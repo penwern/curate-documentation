@@ -267,12 +267,10 @@ of your workgroup. You can upload files or folders to this space for
 your own personal content, which would not normally be part of a group
 archive.
 
-Files uploaded into Personal are virus checked once and cannot be moved
-out into any other area of Curate <span style="font-size: 8pt;vertical-align: super;">TM</span>.
-
-If you have files in Personal that you later want to add to the archive,
-you will need to re-upload into Quarantine, or if you don't have a local
-copy, download from Personal and then re-upload into Quarantine.
+Files uploaded into Personal are virus checked once and should not be moved
+out into any other area of Curate <span style="font-size: 8pt;vertical-align: super;">TM</span>. 
+If you have files in Personal that you do want to add to the archive, you should move them
+into Quarantine so they can be submitted for a full quarantine period.
 
 Files in Personal are not characterised, but you do have basic file
 information available and you can add descriptive metadata. Note that
@@ -287,16 +285,14 @@ uploaded into the Quarantine workspace [(*see upload and ingest for more informa
 members of a workgroup. Uploaded files are virus checked and quarantined
 for 30 days. It is recommended that files should not be moved from the
 Quarantine workspace until the quarantine period is up, however
-Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> is not prescriptive and you can do this.
+Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> is not prescriptive and you can choose to move files out early if you wish.
 
 If the virus scanner detects a virus or malware then the affected file
 will be moved to a folder called Infected within the Quarantine
 workspace.
 
 After the 30-day quarantine period and a second successful virus scan,
-files are moved automatically into the Appraisal space into a folder
-called Released (but note that this folder will not appear until it is
-needed).
+files are moved automatically into the Appraisal space and labelled "Released".
 
 #### Appraisal Space
 
@@ -305,22 +301,21 @@ file characterisation tool Siegfried, which generates a file type unique
 identifier from the PRONOM registry of filetypes maintained by the
 National Archive (see <https://www.nationalarchives.gov.uk/PRONOM/>).
 
-If you search in PRONOM by a file's unique identifier you will be able
-to see detailed information on the file format. Within the Appraisal
-workspace you can move, copy and delete files, create folders and add
+Once Siegfried has completed its analysis, the identified PRONOM ID is added to the file information area. 
+Clicking on the PRONOM ID will open a new tab in your browser linked to the PRONOM registry page with more detailed information on the file format.
+
+Within the Appraisal workspace you can move, copy and delete files, create folders and add
 descriptive metadata. Using detailed file information you can make
 appraisal decisions. From the appraisal space, you can also preserve and
-package your objects in any configuration you wish. [*See preservation*](#preservation) and [*packaging*](#packaging) for more information.
+package your objects in any configuration you wish. [*See appraisal*](#appraisal-selection-and-arrangement) [*preservation*](#preservation) and [*packaging*](#packaging) for more information.
 
 #### Archive Space
 
 Files and folders can be moved to the Archive workspace for long-term
 retention. The organisation of the workspace is up to you, but the
 search function can help any system you have by allowing simple searches
-on filenames or advanced searches on descriptive metadata. Files,
-folders or packages moved to the Archived File workspace are read only
-(you cannot delete or edit them) and cannot be moved, but you can create
-a copy into another workspace.
+on filenames or advanced searches on descriptive metadata. AIPs generated
+by the preservation process are also uploaded to the Archive workspace by default.
 
 #### Common Files Space
 
@@ -334,9 +329,11 @@ The object information area provides you with all the critical details
 about a file or object inside Curate. The object information area will
 appear on the right-hand side of the screen when you select a single
 file or folder.
+
 <div class="main-content-img-container">
     <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image7.png" style=""></img>
 </div>
+
 #### Object information area panels
 
 ##### File actions panel
@@ -377,7 +374,7 @@ information area. Click on "more" to view the full extracted EXIF data.
 </div>
 
 Clicking on any file or folder in Curate
-will summon the metadata panel in the object information area. The
+will open the metadata panel in the object information area. The
 Curate metadata panel comes with simple 15 field Dublin Core and 26
 field ISAD(G) schemas built in. Any additional standardised or
 customized schemas can be supported upon request. There is also a field
@@ -414,8 +411,7 @@ The final panel in the object information area, when a file or folder is selecte
 is the file activity panel. The file activity panel records and displays a log of
 all the actions and modifications taken that relate to the selected
 object. Please note that the activity stream does not record PREMIS
-preservation events. Those are recorded internally. See [*PREMIS in
-Curate*](#) for more information.
+preservation events. Those are recorded internally. See [*PREMIS in Curate*](#premis-in-curate) for more information.
 
 ## Upload and Ingest
 
@@ -448,11 +444,6 @@ This will greatly improve your upload performance.</span></div>
 
 We would strongly recommend using the advanced web-uploader for the
 majority of your ingests, where the size and volume is appropriate.
-
-*If you need to ingest content using another protocol, either to adhere
-to institutional policy or for workloads that are larger than the
-webuploader is able to handle, please read the* *Curate Mission Control
-and SFTP sections*
 
 Try uploading files and folders (you can upload any complex folder
 structure) using the advanced web-uploader. You can do this by selecting
@@ -567,21 +558,10 @@ To resolve this, you will need to generate a JSON manifest of checksums
 for your ingest content before you perform your SFTP upload, and then
 perform manual ingest integrity verification once it is complete. [*See Manual Ingest Integrity Verification for more information.*](#manual-ingest-integrity-verification)
 
-<div class="tip"><span class="mdi mdi-information-outline"></span><span>
-mission control features powerful uploading capabilities, as
-performant as SFTP, as well as checksum generation. It's always strongly
-recommended to use mission control over SFTP for massive ingests for a
-faster, more robust, less fragmented and more pleasant user experience.
-</span></div>
-
 Once you have generated your checksum manifest, you may proceed to
 upload your content via SFTP. Once your content is uploaded, and we have
 completed the necessary reindex, you can upload your checksum manifest.
 [*See Manual Integrity Verification for more information*](#manual-ingest-integrity-verification)
-
-### Curate Mission Control
-
-For massive ingest workloads that exceed the capabilities.
 
 ### Ingest Integrity Verification
 
@@ -589,7 +569,7 @@ Curate offers powerful methods for ingesting content into the system
 which come with automated facilities for verifying that your files were
 not compromised as they were uploaded to the system.
 
-Uploads using either the Advanced Web-uploader or mission control will
+Uploads using the Advanced Web-uploader will
 have their integrity verified completely automatically. Curate will
 notify you with status tags attached to the respective object if any
 items in your ingest workload are found to have been compromised during
@@ -598,20 +578,59 @@ the upload process.
 Uploads using SFTP require manual checksum verification, which you can
 read more about below.
 
-###  Manual Ingest Integrity Verification
+####  Manual Ingest Integrity Verification
 
 If you spot an inconsistency in the checksums or verification results
 generated by Curate during your ingest upload, if you'd like to manually
 verify that the automatic validation was completed successfully, or if
-you have chosen to upload your content using SFTP, you might need to
+you have chosen to upload your content using a method that does not support automatic validation, you might need to
 perform manual ingest integrity verification.
 
 To perform manual ingest integrity verification, follow these steps:
 
-#### Generating a checksum manifest
+##### Generating a checksum manifest
 
-There are free several tools available to do this, but we would strongly
-recommend using our companion tool "mission control". [*See Curate mission control for more information.*](#curate-mission-control)
+There are free several tools available to do this, but your chosen tool must be able to generate MD5 checksums, and it must be
+able to provide a manifest file in this format:
+
+**Comments and Metadata:** Lines starting with a semicolon (;) should include metadata about the checksum generation, such as the software used, URL for more information, and the timestamp of generation.
+
+**Checksum Entries:** Each line contains an MD5 checksum followed by the filename, separated by an asterisk (*)
+
+<div class="code-block">
+        <div class="code-header">
+            <span class="code-title">Example Function</span>
+            <span class="code-language">JavaScript</span>
+        </div>
+        <pre>
+            <code>
+                [md5_checksum] *[filename]
+            </code>
+        </pre>
+</div>
+
+**Footer:** Optionally, a footer can summarize the process, e.g., total number of files hashed.
+
+**Example of a Properly Formatted Checksum Manifest**
+
+<div class="code-block">
+        <div class="code-header">
+            <span class="code-title">Example Function</span>
+            <span class="code-language">JavaScript</span>
+        </div>
+        <pre>
+            <code>
+                ; Checksums generated by ExampleSoftware 1.0.0
+                ; http://www.example.com
+                ; 4/16/2023 9:25:42 PM
+                \n
+                f5c5777e2e66258b2b4e1a5820fb3eff *CNA_HIST_ADAQuestionsAndAnswersDocument.mp3
+                ae7f5ebd507470dc7944cb64909ec665 *CNA_HIST_AdvisoryMeeting_2007_12_12.mp3
+                ; 2 files hashed.
+            </code>
+        </pre>
+</div>
+
 
 <div class="tip"><span class="mdi mdi-information-outline"></span><span>
 For best practice, we recommend uploading your checksum manifest
