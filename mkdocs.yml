@@ -5,5 +5,10 @@ theme:
   logo: /curate-documentation/assets/Penwern Logo Large.png
   palette:
     primary: custom
+  features:
+    - navigation.tracking
 extra:
   homepage: https://www.penwern.co.uk
+markdown_extensions:
+  - toc:
+      permalink: true

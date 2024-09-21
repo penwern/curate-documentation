@@ -6,5 +6,10 @@ theme:
   logo: /curate-documentation/assets/Max Communications Logo Large.png
   palette:
     primary: custom
+  features:
+    - navigation.tracking
 extra:
   homepage: https://www.maxcommunications.co.uk
+markdown_extensions:
+  - toc:
+      permalink: true
