@@ -45,7 +45,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
     }
-  });
+
+});
 });
 
 </script>
@@ -65,45 +66,45 @@ simplicity.
 Valuable digital content can be become inaccessible, unusable, or
 untrustworthy due to a number of factors, such as:
 
--   Files have been damaged or made inaccessible by viruses or malware.
+- Files have been damaged or made inaccessible by viruses or malware.
 
--   Files are corrupted.
+- Files are corrupted.
 
--   File types have become obsolete or software to read them is not
-    available.
+- File types have become obsolete or software to read them is not
+  available.
 
--   The authenticity of the data is in question as you cannot prove that
-    a file hasn't changed.
+- The authenticity of the data is in question as you cannot prove that
+  a file hasn't changed.
 
--   You cannot find specific files due to a lack of understandable
-    organisation or description.
+- You cannot find specific files due to a lack of understandable
+  organisation or description.
 
 Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> helps to fix these problems by:
 
--   Removing threats due to viruses and malware through a system or
-    virus checks and quarantine.
+- Removing threats due to viruses and malware through a system or
+  virus checks and quarantine.
 
--   Checksumming all files and regularly checking the integrity of files
-    in its store.
+- Checksumming all files and regularly checking the integrity of files
+  in its store.
 
--   Characterising file types by MIME type and Pronom ID so that you can
-    monitor your holdings and take decisions on strategies to manage
-    file type and software obsolescence.
+- Characterising file types by MIME type and Pronom ID so that you can
+  monitor your holdings and take decisions on strategies to manage
+  file type and software obsolescence.
 
--   Automatically extracting technical metadata.
+- Automatically extracting technical metadata.
 
--   Allowing you to organize your file-store any way you wish, but also
-    to add descriptive metadata to files and folders so that you can
-    search on multiple attributes.
+- Allowing you to organize your file-store any way you wish, but also
+  to add descriptive metadata to files and folders so that you can
+  search on multiple attributes.
 
--   Allowing you to retain all meta-information, and uniquely associate
-    it with each object.
+- Allowing you to retain all meta-information, and uniquely associate
+  it with each object.
 
--   Allowing you to perform format migration on your objects to
-    normalise their types to archival standards.
+- Allowing you to perform format migration on your objects to
+  normalise their types to archival standards.
 
--   Preparing your content into standards-conformant information
-    packages.
+- Preparing your content into standards-conformant information
+  packages.
 
 ## Is Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> Useful for Archivists and Digital Curators?
 
@@ -112,33 +113,33 @@ critical functions within an electronic archiving system discretely or
 can form a complete and effective system itself. Individually,
 Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> can perform the following roles:
 
- - Ingest, Upload and Accession
+- Ingest, Upload and Accession
 
- - Smart Deposit System
+- Smart Deposit System
 
- - Metadata Extraction
+- Metadata Extraction
 
- - Transcriber
+- Transcriber
 
- - Fixity Agent
+- Fixity Agent
 
- - Appraisal System
+- Appraisal System
 
- - Selection and Arrangement Workspace
+- Selection and Arrangement Workspace
 
- - Reporting System
+- Reporting System
 
- - Unified Description Tool
+- Unified Description Tool
 
- - Digital Preservation System
+- Digital Preservation System
 
- - OAIS Information Packaging
+- OAIS Information Packaging
 
- - Document Editing
+- Document Editing
 
- - Advanced Access System
+- Advanced Access System
 
- - Public Access Portal
+- Public Access Portal
 
 In combination, these services mean that Curate comprises a
 comprehensive and highly capable electronic archiving system all on its
@@ -162,7 +163,6 @@ systems and allows you to consolidate data into a single platform.
 Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> works in a way your users understand, with a best-in-class
 user experience. You don't have to train all your users on new, complex
 digital preservation applications.
-
 
 ## General
 
@@ -217,12 +217,11 @@ at the very bottom of the navigation panel.
 
 ### Bookmarks
 
-
-The bookmarks tab can be accessed from the icon in the navigation panel. 
-The bookmarks tab keeps references to all the files and folders you have 
-saved using the "bookmark" feature [(*see bookmarking a file or folder*)](#bookmarking-a-file-or-folder). 
-Clicking one of the items will navigate you to its location in Curate. 
-If you want to remove an item from your bookmarks, click the <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image4.png" class="text-icon"style=""></img> icon 
+The bookmarks tab can be accessed from the icon in the navigation panel.
+The bookmarks tab keeps references to all the files and folders you have
+saved using the "bookmark" feature [(_see bookmarking a file or folder_)](#bookmarking-a-file-or-folder).
+Clicking one of the items will navigate you to its location in Curate.
+If you want to remove an item from your bookmarks, click the <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image4.png" class="text-icon"style=""></img> icon
 next to the item you wish to remove.
 
 <div class="main-content-img-container">
@@ -236,15 +235,15 @@ navigation panel.
 
 You will see the following spaces:
 
--   Personal files
+- Personal files
 
--   Quarantine Space
+- Quarantine Space
 
--   Appraisal Space
+- Appraisal Space
 
--   Archive Space
+- Archive Space
 
--   Common Files
+- Common Files
 
 <div class="main-content-img-container">
     <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image6.png" style=""></img>
@@ -283,7 +282,7 @@ content.
 #### Quarantine Space
 
 Content that is to be appraised and arranged in Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> should be
-uploaded into the Quarantine workspace [(*see upload and ingest for more information*)](#upload-and-ingest). This is a shared workspace and so is visible to all
+uploaded into the Quarantine workspace [(_see upload and ingest for more information_)](#upload-and-ingest). This is a shared workspace and so is visible to all
 members of a workgroup. Uploaded files are virus checked and quarantined
 for 30 days. It is recommended that files should not be moved from the
 Quarantine workspace until the quarantine period is up, however
@@ -303,13 +302,13 @@ file characterisation tool Siegfried, which generates a file type unique
 identifier from the PRONOM registry of filetypes maintained by the
 National Archive (see <https://www.nationalarchives.gov.uk/PRONOM/>).
 
-Once Siegfried has completed its analysis, the identified PRONOM ID is added to the file information area. 
+Once Siegfried has completed its analysis, the identified PRONOM ID is added to the file information area.
 Clicking on the PRONOM ID will open a new tab in your browser linked to the PRONOM registry page with more detailed information on the file format.
 
 Within the Appraisal workspace you can move, copy and delete files, create folders and add
 descriptive metadata. Using detailed file information you can make
 appraisal decisions. From the appraisal space, you can also preserve and
-package your objects in any configuration you wish. [*See appraisal*](#appraisal-selection-and-arrangement) [*preservation*](#preservation) and [*packaging*](#packaging) for more information.
+package your objects in any configuration you wish. [_See appraisal_](#appraisal-selection-and-arrangement) [_preservation_](#preservation) and [_packaging_](#packaging) for more information.
 
 #### Archive Space
 
@@ -386,9 +385,9 @@ The metadata panel also contains the "import" and "export" sections. The
 import section allows you to import external DC, ISAD or any other
 associated meta file to an object. It also provides fields for entering
 the details of an external OAI-PMH record, from which you can harvest
-and import its metadata. See [*importing metadata*](#) for more. The export
+and import its metadata. See [_importing metadata_](#) for more. The export
 section allows you to make an object harvestable via your Curate systems
-OAI-PMH server. See [*exporting records*](#) for more detail.
+OAI-PMH server. See [_exporting records_](#) for more detail.
 
 <div class="main-content-img-container">
     <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image12.png" style=""></img>
@@ -409,11 +408,11 @@ notes or comments for yourself or your colleagues.
     <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image14.png" style=""></img>
 </div>
 
-The final panel in the object information area, when a file or folder is selected in the file list, 
+The final panel in the object information area, when a file or folder is selected in the file list,
 is the file activity panel. The file activity panel records and displays a log of
 all the actions and modifications taken that relate to the selected
 object. Please note that the activity stream does not record PREMIS
-preservation events. Those are recorded internally. See [*PREMIS in Curate*](#premis-in-curate) for more information.
+preservation events. Those are recorded internally. See [_PREMIS in Curate_](#premis-in-curate) for more information.
 
 ## Upload and Ingest
 
@@ -489,7 +488,7 @@ connection.
 Enabling this option will close the upload panel as soon as the final
 file has finished uploading to Curate. Leaving this option disabled will
 allow you to browse your completed uploads in the panel and at-a-glance
-verify that they have valid integrity checks [*see pre-upload integrity verification*](#pre-upload-integrity-verification).
+verify that they have valid integrity checks [_see pre-upload integrity verification_](#pre-upload-integrity-verification).
 
 **If a file with the same name exists**
 
@@ -537,9 +536,9 @@ If you require SFTP upload in your Curate instance, please let us know
 when you procure Curate for your organisation, or send us a support
 ticket.
 
-*Remember, we'd strongly advise you to use the advanced web-uploader for
+_Remember, we'd strongly advise you to use the advanced web-uploader for
 most ingest usecases. It's best to only use sftp if your institution
-explicitly requires it.*
+explicitly requires it._
 
 #### Connecting to and Uploading Through SFTP
 
@@ -558,12 +557,12 @@ integrity.
 
 To resolve this, you will need to generate a JSON manifest of checksums
 for your ingest content before you perform your SFTP upload, and then
-perform manual ingest integrity verification once it is complete. [*See Manual Ingest Integrity Verification for more information.*](#manual-ingest-integrity-verification)
+perform manual ingest integrity verification once it is complete. [_See Manual Ingest Integrity Verification for more information._](#manual-ingest-integrity-verification)
 
 Once you have generated your checksum manifest, you may proceed to
 upload your content via SFTP. Once your content is uploaded, and we have
 completed the necessary reindex, you can upload your checksum manifest.
-[*See Manual Integrity Verification for more information*](#manual-ingest-integrity-verification)
+[_See Manual Integrity Verification for more information_](#manual-ingest-integrity-verification)
 
 ### Ingest Integrity Verification
 
@@ -580,7 +579,7 @@ the upload process.
 Uploads using SFTP require manual checksum verification, which you can
 read more about below.
 
-####  Manual Ingest Integrity Verification
+#### Manual Ingest Integrity Verification
 
 If you spot an inconsistency in the checksums or verification results
 generated by Curate during your ingest upload, if you'd like to manually
@@ -597,7 +596,7 @@ able to provide a manifest file in this format:
 
 **Comments and Metadata:** Lines starting with a semicolon (;) should include metadata about the checksum generation, such as the software used, URL for more information, and the timestamp of generation.
 
-**Checksum Entries:** Each line contains an MD5 checksum followed by the filename, separated by an asterisk (*)
+**Checksum Entries:** Each line contains an MD5 checksum followed by the filename, separated by an asterisk (\*)
 
 <div class="code-block">
         <div class="code-header">
@@ -634,7 +633,7 @@ able to provide a manifest file in this format:
 
 Please note that the names of your files must match exactly the names of the files in Curate for the system to be able to verify the checksums.
 
-Once you have generated your checksum manifest, you may proceed to upload your file content and the checksum manifest into Curate. It does not matter in which order. 
+Once you have generated your checksum manifest, you may proceed to upload your file content and the checksum manifest into Curate. It does not matter in which order.
 
 <div class="tip"><span class="mdi mdi-information-outline"></span><span>
 For best practice, we recommend uploading your checksum manifest
@@ -660,11 +659,11 @@ Once a file has been uploaded, the initial quarantine virus scan will
 run. If the file is found to contain malicious data, it will be moved to the "INFECTED" folder. You may then choose how and when you would like to action its removal.
 If the file passes the first virus scan, it will receive a "Qurantined" tag and it will be submitted for a quarantine period.
 
-After the quarantine period has passed, the second virus scan will be performed. If no further threats are found, the files status label will change to "Released" and it will be 
+After the quarantine period has passed, the second virus scan will be performed. If no further threats are found, the files status label will change to "Released" and it will be
 moved automatically into the Appraisal space.
 
 You can find detailed results for each scan in the quarantine process and the current quarantine period in the file
-information panel, see [*file information panel*](#file-information-panel) for more detail.
+information panel, see [_file information panel_](#file-information-panel) for more detail.
 
 **Quarantined**
 
@@ -690,13 +689,13 @@ change to "Released".
 The upload process into the Personal Workspace is functionally
 identical, but note two major differences:
 
--   Files will be virus scanned once only.
+- Files will be virus scanned once only.
 
-    -   If safe, the file is tagged "Passed".
+  - If safe, the file is tagged "Passed".
 
-    -   If compromised, the file is moved to an infected directory.
+  - If compromised, the file is moved to an infected directory.
 
--   You cannot move files out of the personal workspace.
+- You cannot move files out of the personal workspace.
 
 ### Other Upload Methods
 
@@ -705,8 +704,8 @@ physical data transport devices when on-cloud.
 
 ### Creating and Using a Deposit Space
 
-Curate allows you to share any file, folder or other area [*see Sharing
-files or folders* for more detail](#sharing-files-or-folders). By allowing users of a shared area
+Curate allows you to share any file, folder or other area [_see Sharing
+files or folders_ for more detail](#sharing-files-or-folders). By allowing users of a shared area
 upload permissions, you can easily create a secure space for your
 submitters to deposit their content.
 
@@ -718,7 +717,7 @@ Personal.
 #### Setup
 
 First create and share a folder for your deposit space. This folder is
-where your depositors will upload their content. [(*see sharing a file or folder*)](#sharing-a-file-or-folder)
+where your depositors will upload their content. [(_see sharing a file or folder_)](#sharing-a-file-or-folder)
 
 Once shared, you can enable "Upload files" under the permissions tab.
 You should typically disable download permissions unless you want your
@@ -751,7 +750,7 @@ of uploading files for your submitters even further, but it also ensures
 that they are unable to see any other content that has been uploaded
 into the space. To change the deposit space interface, open the "link
 label" section in the sharing configuration. Select "Drop Files Here"
-for the simple upload interface. *Hint: make sure to save your changes.*
+for the simple upload interface. _Hint: make sure to save your changes._
 
 ### Creating and Using a Smart Deposit Space
 
@@ -829,12 +828,12 @@ to indicate that full quarantine conditions were not met.
 Once you have files in the Appraisal workspace, Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> runs
 comprehensive file characterisation programmes. To access the generated
 characterization information, select a file and check the file
-information panel in the object information area. [(*see File Information Panel*)](#file-information-panel). Characterised objects will include these fields in their
+information panel in the object information area. [(_see File Information Panel_)](#file-information-panel). Characterised objects will include these fields in their
 information area:
 
--   File MIME type
+- File MIME type
 
--   PRONOM ID
+- PRONOM ID
 
 In Appraisal you can try creating folders ('New/New Folder') and moving
 files between folders to create an arrangement.
@@ -869,11 +868,11 @@ it goes in the system.
 
 Descriptive metadata is used to annotate a file, folder or group of
 files in a folder structure. All descriptive metadata in Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> is
-indexed and searchable [(*see search*)](#search-and-access). Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> provides both the
+indexed and searchable [(_see search_)](#search-and-access). Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> provides both the
 Dublin Core simple 15 element schema which you can read about in detail
 (if you want to) <a href="https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#section-3">here</a>
 and the full General International Standard Archival Description ISAD(G)
-descriptive metadata schema which you can read more about <a href="https://www.ica.org/en/isadg-general-international-standard-archival-description-second-edition">here</a> 
+descriptive metadata schema which you can read more about <a href="https://www.ica.org/en/isadg-general-international-standard-archival-description-second-edition">here</a>
 
 You can be as precise as you wish with the use of metadata elements by
 following the specifications and controlled vocabularies. Alternatively,
@@ -883,7 +882,7 @@ impose rules.
 
 To begin to describe any file or folder in Curate, select the object you
 would like to describe. On the right hand side of your screen, in the
-object information area, you will see the file metadata panel. ([*see object information area*](#object-information-area) , and [*metadata panel*](#metadata-panel)).
+object information area, you will see the file metadata panel. ([_see object information area_](#object-information-area) , and [_metadata panel_](#metadata-panel)).
 
 <div class="main-content-img-container">
     <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image25.png" style=""></img>
@@ -916,7 +915,7 @@ objects you would like to create or modify descriptive records for.
 </div>
 
 In the object information area, you will see only the file actions panel
-[(*see file actions panel*)](#file-actions-panel) which will contain options to download the
+[(_see file actions panel_)](#file-actions-panel) which will contain options to download the
 multiple selection of objects, or "meta data" to modify the descriptive
 records of all the files.
 
@@ -1005,8 +1004,8 @@ are interested, just send us a message via the support channel.
 ## Preservation
 
 Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> features a highly automated digital preservation service that
-wraps the open source tool A3M into a dynamic workflow. Curate preservation workflows are highly configurable, simple to action, 
-and automate the process of performing best-practice preservation and packaging actions on your files and folders. 
+wraps the open source tool A3M into a dynamic workflow. Curate preservation workflows are highly configurable, simple to action,
+and automate the process of performing best-practice preservation and packaging actions on your files and folders.
 
 Here's the enriched version with proper markdown formatting and escaping:
 
@@ -1024,10 +1023,10 @@ A3M is an open-source tool, developed by Artefactual Systems <span style="font-s
 
 Some key benefits of using A3M for digital preservation include:
 
- - Standards compliance: A3M fully supports the OAIS reference model, creates valid and well formed METS documents, and produces AIPs that conform to the BagIt specification.
- - Comprehensive format support: A3M's default Format Policy Registry (FPR) covers a wide range of file formats, from common office documents to complex multimedia files.
- - Extensibility: A3M's modular design makes it easy to add support for new formats, tools, and workflows as needs evolve.
- - Community-driven development: As an open-source project, A3M benefits from the contributions and expertise of a diverse community of users and developers.
+- Standards compliance: A3M fully supports the OAIS reference model, creates valid and well formed METS documents, and produces AIPs that conform to the BagIt specification.
+- Comprehensive format support: A3M's default Format Policy Registry (FPR) covers a wide range of file formats, from common office documents to complex multimedia files.
+- Extensibility: A3M's modular design makes it easy to add support for new formats, tools, and workflows as needs evolve.
+- Community-driven development: As an open-source project, A3M benefits from the contributions and expertise of a diverse community of users and developers.
 
 <span style="font-size: 8pt;">A3M and Archivematica are trademarks of <a href="https://www.artefactual.com/">Artefactual Systems Inc.</a></span>
 
@@ -1037,20 +1036,21 @@ At the heart of A3M's preservation workflow is the Format Policy Registry (FPR).
 
 The FPR consists of three main components:
 
- - Format database: A comprehensive registry of file formats.
- - Tool database: A curated collection of open tools used for normalisation.
- - Policy rules: A set of customisable rules that map specific file formats to their recommended normalisation actions.
+- Format database: A comprehensive registry of file formats.
+- Tool database: A curated collection of open tools used for normalisation.
+- Policy rules: A set of customisable rules that map specific file formats to their recommended normalisation actions.
 
- <span style="font-size: 8pt;">A3M and Archivematica are trademarks of <a href="https://www.artefactual.com/">Artefactual Systems Inc.</a></span>
+<span style="font-size: 8pt;">A3M and Archivematica are trademarks of <a href="https://www.artefactual.com/">Artefactual Systems Inc.</a></span>
 
 <div class="tip"> <span class="mdi mdi-information-outline"></span> <span>The default FPR in Curate encapsulates a broad variety of migration pathways across several tools, offering wide coverage for file formats and applying extensively production-tested methodologies. It is the same as you would find in a standard installation of Archivematica.</span> </div>
 
 By leveraging the collective knowledge and best practices encoded in the FPR, A3M is able to make informed, standards-based decisions about how to best preserve your digital content for the long term.
 
 ##### Customising the FPR
+
 While the default FPR in Curate provides excellent coverage for a wide range of common file formats, we recognize that every institution has unique needs and priorities when it comes to digital preservation. That's why we've made it easy to customize the FPR to better align with your specific requirements.
 
-Whether you need to add support for niche or proprietary formats, fine-tune the normalisation rules for certain content types, or integrate new preservation tools into your workflow, the FPR in Curate can be fully tailored. 
+Whether you need to add support for niche or proprietary formats, fine-tune the normalisation rules for certain content types, or integrate new preservation tools into your workflow, the FPR in Curate can be fully tailored.
 
 If you are an existing Archivematica user migrating to Curate, we can even use your existing customised FPR as a drop-in, ensuring a smooth transition and continuity of your preservation practices (provided your Archivematica installation is reasonably up-to-date).
 
@@ -1063,44 +1063,47 @@ By combining the robustness and reliability of A3M with the flexibility and exte
 The preservation workflow in Curate is highly customisable. You can choose to enable, disable or modify various parameters related to the handling of
 your content:
 
-* *Config Name:* The reference name given to your custom config, as it will appear in your list of available preservation configs when preserving an item. You should make your config names unique.
+- _Config Name:_ The reference name given to your custom config, as it will appear in your list of available preservation configs when preserving an item. You should make your config names unique.
 
-* *Config Description:* A brief description of your customised config to let you or your colleagues know what it's purpose is. 
+- _Config Description:_ A brief description of your customised config to let you or your colleagues know what it's purpose is.
 
-* *Normalise Objects:*  Enable or disable the normalisation process for objects in your preservation selection
+- _Normalise Objects:_ Enable or disable the normalisation process for objects in your preservation selection
 
-* *Image Normalisation Format:* Select your preferred format for image normalisation.
+- _Image Normalisation Format:_ Select your preferred format for image normalisation.
 
-* *AIP Packaging Type:* Select the output packaging format of your workflow AIPs.
-    * *standard:* Standard bagit AIP packaging 
-    * *EARK:* Package AIPs in line with the EARK specifications. <a href="https://eark.online/">Read more about EARK here.</a>
+- _AIP Packaging Type:_ Select the output packaging format of your workflow AIPs.
 
-* *Compress AIPs:* Whether to apply a compression algorithm to your output AIP object. 
-    * *Compression Algorithm:* Compression algorithm to apply to AIPs.
-    * *Compression Level:* Level of compression to apply to AIPs.
+  - _standard:_ Standard bagit AIP packaging
+  - _EARK:_ Package AIPs in line with the EARK specifications. <a href="https://eark.online/">Read more about EARK here.</a>
 
-* *Generate Transfer Structure Report:* Generate a report about your incoming objects before preservation actions are applied to them
+- _Compress AIPs:_ Whether to apply a compression algorithm to your output AIP object.
 
-* *Document Empty Directories:* Create an entry in the AIP METS Structmap for empty directories within your preservation selection before they are deleted.
+  - _Compression Algorithm:_ Compression algorithm to apply to AIPs.
+  - _Compression Level:_ Level of compression to apply to AIPs.
 
-* *Extract Packages:* Any package objects (like .zip files) within your preservation selection will be extracted to a folder before your content is preserved.
+- _Generate Transfer Structure Report:_ Generate a report about your incoming objects before preservation actions are applied to them
 
-    * *Delete Packages After Extraction:* The original package object referenced above will be deleted once its contents has been extracted, otherwise the original package object is preserved along with its extracted contents
+- _Document Empty Directories:_ Create an entry in the AIP METS Structmap for empty directories within your preservation selection before they are deleted.
+
+- _Extract Packages:_ Any package objects (like .zip files) within your preservation selection will be extracted to a folder before your content is preserved.
+
+  - _Delete Packages After Extraction:_ The original package object referenced above will be deleted once its contents has been extracted, otherwise the original package object is preserved along with its extracted contents
 
 <div class="warning"><span class="mdi mdi-alert"></span><span>Enabling compression for your AIPs will save a small amount of storage in your Archive workspace, depending on the selected algorithm and level, but it will also prevent Curate from being able to index their contents. This means you will not be able to search for files inside of your AIPs.</span></div>
 
-The system comes packaged with a default preservation config which is enacted when you choose the standard "Preserve" option in the UI [(*see preserving files and folders*)](#preserving-files-and-folders), and should be appropriate for most use-cases. If you would like to create a customised configuration that modifies any of the parameters described above, Curate provides an intuitive interface for customising, saving and editing your own preservation configs.
+The system comes packaged with a default preservation config which is enacted when you choose the standard "Preserve" option in the UI [(_see preserving files and folders_)](#preserving-files-and-folders), and should be appropriate for most use-cases. If you would like to create a customised configuration that modifies any of the parameters described above, Curate provides an intuitive interface for customising, saving and editing your own preservation configs.
 
 #### Creating a config
 
 To create a new preservation config, first select the main user dropdown in the top left-hand corner of the Curate interface by clicking this icon: <div size="38" style="color: rgb(255, 255, 255); background-color: rgb(0, 102, 138); user-select: none; display: inline-flex; align-items: center; justify-content: center; font-size: 19px; border-radius: 50%; height: 38px; width: 38px;"><span class="mdi mdi-account" color="#ffffff" style="display: flex;align-content: center;color: rgb(255, 255, 255); position: relative; font-size: 22.8px; display: inline-block; user-select: none; transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms; width: 22.8px; height: 22.8px; margin: 7.6px;"></span></div>
 
 From the dropdown, select "Preservation Configs" to open the configs menu.
+
 <div class="main-content-image-container">
     <img src="/curate-documentation/assets/Preservation Configs Menu.png"></img>
 </div>
 
-On the left hand side of the menu, you will find all the controls for creating new configs or editing existing ones. On the right, you will find a list of all of your saved configs. [(*see modifying configs*)](#modifying-a-config)
+On the left hand side of the menu, you will find all the controls for creating new configs or editing existing ones. On the right, you will find a list of all of your saved configs. [(_see modifying configs_)](#modifying-a-config)
 
 To create a config, simply customise your desired parameters in the left hand area and then give your new config a name in the "details" box. Once you have entered a name, you will see the "Save config" button appear. Once you've hit "save", your configs will be reloaded and you will see your new config slide into the list of saved configs on the right.
 
@@ -1113,7 +1116,6 @@ Once the details of your saved config have loaded, you may begin to modify it's 
 
 <div class="tip"><span class="mdi mdi-information-outline"></span><span>You'll notice each of your saved configs has a star icon to the left of its information in the saved configs area. You can click on this icon to favourite any of your saved configs. When you go to launch a preservation workflow on some content, your favourite configs will be shown in the main context menu, rather than appearing in the custom configs drop-down. 
 </span></div>
-
 
 ### Preserving Files and Folders
 
@@ -1131,21 +1133,21 @@ As Curate begins to execute the various steps in the preservation workflow, you 
 
 In addition to the default preservation config, Curate allows you to create and use custom configs that define specific preservation parameters (see Creating Configs). To initiate a custom config on your selection:
 
- 1. Right-click your selected content
- 2. Choose "Preservation Configs" from the context menu
- 3. Select your desired config from the list of custom configs to initiate the preservation workflow with the chosen config
- 4. The rest of the process is identical to using the default config. Curate will execute the preservation workflow according to the parameters specified in your custom config.
-
+1.  Right-click your selected content
+2.  Choose "Preservation Configs" from the context menu
+3.  Select your desired config from the list of custom configs to initiate the preservation workflow with the chosen config
+4.  The rest of the process is identical to using the default config. Curate will execute the preservation workflow according to the parameters specified in your custom config.
 
 ### The Core Preservation Process
-Under the hood, Curate leverages the power of A3M [(*see about A3M*)](#about-a3m)to perform the key preservation actions in its workflow. These actions ensure the long-term accessibility and integrity of your digital content.
 
+Under the hood, Curate leverages the power of A3M [(_see about A3M_)](#about-a3m)to perform the key preservation actions in its workflow. These actions ensure the long-term accessibility and integrity of your digital content.
 
 #### Characterisation
 
 A3M uses a set of specialised tools to analyze your files and extract detailed technical metadata about their format, structure, and properties. This metadata is crucial for informed preservation planning and decision-making. The extracted metadata is stored in the AIP's METS file, providing a complete technical description of the preserved content.
 
 ##### Characterisation Tools
+
 A3M utilizes the following industry-standard tools for file characterization:
 
 <a href="http://ffmpeg.org/">FFProbe</a>: A powerful multimedia stream analyzer that provides detailed information about audio and video files
@@ -1157,25 +1159,25 @@ A3M utilizes the following industry-standard tools for file characterization:
 
 Normalisation is the process of converting files to standardized, preservation-friendly formats that are more likely to remain accessible over the long term.
 
-A3M determines the appropriate target format for each file based on the Format Policy Registry (FPR) [(*see the FPR section for more*)](#the-format-policy-registry-fpr), a comprehensive knowledge base that maps file formats to recommended preservation actions. By consistently applying these normalisation rules, Curate helps ensure the future renderability and usability of your content.
+A3M determines the appropriate target format for each file based on the Format Policy Registry (FPR) [(_see the FPR section for more_)](#the-format-policy-registry-fpr), a comprehensive knowledge base that maps file formats to recommended preservation actions. By consistently applying these normalisation rules, Curate helps ensure the future renderability and usability of your content.
 
 ##### Normalisation Tools
 
 Depending on the type of content being preserved, A3M employs different tools for normalisation:
 
-*Image Files*
+_Image Files_
 
- * <a href="https://imagemagick.org/script/convert.php">Imagemagick Convert</a>
- * <a href="https://inkscape.org/">Inkscape</a>
+- <a href="https://imagemagick.org/script/convert.php">Imagemagick Convert</a>
+- <a href="https://inkscape.org/">Inkscape</a>
 
-*Audio-Visual Files*
+_Audio-Visual Files_
 
- * <a href="https://www.ffmpeg.org/">FFmpeg</a>
+- <a href="https://www.ffmpeg.org/">FFmpeg</a>
 
-*Document Files*
+_Document Files_
 
- * <a href="https://www.ghostscript.com/">Ghostscript</a>
- * <a href="https://www.ps2pdf.com/">Ps2pdf</a>
+- <a href="https://www.ghostscript.com/">Ghostscript</a>
+- <a href="https://www.ps2pdf.com/">Ps2pdf</a>
 
 #### Validation
 
@@ -1186,9 +1188,11 @@ Validation provides an added layer of assurance that your content has been accur
 By combining robust characterisation, normalisation, and validation, Curate's A3M-powered workflow ensures the highest levels of digital preservation for your valuable content. The end result is a standards-based, fully-described Archival Information Package (AIP) that can be confidently stored and managed for the long term.
 
 ## Packaging
+
 Curate integrates a powerful and flexible AIP (Archival Information Package) packaging system that allows it to output your archival objects in a variety of standardized structures. This ensures that your preserved content is stored in a well-documented, sustainable format that can be easily understood and accessed in the future.
 
 ### Supported Packaging Formats
+
 By default, Curate uses the widely-adopted BagIt specification for packaging AIPs. BagIt is a hierarchical file packaging format designed to support disk-based storage and network transfer of arbitrary digital content. It provides a set of conventions for packaging content along with its metadata in a way that facilitates easy validation and long-term preservation.
 
 In addition to BagIt, Curate also supports the E-ARK (European Archival Records and Knowledge Preservation) packaging format out of the box. E-ARK is a set of specifications that aim to provide a common European methodology for packaging digital archival records. It defines a set of information package formats (SIP, AIP, DIP) and guidelines for their creation, management and reuse.
@@ -1196,9 +1200,11 @@ In addition to BagIt, Curate also supports the E-ARK (European Archival Records 
 <div class="tip"> <span class="mdi mdi-information-outline"></span> <span>Curate's packaging system is highly extensible. If your organization requires support for a specific packaging format not currently available, please get in touch with us. We can work with you to implement custom packaging formats to meet your specific needs.</span> </div>
 
 ### Configuring Packaging Options
+
 Curate allows you to customize various aspects of the packaging process through preservation configs. You can specify parameters such as the packaging format (e.g., BagIt or E-ARK), compression options, and whether to include additional metadata or reports in the package. [See the preservation configs section](#preservation-configs) for more details on how to create and manage preservation configs.
 
 ### The Packaging Workflow
+
 The packaging process in Curate is fully integrated with the preservation workflow. Once the core preservation actions (characterisation, normalisation, validation) have completed successfully [(see preservation)](#preservation), Curate automatically packages the resultant archival objects according to the specified packaging format and options.
 
 The generated AIP packages are then stored in your Archival workspace [(see archive workspace)](#archive-space), where they can be easily located, searched and retrieved as needed. Each AIP includes the preserved content along with comprehensive metadata (descriptive, administrative, structural, preservation) to ensure its long-term understandability and usability.
@@ -1275,37 +1281,37 @@ form here. You will now see a url that has been created and is unique
 for your share. You can copy this using the Copy icon and you can send
 it to anyone you wish. Other options in the Shares popup are:
 
--   You can send the link to another use in your group using the Send
-    Invitation button
+- You can send the link to another use in your group using the Send
+  Invitation button
 
--   You can customise the last 12 digits of the link to be anything you
-    want and so can make the link meaningful
+- You can customise the last 12 digits of the link to be anything you
+  want and so can make the link meaningful
 
--   Disable link
+- Disable link
 
--   Change permissions:
+- Change permissions:
 
-    -   For files, by default invited users can download and preview
-        content, but you can disable either of these options.
+  - For files, by default invited users can download and preview
+    content, but you can disable either of these options.
 
-    -   For folders, an option is added to give permission to upload
-        files into your folder
+  - For folders, an option is added to give permission to upload
+    files into your folder
 
--   Access Restrictions: you can add a password and password expiry date
-    to the link to make it private
+- Access Restrictions: you can add a password and password expiry date
+  to the link to make it private
 
--   Link Label: when the object is viewed from the link it will have a
-    label on the top of the page, this is normally the file or folder
-    name, but you can customise it here together with the link
-    description which is normally the created date and the presentation
-    of the link contents. By default the user is presented with a
-    preview of the file (if enabled) or a big download button (if
-    preview is disabled), but you can make the download button the
-    default.
+- Link Label: when the object is viewed from the link it will have a
+  label on the top of the page, this is normally the file or folder
+  name, but you can customise it here together with the link
+  description which is normally the created date and the presentation
+  of the link contents. By default the user is presented with a
+  preview of the file (if enabled) or a big download button (if
+  preview is disabled), but you can make the download button the
+  default.
 
--   \[Advanced Visibility\]: by default the link can only be edited by
-    you, but if you enable this option you can allow other users within
-    your group to edit the link.
+- \[Advanced Visibility\]: by default the link can only be edited by
+  you, but if you enable this option you can allow other users within
+  your group to edit the link.
 
 All of your shares can be viewed and edited by selecting the My Shares
 option in the menu under your username.
@@ -1342,7 +1348,6 @@ To connect your Curate instance to AtoM, you will first need to follow the stand
 NB: the configuration steps reference Archivematica <span style="font-size: 8pt;vertical-align: super;">TM</span>, but the same process can be used with Curate. Please see the above warning for more information about configuring SSH keys between Curate and AtoM.
 
 <div class="tip"> <span class="mdi mdi-information-outline"></span> <span>Please take care to ensure that the SWORD plugin and AtoM REST API are enabled on the AtoM plugins menu.</span> </div>
-
 
 **Explanation**
 
@@ -1383,7 +1388,7 @@ Once you have configured AtoM and entered the required details, you're all done!
 
 If you have not yet configured AtoM, please follow the instructions in the previous sections [Setting up AtoM](#setting-up-atom) before proceeding.
 
-Curate makes the process of generating dissemination packages (DIPs) and sending them to AtoM simple and requires no additional modification of your preservation configurations. The first step is to link an object or hierarchy of objects that you would like to generate a DIP from to an existing AtoM description. 
+Curate makes the process of generating dissemination packages (DIPs) and sending them to AtoM simple and requires no additional modification of your preservation configurations. The first step is to link an object or hierarchy of objects that you would like to generate a DIP from to an existing AtoM description.
 
 <div class="tip"> <span class="mdi mdi-information-outline"></span> <span>Unfortunately, AtoM does not currently support a conducive programmatic way to create new descriptions. You will need to manually create a new description in AtoM for each object you wish to generate a DIP for.</span></div>
 
@@ -1391,14 +1396,14 @@ Curate makes the process of generating dissemination packages (DIPs) and sending
 
 To link an object or hierarchy of objects to an existing AtoM description, you can either:
 
-- Select a single object or hierarchy of objects, select the "more" menu in the main file-list control bar and then click the "Link to AtoM Description" button. This will open a dialog box that allows you to search for an existing AtoM description and link the selected object(s) to it. 
+- Select a single object or hierarchy of objects, select the "more" menu in the main file-list control bar and then click the "Link to AtoM Description" button. This will open a dialog box that allows you to search for an existing AtoM description and link the selected object(s) to it.
 - Select multiple objects or hierarchy of objects, select the "more" menu in the main file-list control bar and then click the "Link to AtoM Description" button. This will open a dialog box that allows you to individually link each object to an existing AtoM description. Clicking the "Link" button will open the AtoM description search dialog box and allow you to search for an existing AtoM description and link the selected object to it. Once you have selected an existing AtoM description, you will be moved back to the first dialog box with your multiple object selection and you can continue to link the remaining objects.
 
 Once you have linked your objects to an existing AtoM description, you will see a tag with the prefix "linked description" next to the object in the file-list that records the slug of the linked description.
 
 ##### Generating a DIP
 
-Once you have linked an object or hierarchy of objects to an existing AtoM description, you can generate a DIP for it by selecting the object or hierarchy of objects, right clicking and clicking the "Preserve" button. Curate analyses each of your selected objects and generates a DIP when it finds a selection with a suitable linked description. It will then automatically generate a DIP during the preservation workflow and send it to AtoM for processing. Whilst the preservation workflow is running, you will see a status tag appear next to the object in the file-list that records the status of the DIP generation and processing. 
+Once you have linked an object or hierarchy of objects to an existing AtoM description, you can generate a DIP for it by selecting the object or hierarchy of objects, right clicking and clicking the "Preserve" button. Curate analyses each of your selected objects and generates a DIP when it finds a selection with a suitable linked description. It will then automatically generate a DIP during the preservation workflow and send it to AtoM for processing. Whilst the preservation workflow is running, you will see a status tag appear next to the object in the file-list that records the status of the DIP generation and processing.
 
 Once your objects have been successfully preserved, you will see the "preserved" status tag appear next to the object in the file-list. This means Curate has generated both an AIP and a DIP for the object, and that the DIP has been sent to AtoM for processing.
 
@@ -1406,10 +1411,9 @@ Once your objects have been successfully preserved, you will see the "preserved"
 
 Curate provides a complete embedded user authentication solution with an internal user directory that should be sufficient for most business cases. However, if you wish to use an external identity provider, such as Google, Microsoft Entra or LDAP, you can do so by configuring your Curate instance to use SSO.
 
-Curate  offers several single sign-on (SSO) options for your users. This means that you can log in to Curate using your existing identity provider (IdP) and have your user details automatically populated into Curate. This is particularly useful for organisations that have a central identity provider such as an LDAP server, Google Accounts or Microsoft Entra, and want to allow their users to log in to Curate with the same credentials they use for your other systems or services.
+Curate offers several single sign-on (SSO) options for your users. This means that you can log in to Curate using your existing identity provider (IdP) and have your user details automatically populated into Curate. This is particularly useful for organisations that have a central identity provider such as an LDAP server, Google Accounts or Microsoft Entra, and want to allow their users to log in to Curate with the same credentials they use for your other systems or services.
 
-
-#### Microsoft Entra (formerly Azure AD) 
+#### Microsoft Entra (formerly Azure AD)
 
 Microsoft Entra is a cloud-based identity provider that allows you to manage your users and their identities in a single place. Many organisations already use Microsoft Entra to manage their users.
 
@@ -1430,7 +1434,6 @@ If you are using Microsoft Entra as your IdP, you will need to follow the steps 
     </span>
 </div>
 
-
 ##### Registering Curate as an Application in Entra
 
 To use Microsoft Entra as your SSO provider, you will first need to register Curate as an application in your Microsoft Entra tenant. To do so, you will need to follow the steps below:
@@ -1450,29 +1453,28 @@ To use Microsoft Entra as your SSO provider, you will first need to register Cur
 7. **Select the supported account types for Curate**. This should generally be "Accounts in this organizational directory only (Microsoft only - Single tenant)" for most configurations. If you are unsure what to select or believe you may require a different option, please contact support for assistance unless you are absolutely sure.
 
 8. **Configure the callback URL** (optional):
-    * You can at this point choose to add the callback URL for your Curate instance, or you can leave this blank for the time being. 
-    * If you do add a callback URL, you will need to configure your logout URL in the next section. 
-    * If you are unsure, please leave this option blank and follow the instructions in the next section.
+
+   - You can at this point choose to add the callback URL for your Curate instance, or you can leave this blank for the time being.
+   - If you do add a callback URL, you will need to configure your logout URL in the next section.
+   - If you are unsure, please leave this option blank and follow the instructions in the next section.
 
 9. **Select "Register" to create the application.**
 
+_Configuration Details_
 
-*Configuration Details*
-
-| Field | Recommended Value | Notes |
-|-------|-------------------|-------|
-| Name | "Curate" or "Curate Enterprise" | Choose a descriptive display name |
+| Field                   | Recommended Value                                                                    | Notes                                               |
+| ----------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------- |
+| Name                    | "Curate" or "Curate Enterprise"                                                      | Choose a descriptive display name                   |
 | Supported account types | "Accounts in this organizational directory only<br>(Microsoft only - Single tenant)" | For most configurations. Contact support if unsure. |
-| Redirect URI (optional) | https://www.yourcurateinstance.com/auth/sso/callback/microsoft-entra | Replace with your actual Curate instance URL |
+| Redirect URI (optional) | https://www.exampleinstance.com/auth/sso/callback/microsoft-entra                    | Replace with your actual Curate instance URL        |
 
-*Next Steps*
+_Next Steps_
 
 After completing the registration process, you will need to proceed with the following steps:
 
 1. Generating a Client Secret
 2. Configuring Curate to use Entra as an Identity Provider
 3. Testing your Entra Configuration
-
 
 ##### Generating a Client Secret
 
@@ -1510,7 +1512,7 @@ Next, you will need to gather the following information from Entra so that Curat
 
 **Tenant ID**: This is a unique identifier for your Entra ID tenant. You can find this value in the Entra admin center by expanding the "Identity" section in the left-hand menu and selecting "Overview" from the menu that appears. Please be careful to collect the ID for the correct tenant that we registered our Curate application in.
 
-Once you have gathered these necessary details, you will need to deliver them to Curate support so that they can configure your Curate instance to use Entra as an identity provider. The best way to do this is to send them in an email to the support team. 
+Once you have gathered these necessary details, you will need to deliver them to Curate support so that they can configure your Curate instance to use Entra as an identity provider. The best way to do this is to send them in an email to the support team.
 
 In order to send your Entra details to Curate support securely, you will first need to encrypt the details using our public GPG key. If you are a new customer, please notify us of your requirement for Entra ID as an identity provider during your onboarding process, and you will be provided with a GPG key for encryption. If you are an existing customer who is now looking to integrate Entra ID with Curate, please create a support ticket and a representative will be in touch to configure the connection.
 
@@ -1549,13 +1551,13 @@ At this point, if you decided to add the callback URL in the previous section, y
 
 7. **Select "Web"** from the "Configure platforms" menu that appears on the right hand side of the screen.
 
-8. **Enter the callback URL** for your Curate instance in the "Redirect URI" field. This should be the URL of your Curate instance with the path "/auth/sso/callback/microsoft-entra". For example, if your Curate instance is at https://www.yourcurateinstance.com, then your callback URL would be https://www.yourcurateinstance.com/auth/sso/callback/microsoft-entra.
+8. **Enter the callback URL** for your Curate instance in the "Redirect URI" field. This should be the URL of your Curate instance with the path "/auth/sso/callback/microsoft-entra". For example, if your Curate instance is at https://www.exampleinstance.com, then your callback URL would be https://www.exampleinstance.com/auth/sso/callback/microsoft-entra.
 
 9. **Select "Add platform"** to add the callback URL.
 
 10. You will see a new "Web" platform configuration in the "Platform Configurations" section which will list the callback URL you added in the previous step.
 
-11. Under the platform configuration, you will see a "Logout URL" field. Enter the URL of your Curate instance with the path "/logout". For example, if your Curate instance is at https://www.yourcurateinstance.com, then your logout URL would be https://www.yourcurateinstance.com/logout.
+11. Under the platform configuration, you will see a "Logout URL" field. Enter the URL of your Curate instance with the path "/logout". For example, if your Curate instance is at https://www.exampleinstance.com, then your logout URL would be https://www.exampleinstance.com/logout.
 
 12. You MUST then select both "Access tokens" and "ID tokens" under the "Implicit grants and hybrid flows" section. If you do not select these options, you will not be able to log in to your Curate instance using Entra.
 
@@ -1567,7 +1569,7 @@ Once you have configured your Curate instance to use Entra as an identity provid
 
 Curate currently uses an honesty policy to ensure that you do not exceed your alloted quota of user licenses. This is because accounts within Curate are automatically created for new users at the point that they sign-in with their Entra details, and we do not require you to provide a list of users who you would like to access the application. This ensures you encounter minimal resistance when trying to onboard new/additional staff members into Curate.
 
-If you have exceeded your quota, support will get in touch with your organisation to discuss your options. If you are unsure of your user quota or would like to add additional user licenses to your contract, please contact support. 
+If you have exceeded your quota, support will get in touch with your organisation to discuss your options. If you are unsure of your user quota or would like to add additional user licenses to your contract, please contact support.
 
 If you do have a specific list of users that you would like to grant access to your Curate instance and want to prevent other users from accessing it, you can do so by using Microsoft Entra administration features like security groups. If your organisational structure or Entra setup prohibits you from doing this, you can contact support with your list of users and we will restrict access from any other user accounts.
 
@@ -1581,13 +1583,13 @@ At this point, you can log in to your Curate instance using the account that has
 
 4. **Enter your Entra ID credentials** and select "Sign in".
 
-5. You will be **redirected back to your Curate instance home space**. 
+5. You will be **redirected back to your Curate instance home space**.
 
 All done! You can now start using your Curate instance with Entra.
 
 ### Microsoft SharePoint
 
-Curate's SharePoint integration provides a robust and user-friendly solution for organisations to safeguard their valuable digital content stored in Microsoft 365 environments. This integration seamlessly connects SharePoint with Curate, enabling efficient management and long-term protection of records directly from within SharePoint. 
+Curate's SharePoint integration provides a robust and user-friendly solution for organisations to safeguard their valuable digital content stored in Microsoft 365 environments. This integration seamlessly connects SharePoint with Curate, enabling efficient management and long-term protection of records directly from within SharePoint.
 
 This documentation will guide you through setting up the integration between Curate and SharePoint, and also using the feature.
 
@@ -1614,25 +1616,25 @@ When you add the SharePoint integration to your Curate enterprise contract, you 
 
 #### Security Setup
 
-To connect your SharePoint system to Curate, you will first need to give both Curate and SharePoint sufficient permissions to interract with eachother securely. 
+To connect your SharePoint system to Curate, you will first need to give both Curate and SharePoint sufficient permissions to interract with eachother securely.
 
 **Explanation**
 
-Both Curate and SharePoint are highly secure platforms protected by comprehensive access protocols that require explicit and controlled access in order to allow users, or in this case eachother, to perform useful actions amongst themselves. 
+Both Curate and SharePoint are highly secure platforms protected by comprehensive access protocols that require explicit and controlled access in order to allow users, or in this case eachother, to perform useful actions amongst themselves.
 
 In order to facilitate a seamless user-experience, the Curate SharePoint integration leverages the Microsoft Graph API, which enables your Curate system to programatically access data stored in Microsoft services like SharePoint. When you preserve a file with Curate from SharePoint, you actually just tell Curate which files you would like to preserve, rather than supplying it the files directly. Curate then uses it's access to your content via the Graph API to directly stream the specified files.
 
-Not only does this make the Preserve action *instant*, no matter the size of your file selection, but it also means data movement is kept to a minimum, performance is improved, and the stability and robustness of your local connection is irrelevent. Uploads of any size are managed completely automatically with no requirement for your device to remain connected to a network, or for you to monitor its progress.
+Not only does this make the Preserve action _instant_, no matter the size of your file selection, but it also means data movement is kept to a minimum, performance is improved, and the stability and robustness of your local connection is irrelevent. Uploads of any size are managed completely automatically with no requirement for your device to remain connected to a network, or for you to monitor its progress.
 
 As a result, to access and retrieve your specified data, Curate requires specific permissions to use your SharePoint data. Similarly, SharePoint requires specific permissions from Curate in order for Curate to allow your requests to be authenticated and actioned securely.
 
-All traffic between Curate and a properly configured SharePoint environment is implicitly encrypted in transit by the HTTPS protocol, and your data never leaves a secure stream set directly between your Curate and SharePoint systems, which are both highly protected platforms with thorough authentication systems. 
+All traffic between Curate and a properly configured SharePoint environment is implicitly encrypted in transit by the HTTPS protocol, and your data never leaves a secure stream set directly between your Curate and SharePoint systems, which are both highly protected platforms with thorough authentication systems.
 
-Ultimately, this solution is much more secure, robust and frictionless than the alternative of downloading content to your local client and sending the data to Curate thereafter. 
+Ultimately, this solution is much more secure, robust and frictionless than the alternative of downloading content to your local client and sending the data to Curate thereafter.
 
 #### Generating a Curate API Key
 
-First, lets generate a Curate API key which will be supplied to Sharepoint in order for your Curate system to authenticate requests coming in from your Sharepoint environment. 
+First, lets generate a Curate API key which will be supplied to Sharepoint in order for your Curate system to authenticate requests coming in from your Sharepoint environment.
 
 <div class="warning"><span class="mdi mdi-alert"></span><span>You should only generate an API key for any system if you understand what you are doing and the potential risks. If you are unsure and would like some advice, please get in touch with us. You should follow common best-practice guidance for storing, securing and retaining your API keys.</span></div>
 
@@ -1652,7 +1654,7 @@ To generate a Curate API key:
 </div>
 
 - Read all of the notes in the API keys menu carefully.
-- Select a refresh duration for your API key in days. The refresh duration is the period after which your API key will expire and become inoperable *unless* it is used within that window. 
+- Select a refresh duration for your API key in days. The refresh duration is the period after which your API key will expire and become inoperable _unless_ it is used within that window.
 
 <div class="tip">
     <span class="mdi mdi-information-outline"></span>
@@ -1667,13 +1669,13 @@ Once you have generated a Curate API key, you will need to add it to your ShareP
 - find the "Create" button in the left-hand navigation panel and select "List".
 - you must call the list "curate-api-key"
 - you must add columns to the list for the following fields:
-    - Key: Single line of text, the Curate API key
-    - Curate URL: Single line of text, the base URL of your Curate instance eg. www.your-curate-instance.co.uk
-    - Active: choice field (Active, Inactive) to indicate if the key is active or not (you can use this to disable keys that you no longer need but wish to retain)
+  - Key: Single line of text, the Curate API key
+  - Curate URL: Single line of text, the base URL of your Curate instance eg. www.your-curate-instance.co.uk
+  - Active: choice field (Active, Inactive) to indicate if the key is active or not (you can use this to disable keys that you no longer need but wish to retain)
 - we recommend you add coluumns for the following fields for informational purposes:
-    - Description: a description of the key
-    - Expiry Date: the date after which the key will expire
-    - User: the user who created the key
+  - Description: a description of the key
+  - Expiry Date: the date after which the key will expire
+  - User: the user who created the key
 
 You can then save your list and add the Curate API key and Curate URL to its fields. Also make sure that the key is active.
 
@@ -1716,9 +1718,9 @@ directly to the Penwern support team.
 # Roadmap and Suggestions
 
 Curate is an incredibly dynamic and flexible platform on which it is easy for us
-to add exciting functionality over time. We have a lot of ideas already, and we will 
+to add exciting functionality over time. We have a lot of ideas already, and we will
 publish a public roadmap in the future, but we would also really like to know
-your needs for new functions that we can prioritise. 
+your needs for new functions that we can prioritise.
 
 Please drop us a line if you have any suggestions for the future of the platform,
 and also indicate if we can contact you in case we have questions.
