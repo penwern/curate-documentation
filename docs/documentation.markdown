@@ -1462,11 +1462,11 @@ To use Microsoft Entra as your SSO provider, you will first need to register Cur
 
 _Configuration Details_
 
-| Field                   | Recommended Value                                                                    | Notes                                               |
+| Field                   | Required Value                                                                       | Notes                                               |
 | ----------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------- |
 | Name                    | "Curate" or "Curate Enterprise"                                                      | Choose a descriptive display name                   |
 | Supported account types | "Accounts in this organizational directory only<br>(Microsoft only - Single tenant)" | For most configurations. Contact support if unsure. |
-| Redirect URI (optional) | https://www.exampleinstance.com/auth/sso/callback/microsoft-entra                    | Replace with your actual Curate instance URL        |
+| Redirect URI (optional) | https://www.exampleinstance.com/auth/login/entra/callback                            | Replace with your actual Curate instance URL        |
 
 _Next Steps_
 
