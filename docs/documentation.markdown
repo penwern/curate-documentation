@@ -684,6 +684,15 @@ After 30 days has passed, the second virus scan will be performed. If no
 further threats are found, the quarantined files status label will
 change to "Released".
 
+<div class="tip"> <span class="mdi mdi-information-outline"></span><span>
+  <span style="display:inline">
+    Curate implements a 30 day quarantine cycle for files uploaded into the quarantine space. However, you can choose to move files to the appraisal space before the full quarantine period has passed. To do this, simple use the "Move" button or drag and drop the files into the appraisal space. Any files you choose to move early will be marked as "Risk" to indicate that they have not completed the full quarantine period and have not been scanned for a second time. You can see more information about the quarantine status of a file by selecting and looking in the <a style="" href="#object-information-area">object information area.</a>
+
+    You can also read more in the <a style="" href="#move-content-into-appraisal">moving content into appraisal section.</a>
+
+  </span>
+</span></div>
+
 ### Uploading File and Folders into Personal
 
 The upload process into the Personal Workspace is functionally
