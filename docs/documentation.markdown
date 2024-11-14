@@ -684,6 +684,15 @@ After 30 days has passed, the second virus scan will be performed. If no
 further threats are found, the quarantined files status label will
 change to "Released".
 
+<div class="tip"> <span class="mdi mdi-information-outline"></span><span>
+  <span style="display:inline">
+    Curate implements a 30 day quarantine cycle for files uploaded into the quarantine space. However, you can choose to move files to the appraisal space before the full quarantine period has passed. To do this, simple use the "Move" button or drag and drop the files into the appraisal space. Any files you choose to move early will be marked as "Risk" to indicate that they have not completed the full quarantine period and have not been scanned for a second time. You can see more information about the quarantine status of a file by selecting and looking in the <a style="" href="#object-information-area">object information area.</a>
+
+    You can also read more in the <a style="" href="#move-content-into-appraisal">moving content into appraisal section.</a>
+
+  </span>
+</span></div>
+
 ### Uploading File and Folders into Personal
 
 The upload process into the Personal Workspace is functionally
@@ -1462,11 +1471,11 @@ To use Microsoft Entra as your SSO provider, you will first need to register Cur
 
 _Configuration Details_
 
-| Field                   | Recommended Value                                                                    | Notes                                               |
+| Field                   | Required Value                                                                       | Notes                                               |
 | ----------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------- |
 | Name                    | "Curate" or "Curate Enterprise"                                                      | Choose a descriptive display name                   |
 | Supported account types | "Accounts in this organizational directory only<br>(Microsoft only - Single tenant)" | For most configurations. Contact support if unsure. |
-| Redirect URI (optional) | https://www.exampleinstance.com/auth/sso/callback/microsoft-entra                    | Replace with your actual Curate instance URL        |
+| Redirect URI (optional) | https://www.exampleinstance.com/auth/login/entra/callback                            | Replace with your actual Curate instance URL        |
 
 _Next Steps_
 
@@ -1601,7 +1610,7 @@ NB: Curate SharePoint is an additional feature available to Curate Enterprise cu
         <strong>Things you'll need:</strong>
         </br>
         <ul>
-            <li>Administrative access to your organisations SharePoint admin centre, or help from someone who does.</li>
+            <li>Administrative access to your organisations SharePoint, or help from someone who does.</li>
             <li>Permission to create an API key for Curate in your SharePoint admin centre that confers read access to Document Libraries in which you would like the Curate integration to be available.</li>
             <li>Permission to upload and deploy SharePoint extensions to your organisations SharePoint environment.</li>
             <li>An account on your organisations Curate Enterprise system with a user-admin tier role.</li>
@@ -1656,24 +1665,30 @@ If you do not see the API keys menu, or you do not have a user-admin tier accoun
 
 <div class="tip">
     <span class="mdi mdi-information-outline"></span>
-    If I select a refresh duration of 7 days for my new API key, and then do not use the API key to make any requests from SharePoint for 7 days, it will expire. If at any point in that 7 day period I *do* make a request using that API key, the expiration date will be reset to 7 days after I made that request.
+    <span>If I select a refresh duration of 7 days for my new API key, and then do not use the API key to make any requests from SharePoint for 7 days, it will expire. If at any point in that 7 day period I *do* make a request using that API key, the expiration date will be reset to 7 days after I made that request.</span>
 </div>
 
 #### Adding your Curate API Key to SharePoint
 
 Once you have generated a Curate API key, you will need to add it to your SharePoint environment. To do this, follow these steps:
 
-- log in to your SharePoint environment.
-- find the "Create" button in the left-hand navigation panel and select "List".
-- you must call the list "curate-api-key"
-- you must add columns to the list for the following fields:
-  - Key: Single line of text, the Curate API key
-  - Curate URL: Single line of text, the base URL of your Curate instance eg. www.your-curate-instance.co.uk
-  - Active: choice field (Active, Inactive) to indicate if the key is active or not (you can use this to disable keys that you no longer need but wish to retain)
-- we recommend you add coluumns for the following fields for informational purposes:
-  - Description: a description of the key
-  - Expiry Date: the date after which the key will expire
-  - User: the user who created the key
+- Log in to your SharePoint environment.
+- Select the site from which you would like to use the Curate integration.
+- Find the "Create" button in the left-hand navigation panel and select a new "List".
+
+You must call the list "soteria-details"
+
+Next, you must add columns to the list for the following fields:
+
+- Key: Single line of text, the Curate API key
+- Curate URL: Single line of text, the base URL of your Curate instance _including the protocol (eg. https://)_ eg. https://www.your-curate-instance.co.uk
+- Active: choice field (Active, Inactive) to indicate if the key is active or not (you can use this to disable keys that you no longer need but wish to retain)
+
+We recommend you also add columns for the following fields for informational purposes:
+
+- Description: a description of the key
+- Expiry Date: the date after which the key will expire
+- User: the user who created the key
 
 You can then save your list and add the Curate API key and Curate URL to its fields. Also make sure that the key is active.
 
@@ -1815,7 +1830,15 @@ To check that the installation worked as expected, you can now navigate to one o
 
 #### Sending files to Curate via SharePoint
 
-To send a file to Curate from SharePoint, you just need to select the items you would like to send to Curate, then locate and select the "Preserve" button in the SharePoint ribbon. This will deposit the selected items into your Curate Quarantine space.
+To send a file to Curate from SharePoint, you just need to select the items you would like to send to Curate, then locate and select the "Preserve" button in the SharePoint ribbon. Provided you have set up the list containing your Curate details as explained in the [Adding your Curate API key to SharePoint](#adding-your-curate-api-key-to-sharepoint) section, this will deposit the selected items into your Curate Quarantine space.
+
+#### Receiving files from Curate via SharePoint
+
+Once you or someone in your organisation has sent some content from SharePoint to Curate using the Curate SharePoint integration, it will automatically appear in your Curate Quarantine space in the "SharePoint Uploads" folder. This folder will be created automatically when a user deposits content into Curate from SharePoint. If you delete this folder, it will simply be recreated the next time you deposit content into Curate from SharePoint.
+
+Each upload from SharePoint to Curate will be scoped to a unique folder within the SharePoint Uploads folder. This folder will be named with the date and time the upload was initiated. Each scoped folder will contain the entire selection of data that was uploaded in that operation. For example, if a user selects and chooses the "Preserve" option on a single file, the file will be deposited into a folder with the date and time within the "SharePoint Uploads" folder. If they instead select several files, and even folders, all of those items will be grouped into a single folder within the "SharePoint Uploads" folder.
+
+Each scoped folder will also be tagged with a piece of metadata that lists the registered name and email address of the user who initiated the upload. This is to help you keep track of who uploaded what to Curate.
 
 ## Exporting Metadata
 
