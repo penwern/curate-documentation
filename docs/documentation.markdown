@@ -1628,10 +1628,6 @@ Not only does this make the Preserve action _instant_, no matter the size of you
 
 As a result, to access and retrieve your specified data, Curate requires specific permissions to use your SharePoint data. Similarly, SharePoint requires specific permissions from Curate in order for Curate to allow your requests to be authenticated and actioned securely.
 
-All traffic between Curate and a properly configured SharePoint environment is implicitly encrypted in transit by the HTTPS protocol, and your data never leaves a secure stream set directly between your Curate and SharePoint systems, which are both highly protected platforms with thorough authentication systems.
-
-Ultimately, this solution is much more secure, robust and frictionless than the alternative of downloading content to your local client and sending the data to Curate thereafter.
-
 #### Generating a Curate API Key
 
 First, lets generate a Curate API key which will be supplied to Sharepoint in order for your Curate system to authenticate requests coming in from your Sharepoint environment.
