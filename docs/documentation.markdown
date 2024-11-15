@@ -684,6 +684,15 @@ After 30 days has passed, the second virus scan will be performed. If no
 further threats are found, the quarantined files status label will
 change to "Released".
 
+<div class="tip"> <span class="mdi mdi-information-outline"></span><span>
+  <span style="display:inline">
+    Curate implements a 30 day quarantine cycle for files uploaded into the quarantine space. However, you can choose to move files to the appraisal space before the full quarantine period has passed. To do this, simple use the "Move" button or drag and drop the files into the appraisal space. Any files you choose to move early will be marked as "Risk" to indicate that they have not completed the full quarantine period and have not been scanned for a second time. You can see more information about the quarantine status of a file by selecting and looking in the <a style="" href="#object-information-area">object information area.</a>
+
+    You can also read more in the <a style="" href="#move-content-into-appraisal">moving content into appraisal section.</a>
+
+  </span>
+</span></div>
+
 ### Uploading File and Folders into Personal
 
 The upload process into the Personal Workspace is functionally
@@ -1462,11 +1471,11 @@ To use Microsoft Entra as your SSO provider, you will first need to register Cur
 
 _Configuration Details_
 
-| Field                   | Recommended Value                                                                    | Notes                                               |
+| Field                   | Required Value                                                                       | Notes                                               |
 | ----------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------- |
 | Name                    | "Curate" or "Curate Enterprise"                                                      | Choose a descriptive display name                   |
 | Supported account types | "Accounts in this organizational directory only<br>(Microsoft only - Single tenant)" | For most configurations. Contact support if unsure. |
-| Redirect URI (optional) | https://www.exampleinstance.com/auth/sso/callback/microsoft-entra                    | Replace with your actual Curate instance URL        |
+| Redirect URI (optional) | https://www.exampleinstance.com/auth/login/entra/callback                            | Replace with your actual Curate instance URL        |
 
 _Next Steps_
 
@@ -1601,7 +1610,7 @@ NB: Curate SharePoint is an additional feature available to Curate Enterprise cu
         <strong>Things you'll need:</strong>
         </br>
         <ul>
-            <li>Administrative access to your organisations SharePoint admin centre, or help from someone who does.</li>
+            <li>Administrative access to your organisations SharePoint, or help from someone who does.</li>
             <li>Permission to create an API key for Curate in your SharePoint admin centre that confers read access to Document Libraries in which you would like the Curate integration to be available.</li>
             <li>Permission to upload and deploy SharePoint extensions to your organisations SharePoint environment.</li>
             <li>An account on your organisations Curate Enterprise system with a user-admin tier role.</li>
@@ -1628,10 +1637,6 @@ Not only does this make the Preserve action _instant_, no matter the size of you
 
 As a result, to access and retrieve your specified data, Curate requires specific permissions to use your SharePoint data. Similarly, SharePoint requires specific permissions from Curate in order for Curate to allow your requests to be authenticated and actioned securely.
 
-All traffic between Curate and a properly configured SharePoint environment is implicitly encrypted in transit by the HTTPS protocol, and your data never leaves a secure stream set directly between your Curate and SharePoint systems, which are both highly protected platforms with thorough authentication systems.
-
-Ultimately, this solution is much more secure, robust and frictionless than the alternative of downloading content to your local client and sending the data to Curate thereafter.
-
 #### Generating a Curate API Key
 
 First, lets generate a Curate API key which will be supplied to Sharepoint in order for your Curate system to authenticate requests coming in from your Sharepoint environment.
@@ -1656,26 +1661,34 @@ To generate a Curate API key:
 - Read all of the notes in the API keys menu carefully.
 - Select a refresh duration for your API key in days. The refresh duration is the period after which your API key will expire and become inoperable _unless_ it is used within that window.
 
+If you do not see the API keys menu, or you do not have a user-admin tier account, you will need to get in touch with support to generate an API key for your Curate instance.
+
 <div class="tip">
     <span class="mdi mdi-information-outline"></span>
-    If I select a refresh duration of 7 days for my new API key, and then do not use the API key to make any requests from SharePoint for 7 days, it will expire. If at any point in that 7 day period I *do* make a request using that API key, the expiration date will be reset to 7 days after I made that request.
+    <span>If I select a refresh duration of 7 days for my new API key, and then do not use the API key to make any requests from SharePoint for 7 days, it will expire. If at any point in that 7 day period I *do* make a request using that API key, the expiration date will be reset to 7 days after I made that request.</span>
 </div>
 
 #### Adding your Curate API Key to SharePoint
 
 Once you have generated a Curate API key, you will need to add it to your SharePoint environment. To do this, follow these steps:
 
-- log in to your SharePoint environment.
-- find the "Create" button in the left-hand navigation panel and select "List".
-- you must call the list "curate-api-key"
-- you must add columns to the list for the following fields:
-  - Key: Single line of text, the Curate API key
-  - Curate URL: Single line of text, the base URL of your Curate instance eg. www.your-curate-instance.co.uk
-  - Active: choice field (Active, Inactive) to indicate if the key is active or not (you can use this to disable keys that you no longer need but wish to retain)
-- we recommend you add coluumns for the following fields for informational purposes:
-  - Description: a description of the key
-  - Expiry Date: the date after which the key will expire
-  - User: the user who created the key
+- Log in to your SharePoint environment.
+- Select the site from which you would like to use the Curate integration.
+- Find the "Create" button in the left-hand navigation panel and select a new "List".
+
+You must call the list "soteria-details"
+
+Next, you must add columns to the list for the following fields:
+
+- Key: Single line of text, the Curate API key
+- Curate URL: Single line of text, the base URL of your Curate instance _including the protocol (eg. https://)_ eg. https://www.your-curate-instance.co.uk
+- Active: choice field (Active, Inactive) to indicate if the key is active or not (you can use this to disable keys that you no longer need but wish to retain)
+
+We recommend you also add columns for the following fields for informational purposes:
+
+- Description: a description of the key
+- Expiry Date: the date after which the key will expire
+- User: the user who created the key
 
 You can then save your list and add the Curate API key and Curate URL to its fields. Also make sure that the key is active.
 
@@ -1683,9 +1696,149 @@ You should only confer access to the list to users who need to use the preservat
 
 Once you have added your key, you can then use it to authenticate requests from your SharePoint environment to Curate.
 
+#### Registering Curate as an Application in Entra
+
+To authorize Curate to retrieve data from your SharePoint environment, you will need to register Curate as an application in your Microsoft Entra tenant. To do so, you will need to follow the steps below:
+
+1. **Log in to your Entra ID as an administrator** and access the correct tenant in the Entra admin center (see [Entra admin center](https://entra.microsoft.com/)).
+
+2. **Expand the Identity section** in the left-hand menu
+
+3. **Expand the Applications section** and select App registrations option.
+
+4. Create a new application registration
+
+5. **Enter a descriptive display name for the Curate SharePoint integration API** in the "Name" field. This can be whatever you like, but it's recommended that you use one similar to "Curate SharePoint".
+
+6. **Select the supported account types for Curate**. This should generally be "Accounts in this organizational directory only<br>(Microsoft only - Single tenant)" for most configurations. If you are unsure what to select or believe you may require a different option, please contact support for assistance unless you are absolutely sure.
+
+7. You do not need to configure any redirect URLs for this registration.
+
+8. **Select "Register"** to save your changes.
+
+Once you have registered the integration, you will need to assign the required permissions.
+
+#### Assigning Permissions to the Curate SharePoint Integration
+
+To assign permissions to the Curate SharePoint integration, you will need to follow the steps below:
+
+1. **Log in to your Entra ID as an administrator** and access the correct tenant in the Entra admin center (see [Entra admin center](https://entra.microsoft.com/)).
+
+2. **Expand the Identity section** in the left-hand menu
+
+3. **Expand the Applications section** and select App registrations option.
+
+4. **Select the application registration** we setup in the previous section
+
+5. **Select "API permissions"** under the "manage" menu which can be found in the left-hand menu in the application registration details page.
+
+6. **Select "Add a permission"** from the top menu.
+
+7. **Select "Microsoft Graph"** from the list of available API permissions.
+
+8. **Select "Application permissions"** from the list of available permission types.
+
+9. **Locate and Select "Files.ReadWrite.All"** from the list of available permissions.
+
+10. **Select "Add Permissions"** to save your changes.
+
+11. **Select "Grant admin consent"** above the list of requested permissions and click "Yes" to grant admin consent.
+
+Next, you will need to generate a new client secret for your application registration. To do so, follow the steps in the next section.
+
+#### Generating a Client Secret for the Curate SharePoint Integration
+
+Once you have registered your Curate SharePoint integration, you will need to generate a client secret for your application registration.
+
+Steps:
+
+1. **Log in to your Entra ID as an administrator** and access the correct tenant in the Entra admin center (see [Entra admin center](https://entra.microsoft.com/)).
+
+2. **Expand the Identity section** in the left-hand menu
+
+3. **Expand the Applications section** and select App registrations option.
+
+4. **Select the application registration** we setup in the previous section
+
+5. **Select "Certificates & secrets"** under the "manage" menu which can be found in the left-hand menu in the application registration details page.
+
+6. **Select "New client secret"**, which will appear above the empty list of client secrets.
+
+7. **Enter a descriptive name** for your client secret in the "Name" field. This can be whatever you like.
+
+8. **Select a sensible expiry date** for your client secret. This is the period after which your client secret will expire and become inoperable. Once the secret has expired you will need to repeat these steps to restablish your connection with Entra.
+
+9. **Select "Add"** to create the client secret.
+
+10. **Copy the client secret** to your clipboard. This is the only time you will be able to see the client secret, so make sure you copy it now.
+
+Next, you will need to contact support to arrange secure transfer of the client secret and other identity values. The support team will provide you with a public encryption key with which you can encrypt the following values:
+
+- Directory (tenant) ID
+- Application (client) ID
+- Client secret from the previous steps
+
+Once you have received the public PGP key, you will need to encrypt your Entra details using a tool like:
+
+**Gpg4win (Windows)**
+
+**GPG Suite (macOS)**
+
+**GnuPG (GNU Privacy Guard)**
+
+Once you have encrypted your Entra details, you can then send them in the encrypted file to support via email. The Curate support team will acknowledge the reception and be able to decrypt the details and configure your Curate instance to use this registration for the Curate SharePoint integration.
+
+#### Installing the SharePoint Extension
+
+When you add the SharePoint integration to your Curate enterprise contract, you will be provided a SharePoint extension package that you can install in your SharePoint environment.
+
+To install the SharePoint extension, follow the instructions below:
+
+- Log in to your SharePoint environment.
+- Navigate to the SharePoint app catalog, which can be found at the url: www.yourorganisation.sharepoint.com/sites/appcatalog
+- From the app catalog, select the "Apps for SharePoint" button.
+- Next, you can simply drag and drop the provided SharePoint extension package into the list of installed extensions.
+
+After a brief wait, SharePoint will prompt you to allow the extension to be installed. It will ask you if you would like to install the extension for all sites automatically. You should leave this option unselected unless you know what you are doing.
+
+Once the extension has been installed, you will be able to see the Curate integration in the SharePoint app catalog we navigated to earlier. You should see "yes" underneath the "Enabled", "Valid app package" and "Deployed" columns, "No" under the "Added to all sites" column, and "No errors" under the "App package error message" column. This confirms that the extension has been successfully installed.
+
+<div class="main-content-img-container">
+    <img src="/curate-documentation/assets/sharepoint-extension-installed.png" style=""></img>
+</div>
+
+#### Adding the SharePoint extension to your site
+
+To add the Curate integration to your site, follow the instructions below:
+
+- Log in to your SharePoint environment.
+- Select the site from which you would like to use the Curate integration.
+- Find and select the "Site Contents" menu from the main site areas navigation strip.
+
+You should find the Curate SharePoint extension in the list of available site content.
+
+You can now simply select the Curate SharePoint extension and click the "Add" button. This will add the Curate SharePoint extension to your site.
+
+At this point, it's a good idea to perform a hard-refresh in your web-browser by holding control/command, shift and pressing r.
+
+To check that the installation worked as expected, you can now navigate to one of the Document Libraries you have set up in your SharePoint site. Once there, you should be able to select an item or multiple items and you will see the "Preserve" button in the SharePoint ribbon.
+
+<div class="tip">
+    <span class="mdi mdi-information-outline"></span>
+    <span>Depending on your screen resolution, you might not see the "Preserve" button in the SharePoint ribbon. If you do not see the button, you can simply click the "More" button in the top right-hand corner of the screen and "Preserve" will appear in the dropdown menu.</span>
+</div>
+
 #### Sending files to Curate via SharePoint
 
-To send a file to Curate from SharePoint, you just need to select the items you would like to send to Curate, then locate and select the "Preserve" button in the SharePoint ribbon. This will deposit the selected items into your Curate Quarantine space.
+To send a file to Curate from SharePoint, you just need to select the items you would like to send to Curate, then locate and select the "Preserve" button in the SharePoint ribbon. Provided you have set up the list containing your Curate details as explained in the [Adding your Curate API key to SharePoint](#adding-your-curate-api-key-to-sharepoint) section, this will deposit the selected items into your Curate Quarantine space.
+
+#### Receiving files from Curate via SharePoint
+
+Once you or someone in your organisation has sent some content from SharePoint to Curate using the Curate SharePoint integration, it will automatically appear in your Curate Quarantine space in the "SharePoint Uploads" folder. This folder will be created automatically when a user deposits content into Curate from SharePoint. If you delete this folder, it will simply be recreated the next time you deposit content into Curate from SharePoint.
+
+Each upload from SharePoint to Curate will be scoped to a unique folder within the SharePoint Uploads folder. This folder will be named with the date and time the upload was initiated. Each scoped folder will contain the entire selection of data that was uploaded in that operation. For example, if a user selects and chooses the "Preserve" option on a single file, the file will be deposited into a folder with the date and time within the "SharePoint Uploads" folder. If they instead select several files, and even folders, all of those items will be grouped into a single folder within the "SharePoint Uploads" folder.
+
+Each scoped folder will also be tagged with a piece of metadata that lists the registered name and email address of the user who initiated the upload. This is to help you keep track of who uploaded what to Curate.
 
 ## Exporting Metadata
 
