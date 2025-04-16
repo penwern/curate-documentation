@@ -1807,10 +1807,6 @@ NB: Curate SharePoint is an additional feature available to Curate Enterprise cu
     </span>
 </div>
 
-#### Installing the SharePoint Extension
-
-When you add the SharePoint integration to your Curate enterprise contract, you will be provided a SharePoint extension package that you can install in your SharePoint environment. Please refer to the SharePoint documentation for more information on how to install SharePoint extensions.
-
 #### Security Setup
 
 To connect your SharePoint system to Curate, you will first need to give both Curate and SharePoint sufficient permissions to interract with eachother securely.
@@ -2015,6 +2011,16 @@ To check that the installation worked as expected, you can now navigate to one o
     <span class="mdi mdi-information-outline"></span>
     <span>Depending on your screen resolution, you might not see the "Preserve" button in the SharePoint ribbon. If you do not see the button, you can simply click the "More" button in the top right-hand corner of the screen and "Preserve" will appear in the dropdown menu.</span>
 </div>
+
+#### Adding the Status Column to your Document Library
+
+To receive updates about the status of your deposits, you will need to add a new column to your Document Library. To add the column, follow these steps:
+
+1. Navigate to the Document Library/s in SharePoint from which you would like to send files to Curate.
+2. Click the "Add Column" button at the far right of the document list header.
+3. In the "New" dialog box, select "Single line of text" from the list of type options.
+4. Name the column "Preservation Status"
+5. Click "Save" to save the new column.
 
 #### Sending files to Curate via SharePoint
 
