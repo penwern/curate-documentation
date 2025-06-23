@@ -1782,7 +1782,75 @@ At this point, you can log in to your Curate instance using the account that has
 
 5. You will be **redirected back to your Curate instance home space**.
 
-All done! You can now start using your Curate instance with Entra.
+All done! You can now start using your Curate instance with Entra. If you would like to configure security groups, please refer to the [Security Groups](#security-groups) section of the User Guide.
+
+##### Using Security Groups with Entra to Manage User Permissions
+
+Security groups provide a centralised and scalable approach to managing user permissions within Curate. By creating groups in Microsoft Entra ID and mapping them to specific roles or permissions in Curate, organisations can streamline user access management while maintaining granular control over system capabilities.
+
+This integration enables self-service permission management, reducing the need for support requests when adjusting user access. You can implement either role-based or permission-based approaches depending on your security requirements and organisational structure.
+
+**Permission Management Strategies**
+
+You can implement security group mappings using two primary approaches:
+
+**Role-Based Mapping**: Create groups that correspond to complete Curate roles such as "Contributor" or "Administrator." This approach simplifies user management by assigning comprehensive permission sets through a single group membership.
+
+**Granular Permission Mapping**: Create groups that map to specific permissions such as "Read" or "Write" access. This approach provides maximum flexibility, allowing you to construct custom roles by combining multiple group memberships.
+
+**Configuration Process**
+
+The initial configuration of security group mappings requires coordination with Curate support. Once established, your organisation can independently manage group memberships through the Entra ID administrative interface.
+
+**Implementation Steps**
+
+**1. Create Security Groups in Entra ID**
+
+Begin by establishing the necessary security groups within your Entra ID environment:
+
+- Access the Entra admin center and navigate to **Identity** > **Groups** > **All Groups**
+- Select **New Group** to initiate group creation
+- Configure the group properties:
+  - **Group Name**: Use a descriptive name that clearly indicates the group's purpose (e.g., "Curate-Contributors" or "Curate-ReadOnly-Access")
+  - **Description**: Provide a comprehensive description that explains the group's intended use and associated permissions
+  - **Group Type**: Select "Security" from the dropdown menu
+- Configure group membership:
+  - You may add users immediately during group creation or manage memberships later
+  - Consider implementing dynamic membership rules if your organisation structure supports automated user assignment
+- **Critical**: Record the Object ID for each created group, as this unique identifier is required for the mapping configuration
+
+2. Configure Groups Claim in Application Registration
+   Configure your Entra ID application registration to include security group information in authentication tokens:
+
+- Navigate to your Curate application registration in the Entra admin center
+- Select Token configuration from the left-hand menu
+- Click Add groups claim to create a new groups claim
+- In the groups claim configuration:
+  - Select Security groups to include security group memberships in tokens
+  - Under the ID section, enable Emit groups as role claims to ensure proper integration with Curate's permission system
+
+Save the configuration to apply the changes
+
+**2. Request Security Group Mapping Configuration**
+
+Contact Curate support to establish the connection between your security groups and Curate permissions:
+
+- **Provide Group Details**: Submit the Object IDs for all security groups requiring mapping
+- **Define Permission Requirements**: Clearly articulate your desired permission structure. Given Curate's extensive permission framework, we recommend discussing your specific use cases with our support team to optimise your configuration
+- **Collaborative Configuration**: Work with Curate support to finalise the most effective permission mapping strategy for your organisational needs
+- **Implementation**: Once approved, Curate support will implement the security group mappings in your environment
+
+**3. Verification and Activation**
+
+Upon completion of the mapping configuration, user permissions will be automatically managed through group membership:
+
+- Users who are members of mapped security groups will receive the associated permissions automatically upon signing in through Entra SSO
+- Permission changes can be managed by modifying group memberships within Entra ID
+- New users can be granted appropriate access by adding them to the relevant security groups
+
+**Ongoing Management**
+
+After initial setup, your IT administrators can manage user permissions entirely through Entra ID group memberships, providing a streamlined and auditable approach to access control within Curate.
 
 ### Microsoft SharePoint
 
