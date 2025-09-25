@@ -1891,38 +1891,11 @@ As a result, to access and retrieve your specified data, Curate requires specifi
 
 #### Generating a Curate API Key
 
-First, lets generate a Curate API key which will be supplied to Sharepoint in order for your Curate system to authenticate requests coming in from your Sharepoint environment.
-
-<div class="warning"><span class="mdi mdi-alert"></span><span>You should only generate an API key for any system if you understand what you are doing and the potential risks. If you are unsure and would like some advice, please get in touch with us. You should follow common best-practice guidance for storing, securing and retaining your API keys.</span></div>
-
-To generate a Curate API key:
-
-- log in to a Curate account with at least a user-admin tier role for your organisation.
-- Open the user account menu by clicking your account profile icon in the top left hand corner of the Curate interface (it's the same menu you log-out from).
-
-<div class="main-content-img-container">
-    <img src="/curate-documentation/assets/user-account-menu.png" style=""></img>
-</div>
-
-- Select the "API Keys <span class="mdi mdi-chip menu-icons" style="color: rgb(117, 117, 117);font-size: 16px;user-select: none;"></span>" button to open the API keys menu.
-
-<div class="main-content-img-container">
-    <img src="/curate-documentation/assets/api-keys-menu.png" style=""></img>
-</div>
-
-- Read all of the notes in the API keys menu carefully.
-- Select a refresh duration for your API key in days. The refresh duration is the period after which your API key will expire and become inoperable _unless_ it is used within that window.
-
-If you do not see the API keys menu, or you do not have a user-admin tier account, you will need to get in touch with support to generate an API key for your Curate instance.
-
-<div class="tip">
-    <span class="mdi mdi-information-outline"></span>
-    <span>If I select a refresh duration of 7 days for my new API key, and then do not use the API key to make any requests from SharePoint for 7 days, it will expire. If at any point in that 7 day period I *do* make a request using that API key, the expiration date will be reset to 7 days after I made that request.</span>
-</div>
+First, you will need to request a Curate API key from the Curate team. To do this, just send an email to your support team. If you have requested the SharePoint integration as part of a project or contract, your support team will be able to provide you with a key during implementation.
 
 #### Adding your Curate API Key to SharePoint
 
-Once you have generated a Curate API key, you will need to add it to your SharePoint environment. To do this, follow these steps:
+Once you have received a Curate API key, you will need to add it to your SharePoint environment. To do this, follow these steps:
 
 - Log in to your SharePoint environment.
 - Select the site from which you would like to use the Curate integration.
@@ -1972,7 +1945,17 @@ Once you have registered the integration, you will need to assign the required p
 
 #### Assigning Permissions to the Curate SharePoint Integration
 
-To assign permissions to the Curate SharePoint integration, you will need to follow the steps below:
+There are two permission models available for the Curate SharePoint integration, each with different levels of access and complexity:
+
+1. **Files.ReadWrite.All** - This is the simpler option that grants broad file access across all SharePoint sites in your tenant. It's easier to set up but provides wider access than may be required.
+
+2. **Sites.Selected** - This is the more secure option that allows you to grant access only to specific SharePoint sites. It requires additional configuration steps using Microsoft Graph Explorer but provides more granular control over permissions.
+
+Choose the option that best fits your security requirements and organizational policies.
+
+##### Option 1: Files.ReadWrite.All Permissions (Simple Setup)
+
+To assign Files.ReadWrite.All permissions to the Curate SharePoint integration, you will need to follow the steps below:
 
 1. **Log in to your Entra ID as an administrator** and access the correct tenant in the Entra admin center (see [Entra admin center](https://entra.microsoft.com/)).
 
@@ -1995,6 +1978,100 @@ To assign permissions to the Curate SharePoint integration, you will need to fol
 10. **Select "Add Permissions"** to save your changes.
 
 11. **Select "Grant admin consent"** above the list of requested permissions and click "Yes" to grant admin consent.
+
+##### Option 2: Sites.Selected Permissions (Secure Setup)
+
+The Sites.Selected permission model provides more granular control by allowing you to grant access only to specific SharePoint sites. This approach requires additional configuration using Microsoft Graph Explorer but offers better security by following the principle of least privilege.
+
+###### Step 1: Get Application Client ID from Entra
+
+1. **Go to Entra admin centre** ([https://entra.microsoft.com/](https://entra.microsoft.com/))
+
+2. **Navigate to Microsoft Entra ID** > **App registrations**
+
+3. **Find and click on the app registration** that you created in the previous section
+
+4. **On the Overview page, copy the Application (client) ID**
+   - It's a GUID that looks like `12345678-1234-1234-1234-123456789012`
+
+5. **Keep this handy** for Step 4 below
+
+###### Step 2: Update API Permissions
+
+1. **In the same app registration, go to API permissions**
+
+2. **Click "Add a permission"** > **Microsoft Graph** > **Application permissions**
+
+3. **Search for and select "Sites.Selected"** from the list of available permissions
+
+4. **Click "Add permissions"** to save your changes
+
+###### Step 3: Grant Admin Consent
+
+1. **Still in API permissions, click "Grant admin consent for [your tenant]"**
+
+2. **Confirm when prompted**
+
+3. **Verify the status shows "✓ Granted for [your tenant]"**
+
+###### Step 4: Get Site ID in Graph Explorer
+
+Microsoft Graph Explorer is the recommended tool for managing Sites.Selected permissions, though alternatives like PnP PowerShell are available.
+
+**Note:** You may need to temporarily grant yourself full site administration capabilities in Graph Explorer. In the **Modify permissions** tab, look for and consent to the permission that provides full administrative control (often named something like "Sites.FullControl.All" or similar - this gives comprehensive site access that overrides other restrictions). This permission is temporary and only applies to your administrator account for the duration of your session on the graph explorer. It does not grant any permissions to the Curate SharePoint integration.
+
+1. **Navigate to Microsoft Graph Explorer** ([https://developer.microsoft.com/en-us/graph/graph-explorer](https://developer.microsoft.com/en-us/graph/graph-explorer))
+
+2. **Sign in with your administrator account**
+
+3. **Use the following request to get your site ID:**
+
+   **Method:** GET
+
+   **URL:**
+   ```
+   https://graph.microsoft.com/v1.0/sites/yourtenant.sharepoint.com:/sites/yoursite
+   ```
+
+   Replace `yourtenant` with your actual tenant name and `yoursite` with your SharePoint site name.
+
+4. **Copy the `id` field from the response** (it will look like `yourtenant.sharepoint.com,{guid},{guid}`)
+
+###### Step 5: Grant Site Permission in Graph Explorer
+
+1. **In Graph Explorer, use the following request to grant site permissions:**
+
+   **Method:** POST
+
+   **URL:**
+   ```
+   https://graph.microsoft.com/v1.0/sites/{site-id-from-step-4}/permissions
+   ```
+
+   Replace `{site-id-from-step-4}` with the site ID you copied in the previous step.
+
+   **Request Body:**
+   ```json
+   {
+     "roles": ["read", "write"],
+     "grantedToIdentities": [
+       {
+         "application": {
+           "id": "{application-client-id-from-step-1}",
+           "displayName": "Curate Connector"
+         }
+       }
+     ]
+   }
+   ```
+
+   Replace `{application-client-id-from-step-1}` with the Application (client) ID you copied in Step 1.
+
+2. **Execute the request** to grant the permissions
+
+3. **Verify the request succeeds** - you should receive a 201 Created response
+
+**Both Options Continue Here:**
 
 Next, you will need to generate a new client secret for your application registration. To do so, follow the steps in the next section.
 
