@@ -5,11 +5,32 @@ theme:
   name: 'material'
   logo: /curate-documentation/assets/Max Communications Logo Large.png
   palette:
-    primary: custom
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode with high contrast
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
   features:
     - navigation.tracking
+extra_css:
+  - style.css
 extra:
   homepage: https://www.maxcommunications.co.uk
+plugins:
+  - redirects:
+      redirect_maps:
+        'documentation.md': 'index.markdown'
 markdown_extensions:
   - toc:
       permalink: true
