@@ -37,10 +37,24 @@
     display: block; /* Show active submenu */
   }
   /* Optional: Add styles for collapsed/expanded states if needed */
+/* Light mode colors */
 :root {
     --md-primary-fg-color:        #9fd0c7;
     --md-primary-fg-color--light: #a6e8ce;
     --md-primary-fg-color--dark:  #83aba3;
+  }
+
+/* Dark mode with high contrast */
+[data-md-color-scheme="slate"] {
+    --md-primary-fg-color:        #9fd0c7;
+    --md-primary-fg-color--light: #a6e8ce;
+    --md-primary-fg-color--dark:  #83aba3;
+
+    /* High contrast background */
+    --md-default-bg-color:        #0a0a0a;
+    --md-default-fg-color:        #e0e0e0;
+    --md-default-fg-color--light: #b0b0b0;
+    --md-code-bg-color:           #1a1a1a;
   }
   .md-grid{
     max-width: 75rem;
@@ -220,3 +234,151 @@ th {
 .md-typeset h4 { font-size: 1.4em; }
 .md-typeset h5 { font-size: 1.2em; }
 .md-typeset h6 { font-size: 1.1em; }
+
+/* Underline all links */
+.md-typeset a {
+  text-decoration: underline;
+}
+
+.md-typeset a:hover {
+  text-decoration: underline;
+}
+
+/* Accessibility notice styling */
+.accessibility-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #e7f3fe;
+  border-left: 5px solid #2196F3;
+  border-radius: 5px;
+  padding: 1em 1.5em;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.accessibility-notice .mdi {
+  color: #2196F3;
+  font-size: 1.5em;
+}
+
+.accessibility-notice button.dismiss-notice {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3em;
+  margin-left: 1em;
+  color: #666;
+  font-size: 1.2em;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.accessibility-notice button.dismiss-notice:hover {
+  color: #2196F3;
+}
+
+.accessibility-notice button.dismiss-notice .mdi {
+  font-size: 1em;
+}
+
+/* Dark mode accessibility notice */
+[data-md-color-scheme="slate"] .accessibility-notice {
+  background-color: #0a2a3a;
+  border-left: 5px solid #4CAF50;
+  color: #e0e0e0;
+}
+
+[data-md-color-scheme="slate"] .accessibility-notice .mdi {
+  color: #4CAF50;
+}
+
+[data-md-color-scheme="slate"] .accessibility-notice button.dismiss-notice {
+  color: #b0b0b0;
+}
+
+[data-md-color-scheme="slate"] .accessibility-notice button.dismiss-notice:hover {
+  color: #4CAF50;
+}
+
+/* Dark mode specific styles for custom elements */
+[data-md-color-scheme="slate"] .md-header {
+  background-color: #1a3d36;
+  border-bottom: 1px solid #2a5a4a;
+}
+
+[data-md-color-scheme="slate"] .md-header__button {
+  color: #e0e0e0;
+}
+
+[data-md-color-scheme="slate"] .md-header__topic {
+  color: #e0e0e0;
+}
+
+[data-md-color-scheme="slate"] .md-nav__link {
+  color: #e0e0e0;
+}
+
+[data-md-color-scheme="slate"] .md-nav__item .mdi {
+  background-color: #2a5a5a;
+}
+
+[data-md-color-scheme="slate"] .md-nav__item .mdi:hover {
+  background-color: #3a6a6a;
+}
+
+[data-md-color-scheme="slate"] .tip {
+  background-color: rgba(0, 100, 80, 0.4);
+  border: 1px solid #4CAF50;
+}
+
+[data-md-color-scheme="slate"] .tip .mdi {
+  background: #2a7a6a;
+}
+
+[data-md-color-scheme="slate"] .warning {
+  background-color: rgba(139, 0, 0, 0.5);
+  border: 1px solid #ff4444;
+}
+
+[data-md-color-scheme="slate"] .warning .mdi {
+  background-color: #8b0000;
+}
+
+[data-md-color-scheme="slate"] .main-content-img-container {
+  background: #1a1a1a;
+  border: 1px solid #333;
+}
+
+[data-md-color-scheme="slate"] .info-box {
+  background-color: #0a2a3a;
+  border-left: 5px solid #2196F3;
+  color: #e0e0e0;
+}
+
+[data-md-color-scheme="slate"] .tip-box {
+  background-color: #0a2a0a;
+  border-left: 5px solid #4CAF50;
+  color: #e0e0e0;
+}
+
+[data-md-color-scheme="slate"] th {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+  border-color: #333;
+}
+
+[data-md-color-scheme="slate"] td {
+  border-color: #333;
+}
+
+[data-md-color-scheme="slate"] .md-typeset h1,
+[data-md-color-scheme="slate"] .md-typeset h2,
+[data-md-color-scheme="slate"] .md-typeset h3,
+[data-md-color-scheme="slate"] .md-typeset h4,
+[data-md-color-scheme="slate"] .md-typeset h5,
+[data-md-color-scheme="slate"] .md-typeset h6 {
+  border-bottom-color: #333;
+}

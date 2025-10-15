@@ -51,7 +51,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 
-<img src="/curate-documentation/assets/Penwern Logo Large.png" style="width: 10em;"></img>
+<img src="/curate-documentation/assets/Penwern Logo Large.png" style="width: 10em;" alt="Penwern LTD Logo"></img>
+
+<div class="accessibility-notice" id="accessibility-notice">
+  <span class="mdi mdi-eye" style="margin-right: 0.5em;"></span>
+  <span><strong>Accessibility:</strong> For improved high contrast viewing, use the dark mode toggle (sun/moon icon) in the top right corner of the page.</span>
+  <button class="dismiss-notice" onclick="document.getElementById('accessibility-notice').style.display='none';" aria-label="Dismiss notice">
+    <span class="mdi mdi-close"></span>
+  </button>
+</div>
 
 # Penwern Curate <span style="font-size: 8pt;vertical-align: super;">TM</span>
 
@@ -184,7 +192,7 @@ security requirements will have been discussed and integrated during
 your signup.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image2.png" style=""></img>
+    <img alt="Curate login screen" src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image2.png" style=""></img>
 </div>
 
 ## Application Areas
@@ -197,7 +205,7 @@ screen provides you with links to recent content, and ways to navigate
 through the rest of the application.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image3.png" style=""></img>
+    <img alt="Curate homepage" src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image3.png" style=""></img>
 </div>
 
 In the centre-top of the home screen, you will find the search bar. At
@@ -221,11 +229,11 @@ The bookmarks tab can be accessed from the icon in the navigation panel.
 The bookmarks tab keeps references to all the files and folders you have
 saved using the "bookmark" feature [(_see bookmarking a file or folder_)](#bookmarking-a-file-or-folder).
 Clicking one of the items will navigate you to its location in Curate.
-If you want to remove an item from your bookmarks, click the <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image4.png" class="text-icon"style=""></img> icon
+If you want to remove an item from your bookmarks, click the <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image4.png" class="text-icon"style="" alt="Rubbish bin icon"></img> icon
 next to the item you wish to remove.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image5.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image5.png" style="" alt="Curate bookmarks tab"></img>
 </div>
 
 ### Workspaces
@@ -246,7 +254,7 @@ You will see the following spaces:
 - Common Files
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image6.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image6.png" style="" alt="Curate workspace filesystem"></img>
 </div>
 
 Workspaces are where you perform your eArchiving workflow within Curate,
@@ -332,7 +340,7 @@ appear on the right-hand side of the screen when you select a single
 file or folder.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image7.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image7.png" style="" alt="Curate object information area"></img>
 </div>
 
 #### Object information area panels
@@ -344,7 +352,7 @@ shows a preview of the object you have selected and presents options to
 share, download, or open the file in one of Curates rendering tools.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image8.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image8.png" style="" alt="Curate file preview actions panel"></img>
 </div>
 
 ##### File information panel
@@ -354,13 +362,13 @@ selected object, along with the quarantine status, scan results and
 detailed characterization information when the file has been appraised.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image9.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image9.png" style="" alt="Curate file information panel"></img>
 </div>
 
 ##### Extracted metadata panels; EXIF etc
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image10.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image10.png" style="" alt="Curate extracted EXIF panel"></img>
 </div>
 
 When you select a file that includes some
@@ -371,7 +379,7 @@ information area. Click on "more" to view the full extracted EXIF data.
 ##### Metadata panel
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image11.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image11.png" style="" alt="Curate metadata panel"></img>
 </div>
 
 Clicking on any file or folder in Curate
@@ -390,7 +398,7 @@ section allows you to make an object harvestable via your Curate systems
 OAI-PMH server. See [_exporting records_](#) for more detail.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image12.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image12.png" style="" alt="Curate metadata import/export panel"></img>
 </div>
 
 ##### Comments
@@ -399,13 +407,13 @@ Each object in Curate has its own comments section that lets you leave
 notes or comments for yourself or your colleagues.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image13.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image13.png" style="" alt="Curate comments panel"></img>
 </div>
 
 ##### File activity
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image14.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image14.png" style="" alt="Curate file activity panel"></img>
 </div>
 
 The final panel in the object information area, when a file or folder is selected in the file list,
@@ -459,7 +467,7 @@ jobs can be added at any time and will just be added to the upload
 queue.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image15.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image15.png" style="" alt="Curate upload window"></img>
 </div>
 
 You can also simply drag your objects into the Curate window with the
@@ -472,7 +480,7 @@ options that dictate how Curate handles certain situations that can be
 dangerous to an archiving workflow.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image16.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image16.png" style="" alt="Curate uploader options"></img>
 </div>
 
 **Start uploading automatically**
@@ -505,19 +513,13 @@ be treated with the "rename files" process.
 #### Pre-upload Integrity Verification
 
 When uploading objects using the Curate web-uploader, it automatically
-generates and compares pre and post-upload checksums. A label indicating
-the result of each files integrity check will appear underneath each
-item in the uploader window.
+generates and compares pre and post-upload checksums.
 
-<div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image17.png" style=""></img>
-</div>
-
-Each of your files will also have a label attached which permanently
+Each of your files will have a label attached which permanently
 records the result of the integrity check.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image18.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image18.png" style="" alt="Curate integrity check label"></img>
 </div>
 
 ### SFTP
@@ -579,78 +581,6 @@ the upload process.
 Uploads using SFTP require manual checksum verification, which you can
 read more about below.
 
-#### Manual Ingest Integrity Verification
-
-If you spot an inconsistency in the checksums or verification results
-generated by Curate during your ingest upload, if you'd like to manually
-verify that the automatic validation was completed successfully, or if
-you have chosen to upload your content using a method that does not support automatic validation, you might need to
-perform manual ingest integrity verification.
-
-To perform manual ingest integrity verification, follow these steps:
-
-##### Generating a checksum manifest
-
-There are free several tools available to do this, but your chosen tool must be able to generate MD5 checksums, and it must be
-able to provide a manifest file in this format:
-
-**Comments and Metadata:** Lines starting with a semicolon (;) should include metadata about the checksum generation, such as the software used, URL for more information, and the timestamp of generation.
-
-**Checksum Entries:** Each line contains an MD5 checksum followed by the filename, separated by an asterisk (\*)
-
-<div class="code-block">
-        <div class="code-header">
-            <span class="code-title">Example Function</span>
-            <span class="code-language">JavaScript</span>
-        </div>
-        <pre>
-            <code>
-                [md5_checksum] *[filename]
-            </code>
-        </pre>
-</div>
-
-**Footer:** Optionally, a footer can summarize the process, e.g., total number of files hashed.
-
-**Example of a Properly Formatted Checksum Manifest**
-
-<div class="code-block">
-        <div class="code-header">
-            <span class="code-title">Example Checksum Manifest</span>
-        </div>
-        <pre>
-            <code>
-                ; Checksums generated by ExampleSoftware 1.0.0
-                ; http://www.example.com
-                ; 4/16/2023 9:25:42 PM
-                
-                f5c5777e2e66258b2b4e1a5820fb3eff *QuestionsAndAnswersDocument.mp3
-                ae7f5ebd507470dc7944cb64909ec665 *AdvisoryMeeting_2012_12_12.mp3
-                ; 2 files hashed.
-            </code>
-        </pre>
-</div>
-
-Please note that the names of your files must match exactly the names of the files in Curate for the system to be able to verify the checksums.
-
-Once you have generated your checksum manifest, you may proceed to upload your file content and the checksum manifest into Curate. It does not matter in which order.
-
-<div class="tip"><span class="mdi mdi-information-outline"></span><span>
-For best practice, we recommend uploading your checksum manifest
-separately through the advanced web-uploader. This ensures the manifest
-itself was uploaded without issue.
-</span></div>
-
-After your content has been uploaded, you will be able to verify the integrity of your files using the checksum manifest. To do so, follow the instructions below:
-
-- Find the checksum manifest in your Curate workspaces and select it.
-
-- Click the "more" dropdown from the main workspace toolbar
-
-- Select "Verify Checksum Manifest"
-
-Curate will then attempt to identify each file recorded in your manifest and compare the MD5 checksums provided to the ones generated by Curate itself. If the checksums match, the file will receive an "integrity verified" label. If they do not match, the file will receive an "integrity failed" label.
-
 ### Quarantine
 
 #### Results
@@ -675,7 +605,7 @@ no immediate threats were detected. The file has now begin it's quarantine perio
 Files that have been removed prematurely from their quarantine period, or that are found to be compromised or infected are labeled "Risk". If a file was labelled risk due to indications of malicious data in them, it will be relocated to a safe directory called "INFECTED". This directory will be created automatically when required. You can test this behaviour by attempting to upload an eicar test file to the quarantine space.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image19.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image19.png" style="" alt="Curate infected file directory"></img>
 </div>
 
 **Released**
@@ -738,7 +668,7 @@ NB: once your sharing link has expired, nothing will happen to your
 shared files or folders, the public URL will simply become inaccessible.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image20.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image20.png" style="" alt="Curate sharing link configuration"></img>
 </div>
 
 #### Usage
@@ -748,7 +678,7 @@ be presented with a simple interface into which they can upload their
 deposit.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image21.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image21.png" style="" alt="Curate deposit space sharing interface"></img>
 </div>
 
 #### Simple upload interface
@@ -779,7 +709,7 @@ and right click in the empty space. You should then select the "Smart
 Form" option.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image22.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image22.png" style="" alt="Curate smart deposit space creation menu"></img>
 </div>
 
 The Smart Form builder will allow you to select what file formats you
@@ -806,7 +736,7 @@ users are unable to submit their deposit until they have completed all
 your mandatory requirements.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image23.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image23.png" style="" alt="Curate smart deposit space interface"></img>
 </div>
 
 ## Appraisal, selection and arrangement
@@ -827,7 +757,7 @@ in the lefthand column. Multiple files or folders can be selected for
 each move using the usual Control or Shift operations.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image24.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image24.png" style="" alt="Curate context menu options"></img>
 </div>
 
 Note that if files are moved into Appraisal early (i.e. before the
@@ -894,7 +824,7 @@ would like to describe. On the right hand side of your screen, in the
 object information area, you will see the file metadata panel. ([_see object information area_](#object-information-area) , and [_metadata panel_](#metadata-panel)).
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image25.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image25.png" style="" alt="Curate metadata panel"></img>
 </div>
 
 Next, click the dropdown for your chosen
@@ -905,7 +835,7 @@ Enter the metadata for each field you would like to modify, and you will
 then see the "save" button appear at the bottom of the panel.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image26.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image26.png" style="" alt="Curate metadata panel save button"></img>
 </div>
 
 Note that the save button will appear as
@@ -920,7 +850,7 @@ To describe multiple files and or folders at once, first select all the
 objects you would like to create or modify descriptive records for.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image27.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image27.png" style="" alt="Curate modify multiple descriptive records"></img>
 </div>
 
 In the object information area, you will see only the file actions panel
@@ -929,7 +859,7 @@ multiple selection of objects, or "meta data" to modify the descriptive
 records of all the files.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image28.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image28.png" style="" alt="Curate context menu multiple objects options"></img>
 </div>
 
 You can also right click any of the
@@ -937,14 +867,14 @@ objects in your selection, and you will see the "meta data" option in
 the context menu.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image29.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image29.png" style="" alt="Curate bulk metadata edit field selection menu"></img>
 </div>
 
 You will then be prompted to select the
 fields that you would like to modify.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image30.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image30.png" style="" alt="Curate bulk metadata edit menu"></img>
 </div>
 
 As you tick each field you would like to
@@ -999,7 +929,7 @@ over the chart to see the numbers. You can also download the MIME type
 report as a CSV file.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image31.png" style=""></img>
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image31.png" style="" alt="Curate generate MIME type report"></img>
 </div>
 
 ### Creating a Transfer Package or SIP
@@ -1109,7 +1039,7 @@ To create a new preservation config, first select the main user dropdown in the 
 From the dropdown, select "Preservation Configs" to open the configs menu.
 
 <div class="main-content-image-container">
-    <img src="/curate-documentation/assets/Preservation Configs Menu.png"></img>
+    <img src="/curate-documentation/assets/Preservation Configs Menu.png" alt="Curate preservation configs menu"></img>
 </div>
 
 On the left hand side of the menu, you will find all the controls for creating new configs or editing existing ones. On the right, you will find a list of all of your saved configs. [(_see modifying configs_)](#modifying-a-config)
@@ -1574,7 +1504,7 @@ Next, you will need to generate an API key for your AtoM user. You can do this b
 Once you have completed these steps, log in to your user-admin Curate account and open the AtoM connection menu by clicking on your user avatar in the top left-hand corner of the Curate interface (it's the same menu you log-out from) and selecting "Connect to AtoM".
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/assets/connect-to-atom-menu.png" style=""></img>
+    <img src="/curate-documentation/assets/connect-to-atom-menu.png" alt="Curate AtoM connection details menu" style=""></img>
 </div>
 
 Next, enter the details you've gathered in the previous steps into the appropriate fields. Once you have entered all of the required details, click "Save" to save your connection details. This information is encrypted in transit by the SSL protocol and is securely stored in your Curate database. Only an organisational user-admin can access or update this information.
@@ -2133,7 +2063,7 @@ After a brief wait, SharePoint will prompt you to allow the extension to be inst
 Once the extension has been installed, you will be able to see the Curate integration in the SharePoint app catalog we navigated to earlier. You should see "yes" underneath the "Enabled", "Valid app package" and "Deployed" columns, "No" under the "Added to all sites" column, and "No errors" under the "App package error message" column. This confirms that the extension has been successfully installed.
 
 <div class="main-content-img-container">
-    <img src="/curate-documentation/assets/sharepoint-extension-installed.png" style=""></img>
+    <img src="/curate-documentation/assets/sharepoint-extension-installed.png" alt="Curate SharePoint extension installed in app catalog" style=""></img>
 </div>
 
 #### Adding the SharePoint extension to your site
