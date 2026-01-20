@@ -1178,24 +1178,26 @@ Curate can process the following email archive formats:
 
 - **PST files** (Microsoft Outlook Personal Storage Files)
 - **MBOX files** (Standard Unix mailbox format)
+- **EML files** (Widely used format for individual emails)
 
 ### Processing an Email Archive
 
 To process an email archive:
 
-1. **Upload your PST or MBOX file** to your Quarantine or Personal workspace using the advanced web-uploader or SFTP [(_see Upload and Ingest_)](#upload-and-ingest).
+1. **Upload your PST, EML or MBOX file** to your Quarantine or Personal workspace [(_see Upload and Ingest_)](#upload-and-ingest).
 
-2. **Wait for the virus scan to complete**. The file must be marked as virus-free before processing can begin.
+2. **Wait for the virus scan to complete**. The file should be marked as virus-free before processing begins.
 
 3. **Locate your archive file** in the file list and select it.
 
-4. **Right-click the file** and choose "Process Archive" from the context menu.
+4. **Open the "More" menu from the toolbar** and choose "Ingest Email Archive".
 
 5. A **processing modal will appear** showing the status of your processing job. The modal displays:
-   - The source file path
-   - Current processing status (Queued, Processing, Completed, or Failed)
-   - The job ID for reference
-   - Output paths once processing completes
+
+    - The source file path
+    - Current processing status (Queued, Processing, Completed, or Failed)
+    - The job ID for reference
+    - Output paths once processing completes
 
 6. **Minimise the modal if desired**. Processing can take considerable time depending on the size of your archive, but you can minimise the status window and continue working. The modal can be restored at any time from the "Jobs Running" indicator at the bottom of the screen, which will display a badge while processing is active.
 
@@ -1204,6 +1206,7 @@ To process an email archive:
 <div class="warning"><span class="mdi mdi-alert"></span><span>Processing large email archives can take significant time, particularly in workspaces with virus scanning enabled. As an example, a 1GB PST file containing 10,000 emails may take several hours to process, as each extracted email and attachment must be individually uploaded and scanned.</span></div>
 
 Processing time scales with:
+
 - The total size of the archive file
 - The number of individual emails
 - The number and size of attachments
@@ -1234,6 +1237,7 @@ The email viewer provides a familiar, email-client-style interface for reviewing
 **Email List Panel**
 
 The left panel displays all emails in your archive with:
+
 - Subject lines
 - Sender information
 - Date and time sent
@@ -1246,6 +1250,7 @@ For PST archives, you can filter emails by their original Outlook folder structu
 **Email Detail Panel**
 
 Selecting an email from the list displays its full content in the right panel, including:
+
 - Complete email headers (From, To, CC, Date, Subject)
 - Full message body (HTML or plain text)
 - Inline images and embedded content
@@ -1276,6 +1281,7 @@ Each email is extracted as a separate `.eml` file, preserving the complete messa
 **Extracted Attachments**
 
 All attachments are extracted as individual files and stored alongside their parent emails. By extracting attachments separately, Curate enables you to:
+
 - Perform format-specific preservation actions (such as normalising PDFs or images)
 - Apply individual virus scanning to each attachment
 - Search and index attachment content
@@ -1292,6 +1298,7 @@ Curate automatically reconstructs email conversations by analysing message heade
 **Manifest File**
 
 The `manifest.json` file serves as the central index for the processed archive, containing:
+
 - Metadata for every email (sender, recipients, subject, date, snippet)
 - Paths to individual `.eml` files and their attachments
 - Folder structure information (for PST files)
@@ -1305,6 +1312,7 @@ This manifest enables the email viewer to efficiently load and display archive c
 **Processing Fails or Takes Excessive Time**
 
 If your processing job fails or seems to stall:
+
 - Check that your archive file passed virus scanning and is not corrupted
 - For very large archives (multiple gigabytes or tens of thousands of emails), processing time can extend to several hours
 - If a job appears stuck for an extended period, you can retry processing by selecting the archive file and choosing "Process Archive" again
@@ -1313,6 +1321,7 @@ If your processing job fails or seems to stall:
 **Email Viewer Shows "Unable to load archive"**
 
 This typically indicates an issue with the processed archive structure:
+
 - Ensure the `.mbox` folder contains a valid `manifest.json` file
 - Verify that the processing job completed successfully (check for "Completed" status in the processing modal)
 - Try closing and reopening the email viewer
@@ -1321,6 +1330,7 @@ This typically indicates an issue with the processed archive structure:
 **Attachments Won't Display**
 
 If attachments are not loading correctly:
+
 - Check that the attachment files exist in the processed archive structure
 - Verify you have appropriate permissions to access the files in the workspace
 - For very large attachments, download times may be extended depending on your connection
