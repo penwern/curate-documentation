@@ -644,7 +644,7 @@ physical data transport devices when on-cloud.
 ### Creating and Using a Deposit Space
 
 Curate allows you to share any file, folder or other area [_see Sharing
-files or folders_ for more detail](#sharing-files-or-folders). By allowing users of a shared area
+files or folders_ for more detail](#sharing-a-file-or-folder). By allowing users of a shared area
 upload permissions, you can easily create a secure space for your
 submitters to deposit their content.
 
