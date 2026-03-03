@@ -1716,6 +1716,118 @@ Once you have linked an object or hierarchy of objects to an existing AtoM descr
 
 Once your objects have been successfully preserved, you will see the "preserved" status tag appear next to the object in the file-list. This means Curate has generated both an AIP and a DIP for the object, and that the DIP has been sent to AtoM for processing.
 
+### ArchivesSpace
+
+Curate integrates with ArchivesSpace, an open-source archival management system, to support a linked preservation workflow. From within Curate, you can browse your ArchivesSpace repositories, navigate archival hierarchies, and select a record to link to. Curate then creates a folder linked to that ArchivesSpace record. When the folder is later preserved, Curate automatically writes digital object instances back into ArchivesSpace, representing the preserved content and associating it with the relevant archival description.
+
+<div class="tip">
+    <span class="mdi mdi-information-outline"></span>
+    <span>
+        <strong>Things you'll need:</strong>
+        </br>
+        <ul>
+            <li>A Curate account on a system where the ArchivesSpace integration has been enabled by your administrator.</li>
+            <li>Access to the ArchivesSpace repositories you wish to link to.</li>
+        </ul>
+    </span>
+</div>
+
+#### Launching the ArchivesSpace Browser
+
+The ArchivesSpace browser is accessed from the main file list in Curate.
+
+1. **Navigate to the folder** in Curate where you want the linked folder to be created.
+2. **Click the "More" button** in the file list toolbar (the toolbar above your files and folders).
+3. **Select "Link ArchivesSpace folder"** from the menu that appears. The ArchivesSpace browser will open.
+
+#### Browsing ArchivesSpace
+
+The browser opens on the **Browse** tab, which is organised into three levels. You navigate through them in sequence to find the archival record you want to link to.
+
+**Repositories**
+
+The first level shows all available repositories as cards, each displaying the repository's name, code, location, and number of collections. Click a repository card to view its collections.
+
+**Collections**
+
+The second level shows the collections within the selected repository. Each card displays the collection's title, identifier, date range, and extent. Click a collection card to open its archival hierarchy.
+
+**Archival hierarchy**
+
+The third level displays the records within the collection as a tree. Click the arrow beside any record to expand its children and explore the hierarchy. Click a record to select it and view its details in the panel on the right-hand side of the browser.
+
+#### Searching and Filtering
+
+**Searching within a collection**
+
+When viewing a collection's archival hierarchy, use the search box at the top of the browser to find records by keyword. Matching records are highlighted in the tree and shown as a list. Use the navigation arrows (showing your current position, e.g. 3/42) to step through search results.
+
+By default, searches look across all fields. Click the dropdown to the left of the search box to restrict the search to a specific field, such as title, identifier, or status.
+
+**Global search**
+
+To search across all repositories without navigating the hierarchy first, use the **Search** tab at the top of the browser.
+
+**Filtering**
+
+Click the **Filters** button to refine the results shown. Available filters are:
+
+- **Level** – Show only records at a particular archival level (e.g. Collection, Series, File, Item).
+- **Status** – Show only records with a particular condition or access status: Available, Needs Attention, or Restricted.
+- **Scope** (when searching within a hierarchy) – Limit the search to the subtree of the currently selected record, rather than the entire collection.
+- **Advanced** – Enter custom filter criteria using ArchivesSpace Lucene filter syntax.
+
+Active filters are shown as chips below the search bar. Click the × on a chip to remove that filter, or use the **Clear** button inside the filters panel to remove all active filters at once.
+
+**Tree and flat list views**
+
+When browsing a collection hierarchy, use the **Tree** and **Flat** buttons in the top-right of the browser to toggle between a hierarchical tree view (the default) and a flat list view of all records in the collection.
+
+#### Selecting Records
+
+Click any record in the tree or flat list to select it. The record's details will appear in the panel on the right.
+
+To select multiple records, use the checkbox on each record. Your selection count is shown at the top of the detail panel. Use the carousel arrows in the detail panel to move through your selections and review each one. To remove a record from your selection, uncheck it. To clear your entire selection, use the **Clear** button in the detail panel.
+
+<div class="tip">
+    <span class="mdi mdi-information-outline"></span>
+    <span>Curate will create one linked folder per selected record. If you select multiple records, a separate linked folder is created for each one.</span>
+</div>
+
+#### Creating a Linked Folder
+
+Once you have selected one or more records, configure the options in the detail panel and click **Create Folders**. Curate will create the linked folder or folders in the location you navigated to before opening the browser. When a folder is later preserved, Curate will automatically update ArchivesSpace with digital object instances representing the preserved content.
+
+##### Detail level
+
+The detail level controls how the preserved files within a folder will be represented in ArchivesSpace after preservation.
+
+- **Per File** (default) – Each file within the preserved folder receives its own representation in ArchivesSpace. There are two sub-options for how these per-file representations are organised:
+  - **Components** (default) – All file representations are grouped together as components of a single digital object. This keeps the ArchivesSpace record compact, with all files together under one entry.
+  - **Records** – Each file receives its own independent digital object, linked directly to the archival record. Choose this option if each individual file represents a distinct intellectual item.
+- **All Records** – All preserved files are represented by a single digital object in ArchivesSpace, regardless of how many files the folder contains. Choose this option when the folder as a whole, rather than its individual files, is the meaningful unit of description.
+
+##### Container type
+
+The container type controls which ArchivesSpace record the preserved content is linked to.
+
+- **Digital Object** (default) – Digital object instances are linked directly to the archival record you selected.
+- **Archival Object** – A new item-level archival record is created as a child of the record you selected, and digital object instances are linked to that new record instead. Use this option when you want the preserved folder to be represented as a new, distinct level of description within your archival hierarchy. When this option is selected, you can enter a name in the **Folder name** field to use as the title of the new archival record; if left blank, the folder's name in Curate will be used.
+
+<div class="tip">
+    <span class="mdi mdi-information-outline"></span>
+    <span>The Archival Object container type requires exactly one selected record. If you have multiple records selected, reduce your selection to one before using this option.</span>
+</div>
+
+#### What appears in ArchivesSpace after preservation
+
+Once a linked folder has been preserved, Curate automatically updates the corresponding ArchivesSpace record. What you will see in ArchivesSpace depends on the options you chose when creating the folder:
+
+- **Digital Object container (default):** One or more digital objects appear as instances on the archival record, with links pointing back to the preserved content in Curate. The number and structure of those digital objects reflects the detail level you selected.
+- **Archival Object container:** A new item-level record appears as a child of the original archival record, and the digital objects are linked to that new record rather than the original.
+
+If a preserved folder is re-preserved, Curate will update the existing ArchivesSpace records rather than creating duplicates.
+
 ### Single Sign-On
 
 Curate provides a complete embedded user authentication solution with an internal user directory that should be sufficient for most business cases. However, if you wish to use an external identity provider, such as Google, Microsoft Entra or LDAP, you can do so by configuring your Curate instance to use SSO.
