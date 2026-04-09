@@ -22,10 +22,28 @@ theme:
         name: Switch to light mode
   features:
     - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - toc.follow
 extra_css:
   - style.css
+  - https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css
 extra:
   homepage: https://www.penwern.co.uk
+nav:
+  - Home: index.markdown
+  - General: general.md
+  - Application Areas: application-areas.md
+  - Upload & Ingest: upload-ingest.md
+  - Appraisal: appraisal.md
+  - Preservation: preservation.md
+  - Packaging: packaging.md
+  - Email Processing: email-processing.md
+  - Miscellaneous: miscellaneous.md
+  - Search & Access: search-access.md
+  - Security: security.md
+  - Integrations: integrations.md
+  - Exporting Metadata: exporting-metadata.md
 plugins:
   - redirects:
       redirect_maps:
