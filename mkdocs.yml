@@ -39,12 +39,14 @@ nav:
   - Preservation: preservation.md
   - Packaging: packaging.md
   - Email Processing: email-processing.md
+  - Web Archiving: web-archiving.md
   - Miscellaneous: miscellaneous.md
   - Search & Access: search-access.md
   - Security: security.md
   - Integrations: integrations.md
   - Exporting Metadata: exporting-metadata.md
 plugins:
+  - search
   - redirects:
       redirect_maps:
         'documentation.md': 'index.markdown'
