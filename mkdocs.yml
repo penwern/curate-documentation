@@ -46,6 +46,7 @@ nav:
   - Integrations: integrations.md
   - Exporting Metadata: exporting-metadata.md
 plugins:
+  - search
   - redirects:
       redirect_maps:
         'documentation.md': 'index.markdown'
