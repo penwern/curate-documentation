@@ -1,0 +1,1047 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://penwern.github.io/curate-documentation/email-processing/">
+      
+      
+        <link rel="prev" href="../packaging/">
+      
+      
+        <link rel="next" href="../web-archiving/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Email Processing - Curate Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../style.css">
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#why-process-email-archives" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://www.penwern.co.uk" title="Curate Documentation" class="md-header__button md-logo" aria-label="Curate Documentation" data-md-component="logo">
+      
+  <img src="/curate-documentation/assets/Penwern Logo Large.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Curate Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Email Processing
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://www.penwern.co.uk" title="Curate Documentation" class="md-nav__button md-logo" aria-label="Curate Documentation" data-md-component="logo">
+      
+  <img src="/curate-documentation/assets/Penwern Logo Large.png" alt="logo">
+
+    </a>
+    Curate Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../general/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    General
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../application-areas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Application Areas
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../upload-ingest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Upload & Ingest
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appraisal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Appraisal
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../preservation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Preservation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../packaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Packaging
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Email Processing
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Email Processing
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-process-email-archives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why Process Email Archives?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported Formats
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#processing-an-email-archive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processing an Email Archive
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Processing an Email Archive">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#processing-time-expectations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processing Time Expectations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viewing-processed-email-archives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing Processed Email Archives
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Viewing Processed Email Archives">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opening-the-email-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opening the Email Viewer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-the-email-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using the Email Viewer
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viewing-individual-email-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing Individual Email Files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#processing-structure-and-preservation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processing Structure and Preservation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../web-archiving/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Web Archiving
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../miscellaneous/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Miscellaneous
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../search-access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Search & Access
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integrations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exporting-metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Exporting Metadata
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-process-email-archives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why Process Email Archives?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported Formats
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#processing-an-email-archive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processing an Email Archive
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Processing an Email Archive">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#processing-time-expectations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processing Time Expectations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viewing-processed-email-archives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing Processed Email Archives
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Viewing Processed Email Archives">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opening-the-email-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opening the Email Viewer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-the-email-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using the Email Viewer
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viewing-individual-email-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing Individual Email Files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#processing-structure-and-preservation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processing Structure and Preservation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Email Processing</h1>
+
+<p>Curate provides powerful tools for processing and viewing email archives, allowing you to preserve email communications alongside your other digital content. The email processing feature extracts individual messages and attachments from PST and MBOX archive files, making them accessible, searchable, and preservable within your Curate workspaces.</p>
+<h2 id="why-process-email-archives">Why Process Email Archives?<a class="headerlink" href="#why-process-email-archives" title="Permanent link">&para;</a></h2>
+<p>Email archives often contain critical organisational records, but they present unique preservation challenges when stored in monolithic PST or MBOX formats. By processing these archives through Curate, you can:</p>
+<ul>
+<li>
+<p><strong>Extract and preserve attachments as individual files</strong>: Rather than keeping attachments encoded within email messages, Curate extracts them as separate files. This allows you to perform preservation actions on each attachment independently, ensuring formats like PDFs, images, and office documents can be normalised and preserved according to best practices.</p>
+</li>
+<li>
+<p><strong>Enable comprehensive virus scanning</strong>: When processed in workspaces with virus scanning enabled (such as Quarantine or Personal spaces), every extracted file undergoes individual scanning. This provides thorough protection that wouldn't be possible with a single archive file.</p>
+</li>
+<li>
+<p><strong>Maintain email context and relationships</strong>: Curate preserves the original folder structure from PST files and automatically reconstructs email threads, ensuring that conversations and organisational context are retained.</p>
+</li>
+<li>
+<p><strong>Search and access individual messages</strong>: Once processed, emails become individually searchable and viewable within Curate's email renderer, making it easier to find and review specific communications.</p>
+</li>
+</ul>
+<h2 id="supported-formats">Supported Formats<a class="headerlink" href="#supported-formats" title="Permanent link">&para;</a></h2>
+<p>Curate can process the following email archive formats:</p>
+<ul>
+<li><strong>PST files</strong> (Microsoft Outlook Personal Storage Files)</li>
+<li><strong>MBOX files</strong> (Standard Unix mailbox format)</li>
+<li><strong>EML files</strong> (Widely used format for individual emails)</li>
+</ul>
+<h2 id="processing-an-email-archive">Processing an Email Archive<a class="headerlink" href="#processing-an-email-archive" title="Permanent link">&para;</a></h2>
+<p>To process an email archive:</p>
+<ol>
+<li>
+<p><strong>Upload your PST, EML or MBOX file</strong> to your Quarantine or Personal workspace <a href="../upload-ingest/">(<em>see Upload and Ingest</em>)</a>.</p>
+</li>
+<li>
+<p><strong>Wait for the virus scan to complete</strong>. The file should be marked as virus-free before processing begins.</p>
+</li>
+<li>
+<p><strong>Locate your archive file</strong> in the file list and select it.</p>
+</li>
+<li>
+<p><strong>Open the "More" menu from the toolbar</strong> and choose "Ingest Email Archive".</p>
+</li>
+<li>
+<p>A <strong>processing modal will appear</strong> showing the status of your processing job. The modal displays:</p>
+<ul>
+<li>The source file path</li>
+<li>Current processing status (Queued, Processing, Completed, or Failed)</li>
+<li>The job ID for reference</li>
+<li>Output paths once processing completes</li>
+</ul>
+</li>
+<li>
+<p><strong>Minimise the modal if desired</strong>. Processing can take considerable time depending on the size of your archive, but you can minimise the status window and continue working. The modal can be restored at any time from the "Jobs Running" indicator at the bottom of the screen, which will display a badge while processing is active.</p>
+</li>
+</ol>
+<h3 id="processing-time-expectations">Processing Time Expectations<a class="headerlink" href="#processing-time-expectations" title="Permanent link">&para;</a></h3>
+<div class="warning"><span class="mdi mdi-alert"></span><span>Processing large email archives can take significant time, particularly in workspaces with virus scanning enabled. As an example, a 1GB PST file containing 10,000 emails may take several hours to process, as each extracted email and attachment must be individually uploaded and scanned.</span></div>
+
+<p>Processing time scales with:</p>
+<ul>
+<li>The total size of the archive file</li>
+<li>The number of individual emails</li>
+<li>The number and size of attachments</li>
+<li>Whether virus scanning is enabled in the destination workspace</li>
+</ul>
+<p>If you're processing very large archives, you may wish to schedule this work during off-peak hours or contact support for guidance on optimising large processing jobs.</p>
+<h2 id="viewing-processed-email-archives">Viewing Processed Email Archives<a class="headerlink" href="#viewing-processed-email-archives" title="Permanent link">&para;</a></h2>
+<p>Once processing is complete, your email archive will be stored as a <code>.mbox</code> folder containing individual email files (<code>.eml</code> format), extracted attachments, and a <code>manifest.json</code> file that maintains the structure and relationships between emails.</p>
+<h3 id="opening-the-email-viewer">Opening the Email Viewer<a class="headerlink" href="#opening-the-email-viewer" title="Permanent link">&para;</a></h3>
+<p>To view your processed emails:</p>
+<ol>
+<li>
+<p><strong>Locate the processed archive folder</strong> in your workspace. It will have a <code>.mbox</code> extension and contain the processed content.</p>
+</li>
+<li>
+<p><strong>Double-click the <code>.mbox</code> folder</strong>. A modal will appear asking whether you want to "Open" or "Render" the archive:</p>
+</li>
+<li><strong>Open</strong>: Browse the internal file structure of the processed archive, viewing individual <code>.eml</code> files and extracted attachments as regular files.</li>
+<li>
+<p><strong>Render</strong>: Launch the email viewer interface to read and navigate your emails as they would appear in an email client.</p>
+</li>
+<li>
+<p><strong>Select "Render"</strong> to launch the email viewer.</p>
+</li>
+</ol>
+<h3 id="using-the-email-viewer">Using the Email Viewer<a class="headerlink" href="#using-the-email-viewer" title="Permanent link">&para;</a></h3>
+<p>The email viewer provides a familiar, email-client-style interface for reviewing your processed archive:</p>
+<p><strong>Email List Panel</strong></p>
+<p>The left panel displays all emails in your archive with:</p>
+<ul>
+<li>Subject lines</li>
+<li>Sender information</li>
+<li>Date and time sent</li>
+<li>Preview snippets of email content</li>
+<li>Attachment indicators</li>
+<li>Thread grouping (emails in the same conversation are grouped together)</li>
+</ul>
+<p>For PST archives, you can filter emails by their original Outlook folder structure using the folder browser at the top of the list panel.</p>
+<p><strong>Email Detail Panel</strong></p>
+<p>Selecting an email from the list displays its full content in the right panel, including:</p>
+<ul>
+<li>Complete email headers (From, To, CC, Date, Subject)</li>
+<li>Full message body (HTML or plain text)</li>
+<li>Inline images and embedded content</li>
+<li>Attached files with download options</li>
+<li>Thread view (if the email is part of a conversation, all related messages are displayed together)</li>
+</ul>
+<p><strong>Search and Navigation</strong></p>
+<p>Use the search box at the top of the email list to quickly find specific messages by subject, sender, recipient, or content. The viewer also supports keyboard navigation and responsive design for different screen sizes.</p>
+<h2 id="viewing-individual-email-files">Viewing Individual Email Files<a class="headerlink" href="#viewing-individual-email-files" title="Permanent link">&para;</a></h2>
+<p>In addition to viewing processed archives, Curate can also render individual <code>.eml</code> files directly. If you receive a standalone <code>.eml</code> file (for example, as an export from another email system), simply:</p>
+<ol>
+<li>Upload the <code>.eml</code> file to any workspace</li>
+<li>Double-click the file to open the email viewer</li>
+</ol>
+<p>The file will be rendered immediately without requiring archive processing, allowing you to quickly review individual email messages.</p>
+<h2 id="processing-structure-and-preservation">Processing Structure and Preservation<a class="headerlink" href="#processing-structure-and-preservation" title="Permanent link">&para;</a></h2>
+<p>When Curate processes an email archive, it creates a structured output that preserves all the information needed for long-term access:</p>
+<p><strong>Individual Email Files</strong></p>
+<p>Each email is extracted as a separate <code>.eml</code> file, preserving the complete message including headers, body, and metadata. These files use the standard RFC 822 email message format, ensuring they remain readable by any standards-compliant email tool.</p>
+<p><strong>Extracted Attachments</strong></p>
+<p>All attachments are extracted as individual files and stored alongside their parent emails. By extracting attachments separately, Curate enables you to:</p>
+<ul>
+<li>Perform format-specific preservation actions (such as normalising PDFs or images)</li>
+<li>Apply individual virus scanning to each attachment</li>
+<li>Search and index attachment content</li>
+<li>Create separate preservation plans for different file types</li>
+</ul>
+<p><strong>Folder Structure (PST files)</strong></p>
+<p>For PST archives, Curate preserves the original Outlook folder hierarchy. The <code>manifest.json</code> file records which folder each email belonged to, allowing the email viewer to recreate the original structure and filter emails by folder.</p>
+<p><strong>Email Threading</strong></p>
+<p>Curate automatically reconstructs email conversations by analysing message headers (Message-ID, In-Reply-To, and References fields). Related emails are linked together in threads, preserving the context of conversations.</p>
+<p><strong>Manifest File</strong></p>
+<p>The <code>manifest.json</code> file serves as the central index for the processed archive, containing:</p>
+<ul>
+<li>Metadata for every email (sender, recipients, subject, date, snippet)</li>
+<li>Paths to individual <code>.eml</code> files and their attachments</li>
+<li>Folder structure information (for PST files)</li>
+<li>Thread relationships between emails</li>
+<li>Technical metadata needed for rendering</li>
+</ul>
+<p>This manifest enables the email viewer to efficiently load and display archive contents without parsing every individual <code>.eml</code> file.</p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<p><strong>Processing Fails or Takes Excessive Time</strong></p>
+<p>If your processing job fails or seems to stall:</p>
+<ul>
+<li>Check that your archive file passed virus scanning and is not corrupted</li>
+<li>For very large archives (multiple gigabytes or tens of thousands of emails), processing time can extend to several hours</li>
+<li>If a job appears stuck for an extended period, you can retry processing by selecting the archive file and choosing "Process Archive" again</li>
+<li>For persistent issues with large archives, contact support for assistance</li>
+</ul>
+<p><strong>Email Viewer Shows "Unable to load archive"</strong></p>
+<p>This typically indicates an issue with the processed archive structure:</p>
+<ul>
+<li>Ensure the <code>.mbox</code> folder contains a valid <code>manifest.json</code> file</li>
+<li>Verify that the processing job completed successfully (check for "Completed" status in the processing modal)</li>
+<li>Try closing and reopening the email viewer</li>
+<li>If problems persist, you may need to reprocess the original archive file</li>
+</ul>
+<p><strong>Attachments Won't Display</strong></p>
+<p>If attachments are not loading correctly:</p>
+<ul>
+<li>Check that the attachment files exist in the processed archive structure</li>
+<li>Verify you have appropriate permissions to access the files in the workspace</li>
+<li>For very large attachments, download times may be extended depending on your connection</li>
+</ul>
+<p>For any issues not covered here, please contact support with your job ID and archive details for assistance.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tracking", "navigation.sections", "navigation.top", "toc.follow"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

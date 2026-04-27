@@ -1,0 +1,1284 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://penwern.github.io/curate-documentation/upload-ingest/">
+      
+      
+        <link rel="prev" href="../application-areas/">
+      
+      
+        <link rel="next" href="../appraisal/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Upload & Ingest - Curate Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../style.css">
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#uploading-files-and-folders-into-quarantine" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://www.penwern.co.uk" title="Curate Documentation" class="md-header__button md-logo" aria-label="Curate Documentation" data-md-component="logo">
+      
+  <img src="/curate-documentation/assets/Penwern Logo Large.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Curate Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Upload & Ingest
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://www.penwern.co.uk" title="Curate Documentation" class="md-nav__button md-logo" aria-label="Curate Documentation" data-md-component="logo">
+      
+  <img src="/curate-documentation/assets/Penwern Logo Large.png" alt="logo">
+
+    </a>
+    Curate Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../general/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    General
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../application-areas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Application Areas
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Upload & Ingest
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Upload & Ingest
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#uploading-files-and-folders-into-quarantine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Uploading Files and Folders into Quarantine
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-web-uploader" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Web-uploader
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Web-uploader">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#web-uploader-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Web-uploader Options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-upload-integrity-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-upload Integrity Verification
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sftp" class="md-nav__link">
+    <span class="md-ellipsis">
+      SFTP
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SFTP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connecting-to-and-uploading-through-sftp" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connecting to and Uploading Through SFTP
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sftp-integrity-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      SFTP Integrity Verification
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ingest-integrity-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ingest Integrity Verification
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quarantine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quarantine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quarantine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Results
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uploading-file-and-folders-into-personal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Uploading File and Folders into Personal
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-upload-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other Upload Methods
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-and-using-a-deposit-space" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating and Using a Deposit Space
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating and Using a Deposit Space">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simple-upload-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      Simple upload interface
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-and-using-a-smart-deposit-space" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating and Using a Smart Deposit Space
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appraisal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Appraisal
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../preservation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Preservation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../packaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Packaging
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../email-processing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Email Processing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../web-archiving/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Web Archiving
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../miscellaneous/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Miscellaneous
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../search-access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Search & Access
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integrations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exporting-metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Exporting Metadata
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#uploading-files-and-folders-into-quarantine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Uploading Files and Folders into Quarantine
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-web-uploader" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Web-uploader
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Web-uploader">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#web-uploader-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Web-uploader Options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-upload-integrity-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-upload Integrity Verification
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sftp" class="md-nav__link">
+    <span class="md-ellipsis">
+      SFTP
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SFTP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connecting-to-and-uploading-through-sftp" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connecting to and Uploading Through SFTP
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sftp-integrity-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      SFTP Integrity Verification
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ingest-integrity-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ingest Integrity Verification
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quarantine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quarantine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quarantine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Results
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uploading-file-and-folders-into-personal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Uploading File and Folders into Personal
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-upload-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Other Upload Methods
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-and-using-a-deposit-space" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating and Using a Deposit Space
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating and Using a Deposit Space">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simple-upload-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      Simple upload interface
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-and-using-a-smart-deposit-space" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating and Using a Smart Deposit Space
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Upload & Ingest</h1>
+
+<h2 id="uploading-files-and-folders-into-quarantine">Uploading Files and Folders into Quarantine<a class="headerlink" href="#uploading-files-and-folders-into-quarantine" title="Permanent link">&para;</a></h2>
+<p>Files and Directories can be simple and quickly uploaded into
+Curate <span style="font-size: 8pt;vertical-align: super;">TM</span>, but only into the Personal and Quarantine workspaces. If
+files are uploaded into the Personal workspace they cannot be moved out
+into any other workspace. Any file which is uploaded or moved into the
+Quarantine workspace will be virus checked and a visual indication given
+if the virus check was successful and the file virus free. Any file that
+is found with a virus is immediately moved to a folder within the
+Quarantine workspace called Infected. Files will be automatically
+re-scanned for viruses after 30 days if they are left in the Quarantine
+workspace, after which time they are then labeled Virus Free and
+available for Release. Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> does not stop you from moving files
+out of Quarantine at any time you wish.</p>
+<h2 id="advanced-web-uploader">Advanced Web-uploader<a class="headerlink" href="#advanced-web-uploader" title="Permanent link">&para;</a></h2>
+<p>The advanced web-uploader is the main ingest tool in Curate. It's fast,
+efficient and offers several useability benefits over other, lower level
+upload methods. The advanced web-uploader can handle ingests of
+thousands of files and tens of gigabytes, making it capable of
+processing most common ingest workloads.</p>
+<div class="tip"><span class="mdi mdi-information-outline"></span><span>If you have thousands of files to upload, you can compress your
+objects into an archive package locally and then upload that instead.
+This will greatly improve your upload performance.</span></div>
+
+<p>We would strongly recommend using the advanced web-uploader for the
+majority of your ingests, where the size and volume is appropriate.</p>
+<p>Try uploading files and folders (you can upload any complex folder
+structure) using the advanced web-uploader. You can do this by selecting
+'New' at the top of the screen, and then Upload.</p>
+<p>You can drag and drop into the pop-up box or select to upload files or
+folders. If you are uploading a large file or folder you can minimize
+the upload window by clicking the X in the top right. You can then carry
+on working and see the progress of the upload at any time by clicking
+the 'Jobs Running' area at the bottom left of the window. New upload
+jobs can be added at any time and will just be added to the upload
+queue.</p>
+<div class="main-content-img-container">
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image15.png" style="" alt="Curate upload window"></img>
+</div>
+
+<p>You can also simply drag your objects into the Curate window with the
+appropriate location open and the content will be uploaded directly.</p>
+<h3 id="web-uploader-options">Web-uploader Options<a class="headerlink" href="#web-uploader-options" title="Permanent link">&para;</a></h3>
+<p>When using the Curate web-uploader, you can also set configuration
+options that dictate how Curate handles certain situations that can be
+dangerous to an archiving workflow.</p>
+<div class="main-content-img-container">
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image16.png" style="" alt="Curate uploader options"></img>
+</div>
+
+<p><strong>Start uploading automatically</strong></p>
+<p>Selecting this option means that each file you add to the uploader will
+begin to upload immediately. If you disable this option, you can begin
+to load all of the parts of an upload before beginning pieces of it at a
+time. This can help you manage complex or large uploads on a sub-optimal
+connection.</p>
+<p><strong>Close panel after upload is finished</strong></p>
+<p>Enabling this option will close the upload panel as soon as the final
+file has finished uploading to Curate. Leaving this option disabled will
+allow you to browse your completed uploads in the panel and at-a-glance
+verify that they have valid integrity checks <a href="#pre-upload-integrity-verification"><em>see pre-upload integrity verification</em></a>.</p>
+<p><strong>If a file with the same name exists</strong></p>
+<p>These exclusive options allow you to dictate how Curate handles uploads
+of files with duplicate names. Note that this does not check for
+duplicates based on their content, only their name. You should generally
+avoid uploading multiple files with the same name to a single folder or
+area intentionally. If you select "rename files", each file with a
+duplicated name will have a numbered suffix. "merge folders" means that
+files inside a folder with a duplicated name will instead be uploaded to
+the original folder. Any duplicated files within the merged folder will
+be treated with the "rename files" process.</p>
+<h3 id="pre-upload-integrity-verification">Pre-upload Integrity Verification<a class="headerlink" href="#pre-upload-integrity-verification" title="Permanent link">&para;</a></h3>
+<p>When uploading objects using the Curate web-uploader, it automatically
+generates and compares pre and post-upload checksums.</p>
+<p>Each of your files will have a label attached which permanently
+records the result of the integrity check.</p>
+<div class="main-content-img-container">
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image18.png" style="" alt="Curate integrity check label"></img>
+</div>
+
+<h2 id="sftp">SFTP<a class="headerlink" href="#sftp" title="Permanent link">&para;</a></h2>
+<p>Curate offers a connection to your workspaces over SFTP, allowing you to
+ingest more massive uploads of content into your quarantine space than
+the advanced web-uploader can handle. The SFTP protocol is more capable
+for massive uploads than HTTPS used in the advanced web-uploader, but
+uploading through SFTP in Curate necessitates a system reindex.</p>
+<p>As a result, you will either need to schedule your planned SFTP upload
+with us ahead of time or, if the workload is not time critical, feel
+free to contact us once the upload has completed.</p>
+<p>If you require SFTP upload in your Curate instance, please let us know
+when you procure Curate for your organisation, or send us a support
+ticket.</p>
+<p><em>Remember, we'd strongly advise you to use the advanced web-uploader for
+most ingest usecases. It's best to only use sftp if your institution
+explicitly requires it.</em></p>
+<h3 id="connecting-to-and-uploading-through-sftp">Connecting to and Uploading Through SFTP<a class="headerlink" href="#connecting-to-and-uploading-through-sftp" title="Permanent link">&para;</a></h3>
+<p>You can connect to your Curate workspaces over SFTP using any common FTP
+client. If SFTP is enabled for your Curate instance, you will be
+supplied the relevant connection details by email when they are
+provisioned.</p>
+<h3 id="sftp-integrity-verification">SFTP Integrity Verification<a class="headerlink" href="#sftp-integrity-verification" title="Permanent link">&para;</a></h3>
+<p>Warning: it is difficult to maintain integrity verification for all your
+ingested files when uploading through SFTP. Many FTP clients offer often
+poor support for checksum features integrated with the protocol, as a
+result Curate is unable to automatically verify your SFTP uploads
+integrity.</p>
+<p>To resolve this, you will need to generate a JSON manifest of checksums
+for your ingest content before you perform your SFTP upload, and then
+perform manual ingest integrity verification once it is complete. <a href="#manual-ingest-integrity-verification"><em>See Manual Ingest Integrity Verification for more information.</em></a></p>
+<p>Once you have generated your checksum manifest, you may proceed to
+upload your content via SFTP. Once your content is uploaded, and we have
+completed the necessary reindex, you can upload your checksum manifest.
+<a href="#manual-ingest-integrity-verification"><em>See Manual Integrity Verification for more information</em></a></p>
+<h2 id="ingest-integrity-verification">Ingest Integrity Verification<a class="headerlink" href="#ingest-integrity-verification" title="Permanent link">&para;</a></h2>
+<p>Curate offers powerful methods for ingesting content into the system
+which come with automated facilities for verifying that your files were
+not compromised as they were uploaded to the system.</p>
+<p>Uploads using the Advanced Web-uploader will
+have their integrity verified completely automatically. Curate will
+notify you with status tags attached to the respective object if any
+items in your ingest workload are found to have been compromised during
+the upload process.</p>
+<p>Uploads using SFTP require manual checksum verification, which you can
+read more about below.</p>
+<h2 id="quarantine">Quarantine<a class="headerlink" href="#quarantine" title="Permanent link">&para;</a></h2>
+<h3 id="results">Results<a class="headerlink" href="#results" title="Permanent link">&para;</a></h3>
+<p>Once a file has been uploaded, the initial quarantine virus scan will
+run. If the file is found to contain malicious data, it will be moved to the "INFECTED" folder. You may then choose how and when you would like to action its removal.
+If the file passes the first virus scan, it will receive a "Qurantined" tag and it will be submitted for a quarantine period.</p>
+<p>After the quarantine period has passed, the second virus scan will be performed. If no further threats are found, the files status label will change to "Released" and it will be
+moved automatically into the Appraisal space.</p>
+<p>You can find detailed results for each scan in the quarantine process and the current quarantine period in the file
+information panel, see <a href="../application-areas/#file-information-panel"><em>file information panel</em></a> for more detail.</p>
+<p><strong>Quarantined</strong></p>
+<p>"Quarantined" indicates that the file has been successfully scanned and
+no immediate threats were detected. The file has now begin it's quarantine period.</p>
+<p><strong>Risk</strong></p>
+<p>Files that have been removed prematurely from their quarantine period, or that are found to be compromised or infected are labeled "Risk". If a file was labelled risk due to indications of malicious data in them, it will be relocated to a safe directory called "INFECTED". This directory will be created automatically when required. You can test this behaviour by attempting to upload an eicar test file to the quarantine space.</p>
+<div class="main-content-img-container">
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image19.png" style="" alt="Curate infected file directory"></img>
+</div>
+
+<p><strong>Released</strong></p>
+<p>After 30 days has passed, the second virus scan will be performed. If no
+further threats are found, the quarantined files status label will
+change to "Released".</p>
+<div class="tip"> <span class="mdi mdi-information-outline"></span><span>
+  <span style="display:inline">
+    Curate implements a 30 day quarantine cycle for files uploaded into the quarantine space. However, you can choose to move files to the appraisal space before the full quarantine period has passed. To do this, simple use the "Move" button or drag and drop the files into the appraisal space. Any files you choose to move early will be marked as "Risk" to indicate that they have not completed the full quarantine period and have not been scanned for a second time. You can see more information about the quarantine status of a file by selecting and looking in the <a href="../application-areas/#object-information-area">object information area.</a>
+
+    You can also read more in the <a href="../appraisal/#move-content-into-appraisal">moving content into appraisal section.</a>
+
+  </span>
+</span></div>
+
+<h2 id="uploading-file-and-folders-into-personal">Uploading File and Folders into Personal<a class="headerlink" href="#uploading-file-and-folders-into-personal" title="Permanent link">&para;</a></h2>
+<p>The upload process into the Personal Workspace is functionally
+identical, but note two major differences:</p>
+<ul>
+<li>
+<p>Files will be virus scanned once only.</p>
+</li>
+<li>
+<p>If safe, the file is tagged "Passed".</p>
+</li>
+<li>
+<p>If compromised, the file is moved to an infected directory.</p>
+</li>
+<li>
+<p>You cannot move files out of the personal workspace.</p>
+</li>
+</ul>
+<h2 id="other-upload-methods">Other Upload Methods<a class="headerlink" href="#other-upload-methods" title="Permanent link">&para;</a></h2>
+<p>You can also get content into Curate using SFTP, webdav and with
+physical data transport devices when on-cloud.</p>
+<h2 id="creating-and-using-a-deposit-space">Creating and Using a Deposit Space<a class="headerlink" href="#creating-and-using-a-deposit-space" title="Permanent link">&para;</a></h2>
+<p>Curate allows you to share any file, folder or other area <a href="../search-access/#sharing-a-file-or-folder"><em>see Sharing
+files or folders</em> for more detail</a>. By allowing users of a shared area
+upload permissions, you can easily create a secure space for your
+submitters to deposit their content.</p>
+<p>Be sure to create your deposit space in the Quarantine workspace, so
+that your deposited files are automatically quarantined. You are also
+unable to upload files in to workspaces other than Quarantine and
+Personal.</p>
+<h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h3>
+<p>First create and share a folder for your deposit space. This folder is
+where your depositors will upload their content. <a href="../search-access/#sharing-a-file-or-folder">(<em>see sharing a file or folder</em>)</a></p>
+<p>Once shared, you can enable "Upload files" under the permissions tab.
+You should typically disable download permissions unless you want your
+depositors to be able to download content from other depositors.</p>
+<p>Under the "Access restrictions" tab, you can choose to set a password
+for the space, and even specify an expiry period for the sharing link.
+NB: once your sharing link has expired, nothing will happen to your
+shared files or folders, the public URL will simply become inaccessible.</p>
+<div class="main-content-img-container">
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image20.png" style="" alt="Curate sharing link configuration"></img>
+</div>
+
+<h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h3>
+<p>You may then share your deposit URL with your collaborators. They will
+be presented with a simple interface into which they can upload their
+deposit.</p>
+<div class="main-content-img-container">
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image21.png" style="" alt="Curate deposit space sharing interface"></img>
+</div>
+
+<h3 id="simple-upload-interface">Simple upload interface<a class="headerlink" href="#simple-upload-interface" title="Permanent link">&para;</a></h3>
+<p>You can also choose to give your depositors an ultra-simple "drop files
+here" style interface instead. Not only does this simplify the process
+of uploading files for your submitters even further, but it also ensures
+that they are unable to see any other content that has been uploaded
+into the space. To change the deposit space interface, open the "link
+label" section in the sharing configuration. Select "Drop Files Here"
+for the simple upload interface. <em>Hint: make sure to save your changes.</em></p>
+<h2 id="creating-and-using-a-smart-deposit-space">Creating and Using a Smart Deposit Space<a class="headerlink" href="#creating-and-using-a-smart-deposit-space" title="Permanent link">&para;</a></h2>
+<p>Smart Deposit Spaces allow you to require specific files, formats,
+contents, documentation and even metadata from your depositors. You can
+even leave them personalized messages upon submission, or chain
+additional actions in your workflow.</p>
+<p>Just like other Deposit spaces, make sure to create it in your
+Quarantine workspace. You are unable to upload files into other
+workspaces, and it will ensure that all your deposits are automatically
+quarantined.</p>
+<p>To create a Smart Deposit Space, first create a deposit space (see
+creating and using a deposit space). Then, open your new deposit space
+and right click in the empty space. You should then select the "Smart
+Form" option.</p>
+<div class="main-content-img-container">
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image22.png" style="" alt="Curate smart deposit space creation menu"></img>
+</div>
+
+<p>The Smart Form builder will allow you to select what file formats you
+require in your deposits in the "Expected Files" section. This will also
+allow you to describe the required files, add authorized extensions and
+size limitations.</p>
+<p>You can then define what other information or metadata you require in
+the "Submission Form" section.</p>
+<p>Follow on actions and submission messages can be configured in the
+"Legends and Completion" section.</p>
+<p>In the "Creating and Using a Deposit Space" section, you can find more
+information about the configuration options for your shared space,
+including password protection, file visibility, access restrictions and
+more.</p>
+<p>Once you have created your Smart Deposit Space, you can save it and
+disseminate the URL. Users accessing the link will be presented with a
+form requesting the information you have described. Their uploads will
+be rejected without any processing if the requirements are not met. The
+users are unable to submit their deposit until they have completed all
+your mandatory requirements.</p>
+<div class="main-content-img-container">
+    <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image23.png" style="" alt="Curate smart deposit space interface"></img>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tracking", "navigation.sections", "navigation.top", "toc.follow"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
