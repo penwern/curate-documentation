@@ -25,13 +25,13 @@ Curate integrates with AtoM, an open-source archival description management syst
 
 To connect your Curate instance to AtoM, you will first need to follow the standard installation instructions for AtoM (see [AtoM installation instructions](https://www.accesstomemory.org/en/docs/latest/#installation)). Once AtoM is installed, you will need to correctly configure AtoM to enable the Sword API (see [AtoM Sword API configuration](https://www.archivematica.org/en/docs/latest/admin-manual/installation-setup/integrations/atom-setup/#configure-dip-upload)). Once AtoM is installed and configured, please proceed to the following section [connecting to AtoM](#connecting-to-atom)
 
-NB: the configuration steps reference Archivematica <span style="font-size: 8pt;vertical-align: super;">TM</span>, but the same process can be used with Curate. Please see the above warning for more information about configuring SSH keys between Curate and AtoM.
+NB: the configuration steps reference Archivematica<span style="font-size: 8pt;vertical-align: super;">TM</span>, but the same process can be used with Curate. Please see the above warning for more information about configuring SSH keys between Curate and AtoM.
 
 <div class="tip"> <span class="mdi mdi-information-outline"></span> <span>Please take care to ensure that the SWORD plugin and AtoM REST API are enabled on the AtoM plugins menu.</span> </div>
 
 **Explanation**
 
-Curate takes advantage of the Sword protocol to communicate with AtoM. This protocol allows AtoM to receive and process dissemination packages (DIPs) directly from Curate. The sword API is the mechanism AtoM internally uses to communicate DIP processing requests with its companion digital preservation system, Archivematica <span style="font-size: 8pt;vertical-align: super;">TM</span>. This enables Curate to streamline the process of uploading content into AtoM, and then linking it to existing archival descriptions.
+Curate takes advantage of the Sword protocol to communicate with AtoM. This protocol allows AtoM to receive and process dissemination packages (DIPs) directly from Curate. The sword API is the mechanism AtoM internally uses to communicate DIP processing requests with its companion digital preservation system, Archivematica<span style="font-size: 8pt;vertical-align: super;">TM</span>. This enables Curate to streamline the process of uploading content into AtoM, and then linking it to existing archival descriptions.
 
 #### Setting up AtoM (AtoM Hosted by your Curate Provider)
 

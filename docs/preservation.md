@@ -1,4 +1,4 @@
-Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> features a highly automated digital preservation service that
+Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> features a highly automated digital preservation service that
 wraps the open source tool A3M into a dynamic workflow. Curate preservation workflows are highly configurable, simple to action,
 and automate the process of performing best-practice preservation and packaging actions on your files and folders.
 
@@ -6,7 +6,7 @@ Here's the enriched version with proper markdown formatting and escaping:
 
 ## About A3M
 
-A3M is an open-source tool, developed by Artefactual Systems <span style="font-size: 8pt;vertical-align: super;">TM</span>, that distills the essential preservation and packaging functionality of their widely-used platform Archivematica <span style="font-size: 8pt;vertical-align: super;">TM</span> into a specialised module. By removing unneeded components like the backend storage management and frontend-application while maintaining the same core code that powers digital archiving programs across the globe, A3M is able to provide reliable, comprehensive preservation and packaging functionalities in entirely new contexts.
+A3M is an open-source tool, developed by Artefactual Systems<span style="font-size: 8pt;vertical-align: super;">TM</span>, that distills the essential preservation and packaging functionality of their widely-used platform Archivematica<span style="font-size: 8pt;vertical-align: super;">TM</span> into a specialised module. By removing unneeded components like the backend storage management and frontend-application while maintaining the same core code that powers digital archiving programs across the globe, A3M is able to provide reliable, comprehensive preservation and packaging functionalities in entirely new contexts.
 
 <a href="https://a3m.readthedocs.io/en/latest/">Read the A3M documentation</a>
 
@@ -145,10 +145,10 @@ A3M uses a set of specialised tools to analyze your files and extract detailed t
 
 A3M utilizes the following industry-standard tools for file characterization:
 
-<a href="http://ffmpeg.org/">FFProbe</a>: A powerful multimedia stream analyzer that provides detailed information about audio and video files
-<a href="http://mediaarea.net/en/MediaInfo">MediaInfo</a>: A versatile tool that extracts technical and tag data from video and audio files
-<a href="https://exiftool.org/index.html">ExifTool</a>: A comprehensive metadata extraction tool that supports a wide range of file formats
-<a href="https://forensicswiki.xyz/wiki/index.php?title=Fiwalk">Fiwalk</a>: A command-line tool for analyzing and extracting metadata from disk images and file systems
+- <a href="http://ffmpeg.org/">FFProbe</a>: A powerful multimedia stream analyzer that provides detailed information about audio and video files.
+- <a href="http://mediaarea.net/en/MediaInfo">MediaInfo</a>: A versatile tool that extracts technical and tag data from video and audio files.
+- <a href="https://exiftool.org/index.html">ExifTool</a>: A comprehensive metadata extraction tool that supports a wide range of file formats.
+- <a href="https://forensicswiki.xyz/wiki/index.php?title=Fiwalk">Fiwalk</a>: A command-line tool for analyzing and extracting metadata from disk images and file systems.
 
 ### Normalisation
 

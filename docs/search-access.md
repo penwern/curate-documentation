@@ -1,12 +1,12 @@
 ## Sharing a file or folder
 
 You can create a public or secure, private link for any file or folder
-in your account. When clocking the link, guest users can view, download,
+in your account. When clicking the link, guest users can view, download,
 view metadata and even upload content. Start by selecting your content, and then selecting "share" either from the right click context-menu, or from the top main options bar in the file-list.
 
 ## Searching for Files
 
-You can do simple searches across all of Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> using the search box
+You can do simple searches across all of Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> using the search box
 at the top right of the screen. The simple search is conducted over file
 names and folder names only (not metadata). Complete names or fragments
 of filenames can be used, for example a file called myphotograph.jpg can

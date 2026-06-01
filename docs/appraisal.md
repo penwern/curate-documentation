@@ -1,7 +1,7 @@
 ## Move Content into Appraisal
 
 Files will be moved into the Appraisal workspace when they have
-completed quarantine and two successful virus scans. Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> is not
+completed quarantine and two successful virus scans. Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> is not
 prescriptive however and you can move data early. The Appraisal
 workspace is used to create arrangements (folder structures containing
 your files), conduct content appraisal helped by the file information
@@ -10,7 +10,7 @@ available and to create descriptions.
 Try moving files and folders from the Quarantine workspace into
 Appraisal. You can do this by selecting, right clicking and selecting
 Move or by dragging and dropping to a different workspace in the listing
-in the lefthand column. Multiple files or folders can be selected for
+in the left hand column. Multiple files or folders can be selected for
 each move using the usual Control or Shift operations.
 
 <div class="main-content-img-container">
@@ -21,7 +21,7 @@ Note that if files are moved into Appraisal early (i.e. before the
 quarantine period is up) then the Quarantine Status tag changes to Risk
 to indicate that full quarantine conditions were not met.
 
-Once you have files in the Appraisal workspace, Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> runs
+Once you have files in the Appraisal workspace, Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> runs
 comprehensive file characterisation programmes. To access the generated
 characterization information, select a file and check the file
 information panel in the object information area. [(_see File Information Panel_)](application-areas.md#file-information-panel). Characterised objects will include these fields in their
@@ -63,8 +63,8 @@ it goes in the system.
 ### Describing a Single File or Folder
 
 Descriptive metadata is used to annotate a file, folder or group of
-files in a folder structure. All descriptive metadata in Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> is
-indexed and searchable [(_see search_)](search-access.md). Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> provides both the
+files in a folder structure. All descriptive metadata in Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> is
+indexed and searchable [(_see search_)](search-access.md). Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> provides both the
 Dublin Core simple 15 element schema which you can read about in detail
 (if you want to) <a href="https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#section-3">here</a>
 and the full General International Standard Archival Description ISAD(G)
@@ -73,7 +73,7 @@ descriptive metadata schema which you can read more about <a href="https://www.i
 You can be as precise as you wish with the use of metadata elements by
 following the specifications and controlled vocabularies. Alternatively,
 you can just use those elements you wish, in the way that suits you,
-(for example by putting a title in for each file). Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> does not
+(for example by putting a title in for each file). Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> does not
 impose rules.
 
 To begin to describe any file or folder in Curate, select the object you
@@ -142,7 +142,7 @@ files in your selection will be updated.
 
 ## Importing Metadata
 
-Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> allows you to import metadata from external sources into your Curate instance. You can import metadata from:
+Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> allows you to import metadata from external sources into your Curate instance. You can import metadata from:
 
 - CSV files
 - OAI-PMH repositories
@@ -176,7 +176,7 @@ If you have persistent problems, please contact us for help.
 
 ## Creating a Report on File Types
 
-Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> identifies file types via a MIME type and a PRONOM ID. You
+Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> identifies file types via a MIME type and a PRONOM ID. You
 can generate detailed reports of the MIME types, for example to create a
 digital asset register, for any aggregation of files or folders. Try
 going to a high-level folder that contains other folders and files,
@@ -191,7 +191,7 @@ report as a CSV file.
 
 ## Creating a Transfer Package or SIP
 
-Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> can create packages or SIPs for submission to repositories or
+Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> can create packages or SIPs for submission to repositories or
 digital preservation platforms such as: Archivematica, Preservica and
 EARK compliant systems using the templates in the Package Templates
 workspace. We can give you a demonstration of package creation if you

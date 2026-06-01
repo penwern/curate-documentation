@@ -1,7 +1,7 @@
 ## Uploading Files and Folders into Quarantine
 
 Files and Directories can be simple and quickly uploaded into
-Curate <span style="font-size: 8pt;vertical-align: super;">TM</span>, but only into the Personal and Quarantine workspaces. If
+Curate<span style="font-size: 8pt;vertical-align: super;">TM</span>, but only into the Personal and Quarantine workspaces. If
 files are uploaded into the Personal workspace they cannot be moved out
 into any other workspace. Any file which is uploaded or moved into the
 Quarantine workspace will be virus checked and a visual indication given
@@ -10,7 +10,7 @@ is found with a virus is immediately moved to a folder within the
 Quarantine workspace called Infected. Files will be automatically
 re-scanned for viruses after 30 days if they are left in the Quarantine
 workspace, after which time they are then labeled Virus Free and
-available for Release. Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> does not stop you from moving files
+available for Release. Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> does not stop you from moving files
 out of Quarantine at any time you wish.
 
 ## Advanced Web-uploader
@@ -113,7 +113,7 @@ when you procure Curate for your organisation, or send us a support
 ticket.
 
 _Remember, we'd strongly advise you to use the advanced web-uploader for
-most ingest usecases. It's best to only use sftp if your institution
+most ingest use cases. It's best to only use sftp if your institution
 explicitly requires it._
 
 ### Connecting to and Uploading Through SFTP
