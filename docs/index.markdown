@@ -8,9 +8,9 @@
   </button>
 </div>
 
-# Penwern Curate <span style="font-size: 8pt;vertical-align: super;">TM</span>
+# Penwern Curate<span style="font-size: 8pt;vertical-align: super;">TM</span>
 
-Penwern Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> is a comprehensive software platform that addresses
+Penwern Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> is a comprehensive software platform that addresses
 the fundamental issues with existing Digital Archiving solutions,
 allowing organisations of any size to build, preserve and manage
 best-practice Digital Archives with ground-breaking speed and
@@ -34,7 +34,7 @@ untrustworthy due to a number of factors, such as:
 - You cannot find specific files due to a lack of understandable
   organisation or description.
 
-Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> helps to fix these problems by:
+Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> helps to fix these problems by:
 
 - Removing threats due to viruses and malware through a system or
   virus checks and quarantine.
@@ -61,12 +61,12 @@ Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> helps to fi
 - Preparing your content into standards-conformant information
   packages.
 
-## Is Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> Useful for Archivists and Digital Curators?
+## Is Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> Useful for Archivists and Digital Curators?
 
-Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> is a platform that can be used to provide a number of
+Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> is a platform that can be used to provide a number of
 critical functions within an electronic archiving system discretely or
 can form a complete and effective system itself. Individually,
-Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> can perform the following roles:
+Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> can perform the following roles:
 
 - Ingest, Upload and Accession
 
@@ -100,9 +100,9 @@ In combination, these services mean that Curate comprises a
 comprehensive and highly capable electronic archiving system all on its
 own.
 
-## Is Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> Useful for Business?
+## Is Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> Useful for Business?
 
-Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> is a file sharing platform that integrates the features
+Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> is a file sharing platform that integrates the features
 required for the preservation of data that go beyond basic data
 protection (back-up, integrity checking, disaster recovery).
 
@@ -115,7 +115,7 @@ digital preservation and eArchiving.
 It is cost effective, allowing you to create an archive for inactive
 data that doesn't take up valuable storage on your primary storage
 systems and allows you to consolidate data into a single platform.
-Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> works in a way your users understand, with a best-in-class
+Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> works in a way your users understand, with a best-in-class
 user experience. You don't have to train all your users on new, complex
 digital preservation applications.
 

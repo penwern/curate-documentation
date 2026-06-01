@@ -1,6 +1,6 @@
 ## Home Screen
 
-When you log in to Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> you will see the home screen as shown
+When you log in to Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> you will see the home screen as shown
 below and you will be guided through a short welcome tour. The home
 screen provides you with links to recent content, and ways to navigate
 through the rest of the application.
@@ -76,7 +76,7 @@ your own personal content, which would not normally be part of a group
 archive.
 
 Files uploaded into Personal are virus checked once and cannot be moved
-out into any other area of Curate <span style="font-size: 8pt;vertical-align: super;">TM</span>.
+out into any other area of Curate<span style="font-size: 8pt;vertical-align: super;">TM</span>.
 
 If you have files in Personal that you later want to add to the archive,
 you will need to re-upload into Quarantine, or if you don't have a local
@@ -90,12 +90,12 @@ content.
 
 ### Quarantine Space
 
-Content that is to be appraised and arranged in Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> should be
+Content that is to be appraised and arranged in Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> should be
 uploaded into the Quarantine workspace [(_see upload and ingest for more information_)](upload-ingest.md). This is a shared workspace and so is visible to all
 members of a workgroup. Uploaded files are virus checked and quarantined
 for 30 days. It is recommended that files should not be moved from the
 Quarantine workspace until the quarantine period is up, however
-Curate <span style="font-size: 8pt;vertical-align: super;">TM</span> is not prescriptive and you can choose to move files out early if you wish.
+Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> is not prescriptive and you can choose to move files out early if you wish.
 
 If the virus scanner detects a virus or malware then the affected file
 will be moved to a folder called Infected within the Quarantine
