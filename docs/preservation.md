@@ -2,8 +2,6 @@ Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> features a h
 wraps the open source tool A3M into a dynamic workflow. Curate preservation workflows are highly configurable, simple to action,
 and automate the process of performing best-practice preservation and packaging actions on your files and folders.
 
-Here's the enriched version with proper markdown formatting and escaping:
-
 ## About A3M
 
 A3M is an open-source tool, developed by Artefactual Systems<span style="font-size: 8pt;vertical-align: super;">TM</span>, that distills the essential preservation and packaging functionality of their widely-used platform Archivematica<span style="font-size: 8pt;vertical-align: super;">TM</span> into a specialised module. By removing unneeded components like the backend storage management and frontend-application while maintaining the same core code that powers digital archiving programs across the globe, A3M is able to provide reliable, comprehensive preservation and packaging functionalities in entirely new contexts.
