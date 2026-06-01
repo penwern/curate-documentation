@@ -1,6 +1,6 @@
 # Core MkDocs dependencies
 mkdocs==1.6.1
-mkdocs-material==9.6.20
+mkdocs-material==9.7.6
 
 # MkDocs plugins
-mkdocs-redirects==1.2.2
+mkdocs-redirects==1.2.3
