@@ -60,7 +60,7 @@ allowing organisations of any size to build, preserve and manage
 best-practice Digital Archives with ground-breaking speed and
 simplicity.
 
-## Why is eArchiving Important for Any Organization?
+## Why is eArchiving Important for Any Organisation?
 
 Valuable digital content can be become inaccessible, unusable, or
 untrustworthy due to a number of factors, such as:
@@ -283,7 +283,7 @@ content.
 #### Quarantine Space
 
 Content that is to be appraised and arranged in Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> should be
-[uploaded](#upload-and-ingest) into the Quarantine workspace. See [Upload and Ingest](#upload-and-ingest). This is a shared workspace and so is visible to all
+[uploaded](#upload-and-ingest) into the Quarantine workspace. This is a shared workspace and so is visible to all
 members of a workgroup. Uploaded files are virus checked and quarantined
 for 30 days. It is recommended that files should not be moved from the
 Quarantine workspace until the quarantine period is up, however
@@ -310,7 +310,7 @@ to see detailed information on the file format. Within the Appraisal
 workspace you can move, copy and delete files, create folders and add
 descriptive metadata. Using detailed file information you can make
 appraisal decisions. From the appraisal space, you can also [preserve](#preservation) and
-[package](#packaging) your objects in any configuration you wish. See [Preservation](#preservation) and [Packaging](#packaging).
+[package](#packaging) your objects in any configuration you wish.
 
 #### Archive Space
 
@@ -495,7 +495,7 @@ connection.
 Enabling this option will close the upload panel as soon as the final
 file has finished uploading to Curate. Leaving this option disabled will
 allow you to browse your completed uploads in the panel and at-a-glance
-verify that they have [valid integrity checks](#pre-upload-integrity-verification). See [Pre-upload Integrity Verification](#pre-upload-integrity-verification).
+verify that they have [valid integrity checks](#pre-upload-integrity-verification).
 
 **If a file with the same name exists**
 
@@ -580,7 +580,7 @@ See [Manual Integrity Verification](#manual-ingest-integrity-verification).
 
 ### Curate Mission Control
 
-For massive ingest workloads that exceed the capabilities. This tool is under development. Please request for more information.
+For massive ingest workloads that exceed the capabilities of the web uploader. This tool is under development; please contact us for more information.
 
 ### Ingest Integrity Verification
 
@@ -610,7 +610,7 @@ To perform manual ingest integrity verification, follow these steps:
 #### Generating a checksum manifest
 
 There are free several tools available to do this, but we would strongly
-recommend using our companion tool "[mission control](#curate-mission-control)". See [Curate Mission Control](#curate-mission-control).
+recommend using our companion tool "[mission control](#curate-mission-control)".
 
 <div class="tip"><span class="mdi mdi-information-outline"></span><span>
 For best practice, we recommend uploading your checksum manifest
@@ -792,7 +792,7 @@ to indicate that full quarantine conditions were not met.
 
 Once you have files in the Appraisal workspace, Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> runs
 comprehensive file characterisation programmes. To access the generated
-characterization information, select a file and check the [file information panel](#file-information-panel) in the object information area. See [File Information Panel](#file-information-panel).
+characterization information, select a file and check the [file information panel](#file-information-panel) in the object information area.
 
 Characterised objects will include these fields in their
 information area:
@@ -834,7 +834,7 @@ it goes in the system.
 
 Descriptive metadata is used to annotate a file, folder or group of
 files in a folder structure. All descriptive metadata in Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> is
-indexed and [searchable](#search-and-access). See [Search and Access](#search-and-access).
+indexed and [searchable](#search-and-access).
 
 Curate<span style="font-size: 8pt;vertical-align: super;">TM</span> provides both the
 <a href="https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#section-3">Dublin Core</a> simple 15 element schema
@@ -848,7 +848,7 @@ impose rules.
 
 To begin to describe any file or folder in Curate, select the object you
 would like to describe. On the right hand side of your screen, in the
-[object information area](#object-information-area), you will see the file [metadata panel](#metadata-panel). See [Object Information Area](#object-information-area) and [Metadata Panel](#metadata-panel).
+[object information area](#object-information-area), you will see the file [metadata panel](#metadata-panel).
 
 <div class="main-content-img-container">
     <img src="/curate-documentation/vertopal_205d29a8e99241c0a1d0e3064ad58f44/media/image25.png" style=""></img>
@@ -1032,7 +1032,7 @@ From the dropdown, select "Preservation Configs" to open the configs menu.
     <img src="/curate-documentation/assets/Preservation Configs Menu.png"></img>
 </div>
 
-On the left hand side of the menu, you will find all the controls for creating new configs or editing existing ones. On the right, you will find a list of all of your saved configs. See [Modifying Configs](#modifying-a-config)
+On the left hand side of the menu, you will find all the controls for creating new configs or editing existing ones. On the right, you will find a list of all of your saved configs. See [Modifying Configs](#modifying-a-config).
 
 To create a config, simply customise your desired parameters in the left hand area and then give your new config a name in the "details" box. Once you have entered a name, you will see the "Save config" button appear. Once you've hit "save", your configs will be reloaded and you will see your new config slide into the list of saved configs on the right.
 
@@ -1087,7 +1087,7 @@ A3M utilizes the following industry-standard tools for file characterization:
 
 Normalisation is the process of converting files to standardized, preservation-friendly formats that are more likely to remain accessible over the long term.
 
-A3M determines the appropriate target format for each file based on the [Format Policy Registry (FPR)](#the-format-policy-registry-fpr), a comprehensive knowledge base that maps file formats to recommended preservation actions. By consistently applying these normalisation rules, Curate helps ensure the future renderability and usability of your content. See [The Format Policy Registry (FPR)](#the-format-policy-registry-fpr).
+A3M determines the appropriate target format for each file based on the [Format Policy Registry (FPR)](#the-format-policy-registry-fpr), a comprehensive knowledge base that maps file formats to recommended preservation actions. By consistently applying these normalisation rules, Curate helps ensure the future renderability and usability of your content.
 
 ##### Normalisation Tools
 
@@ -1126,10 +1126,10 @@ In addition to BagIt, Curate also supports the E-ARK (European Archival Records 
 <div class="tip"> <span class="mdi mdi-information-outline"></span> <span>Curate's packaging system is highly extensible. If your organization requires support for a specific packaging format not currently available, please get in touch with us. We can work with you to implement custom packaging formats to meet your specific needs.</span> </div>
 
 ### Configuring Packaging Options
-Curate allows you to customize various aspects of the packaging process through [preservation configs](#preservation-configs). You can specify parameters such as the packaging format (e.g., BagIt or E-ARK), compression options, and whether to include additional metadata or reports in the package. See [Preservation Configs](#preservation-configs).
+Curate allows you to customize various aspects of the packaging process through [preservation configs](#preservation-configs). You can specify parameters such as the packaging format (e.g., BagIt or E-ARK), compression options, and whether to include additional metadata or reports in the package.
 
 ### The Packaging Workflow
-The packaging process in Curate is fully integrated with the [preservation workflow](#preservation). Once the core preservation actions (characterisation, normalisation, validation) have completed successfully, Curate automatically packages the resultant archival objects according to the specified packaging format and options. See [Preservation](#preservation).
+The packaging process in Curate is fully integrated with the [preservation workflow](#preservation). Once the core preservation actions (characterisation, normalisation, validation) have completed successfully, Curate automatically packages the resultant archival objects according to the specified packaging format and options.
 
 The generated AIP packages are then stored in your [Archival Workspace](#archive-space), where they can be easily located, searched and retrieved as needed. Each AIP includes the preserved content along with comprehensive metadata (descriptive, administrative, structural, preservation) to ensure its long-term understandability and usability.
 
