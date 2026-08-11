@@ -30,6 +30,10 @@ CHIP_GAP = 10
 CHIP_INSET = 16
 CHIP_TOP = 48
 PLAQUE_H = 16
+# A label sits this far off its line, measured to the plaque's
+# centre. It has to exceed PLAQUE_H / 2 or the plaque touches the
+# arrow; one more than that is the source's own 9.
+LABEL_GAP = 9
 PAD = 24
 LABEL_H = 42
 GROUP_LINE_H = 15
@@ -411,24 +415,43 @@ def connector(pts, pen: Pen, dashed=False, both=False, label=None):
         i = 1 if len(pts) > 2 else 0
         (ax, ay), (bx, by) = pts[i], pts[i + 1]
         mx, my = (ax + bx) / 2, (ay + by) / 2
-        lw = 5.35 * len(label) + 12
-        # A plaque behind the label. Every label is centred on its own
-        # route, so without one the arrow strikes through the text. The
-        # width is measured from the glyphs, since there is no text
+        # A plaque behind the label, so it reads over whatever it crosses.
+        # Its width is measured from the glyphs, since there is no text
         # metric available: 0.535em per character at this size, plus 6
         # either side.
-        #
-        # It is centred on the segment, not offset up from it. An offset
-        # is only perpendicular for one orientation: on a vertical segment
-        # a fixed -17.5 in y runs along the line instead of across it and
-        # overshoots the end of the segment into whatever box edge the
-        # route just left, erasing a length of it. Centred, the plaque
-        # cannot reach past the segment's own ends by more than half its
-        # height, whichever way the segment runs.
-        out += rect(mx - lw / 2, my - PLAQUE_H / 2, lw, PLAQUE_H, rx=3)
-        out += text(mx, my + 4.5, label, size=10, anchor="middle",
+        lw = 5.35 * len(label) + 12
+        # The plaque is offset perpendicular to its segment: above a
+        # horizontal run, beside a vertical one. LABEL_GAP exceeds half
+        # the plaque's extent in that direction, so the plaque cannot
+        # touch the arrow it labels, whatever the two lengths are. That
+        # is the whole invariant, and it is why the offset cannot be
+        # dropped in favour of centring the plaque on the segment:
+        # centred, a plaque wider than its segment hides the arrow
+        # completely, heads included, and the shortest segment here is
+        # 46px under a 114px label.
+        if ay == by:
+            cx, cy = mx, my - LABEL_GAP
+        else:
+            cx, cy = mx + lw / 2 + LABEL_GAP, my
+        out += rect(cx - lw / 2, cy - PLAQUE_H / 2, lw, PLAQUE_H, rx=3)
+        out += text(cx, cy + 4.5, label, size=10, anchor="middle",
                     fill=PALETTE["muted"])
     return out
+
+
+def _lane(top: float, bottom: float) -> float:
+    """Where to run a labelled horizontal line inside a band.
+
+    A label sits LABEL_GAP above its line, so a line down the middle of a
+    band hangs its plaque over the band's top edge. Putting the plaque in
+    the middle instead puts the line LABEL_GAP below it.
+
+    The band needs LABEL_GAP + PLAQUE_H / 2 of clear height above the
+    line for this to fit, which every band it is used on has. A band too
+    short for that has no position at all that clears both edges, and the
+    caller would have to accept a cut.
+    """
+    return (top + bottom) / 2 + LABEL_GAP
 
 
 # The two outside lanes. LANE_L runs in the corridor between the AWS box
@@ -450,14 +473,23 @@ def _arrows(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
     # support route crosses the full width of the diagram, so it needs a
     # clear horizontal lane; this is the only one there is.
     below_aws = (b["aws"].bottom + b["catalogues"].y) / 2
-    # The band between the client box and the AWS box. Two routes turn in
-    # it, and it is only GROUP_GAP tall, so the lane that carries a label
-    # takes the middle of it and the other is offset clear of that.
-    below_client = (b["client"].bottom + b["aws"].y) / 2
-    # Likewise for the route leaving the pipeline band: turning a fixed
-    # 8px below it puts the label's plaque on the band's own bottom edge,
-    # so it reads as the pipeline's caption rather than the arrow's.
-    below_pipeline = (b["pipeline"].bottom + b["connectors"].y) / 2
+    # The catalogue route crosses the AWS box's own bottom padding.
+    below_ec2 = _lane(b["ec2"].bottom, b["aws"].bottom)
+    # The band between the client box and the AWS box, which two routes
+    # turn in. It is GROUP_GAP tall and a labelled line needs LABEL_GAP +
+    # PLAQUE_H / 2 of clear height above it, so the line cannot sit in the
+    # middle: that hangs the plaque over the client box's bottom edge,
+    # which is the cut the source has here. _lane puts the plaque in the
+    # middle instead and the line just under it.
+    below_client = _lane(b["client"].bottom, b["aws"].y)
+    # The support route turns inside the client box's own bottom padding
+    # rather than in the band below it, which has no room for a second
+    # label.
+    below_cards = _lane(b["support"].bottom, b["client"].bottom)
+    # The route leaving the pipeline band. Turning a fixed 8px below it
+    # put the label's plaque on the band's own bottom edge, so it read as
+    # the pipeline's caption rather than the arrow's.
+    below_pipeline = _lane(b["pipeline"].bottom, b["connectors"].y)
     return [
         # 1. Users in through the reverse proxy.
         route([(b["users"].cx, b["users"].bottom),
@@ -483,8 +515,8 @@ def _arrows(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
         #    cannot turn in along the right of the EC2 box: every height
         #    there is either the S3 column, AWS Backup or Monitoring.
         route([(b["support"].cx, b["support"].bottom),
-              (b["support"].cx, b["support"].bottom + 42),
-              (LANE_R, b["support"].bottom + 42),
+              (b["support"].cx, below_cards),
+              (LANE_R, below_cards),
               (LANE_R, below_aws),
               (b["ec2"].cx, below_aws),
               (b["ec2"].cx, b["ec2"].bottom)],
@@ -507,10 +539,12 @@ def _arrows(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
         # 8. Connectors publish catalogue records to ArchivesSpace. It
         #    leaves right of centre, as the source does: left of centre
         #    puts its label on top of the support route coming up into
-        #    the instance.
-        route([(b["connectors"].cx + 124, b["connectors"].bottom),
-              (b["connectors"].cx + 124, b["aspace"].y - 76),
-              (b["aspace"].cx, b["aspace"].y - 76),
+        #    the instance. The offset also has to leave the horizontal
+        #    run longer than the label, or the plaque overhangs the run
+        #    and covers the stub it just came down.
+        route([(b["connectors"].cx + 100, b["connectors"].bottom),
+              (b["connectors"].cx + 100, below_ec2),
+              (b["aspace"].cx, below_ec2),
               (b["aspace"].cx, b["aspace"].y)],
              dashed=True, label="catalogue records"),
         # 9, 10. Backup and monitoring both point at the instance: they
