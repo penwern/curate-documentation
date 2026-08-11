@@ -52,7 +52,14 @@ def text(x, y, s, size=13, weight=None, anchor=None, fill=None, spacing=None,
     return f"<text {' '.join(a)}>{esc(s)}</text>"
 
 
-def rect(x, y, w, h, fill=None, stroke=None, dashed=False, rx=7, sw=1.5):
+def rect(x, y, w, h, fill=None, stroke=None, dashed=False, rx=7, sw=1.5,
+         dash="6 5"):
+    """A rounded rectangle.
+
+    `dash` is the pattern used when `dashed` is set. It is a parameter
+    because the source dashes a group box more coarsely than a card, and
+    the caller is the only thing that knows which it is drawing.
+    """
     a = [f'x="{_n(x)}"', f'y="{_n(y)}"', f'width="{_n(w)}"',
          f'height="{_n(h)}"', f'rx="{rx}"']
     a.append(f'fill="{fill or PALETTE["white"]}"')
@@ -60,7 +67,7 @@ def rect(x, y, w, h, fill=None, stroke=None, dashed=False, rx=7, sw=1.5):
         a.append(f'stroke="{stroke}"')
         a.append(f'stroke-width="{sw}"')
         if dashed:
-            a.append('stroke-dasharray="5 4"')
+            a.append(f'stroke-dasharray="{dash}"')
     return f"<rect {' '.join(a)}/>"
 
 
@@ -72,7 +79,7 @@ def chip(x, y, w, label, fill=None):
     """
     return rect(x, y, w, CHIP_H, fill=fill, stroke=PALETTE["mint"],
                 rx=CHIP_H / 2, sw=1.2) + text(
-        x + w / 2, y + 17, label, size=10, anchor="middle",
+        x + w / 2, y + 16.5, label, size=10, anchor="middle",
         fill=PALETTE["ink"], mono=True
     )
 
@@ -197,9 +204,11 @@ def measure(group: Group, w: float) -> float:
 
 def _card(c: Card, box: Box) -> str:
     """A card: rounded rect, bold title, then chips and/or grey lines."""
+    # A dashed card is dashed more finely than a dashed group box.
     out = [rect(box.x, box.y, box.w, box.h,
                 fill=c.fill or PALETTE["white"],
-                stroke=c.stroke or PALETTE["sage"], dashed=c.dashed)]
+                stroke=c.stroke or PALETTE["sage"], dashed=c.dashed,
+                dash="5 4")]
 
     if c.chips:
         # Title sits near the top; the chip grid fills the body below it.
@@ -243,7 +252,7 @@ def render(group: Group, x: float, y: float, w: float,
     if group.label:
         out.append(rect(x, y, w, h, fill=group.fill or PALETTE["wash"],
                         stroke=group.stroke or PALETTE["sage"],
-                        dashed=group.dashed, rx=10, sw=2))
+                        dashed=group.dashed, rx=10, sw=2, dash="6 5"))
         out.append(text(x + 16, y + 24, group.label, size=10.5, weight="600",
                         spacing="1.1", fill=PALETTE["muted"]))
         # Caption lines under the label. The tuple is flat, so the source's
