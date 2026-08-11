@@ -466,9 +466,15 @@ def _lane(top: float, bottom: float) -> float:
     return (top + bottom) / 2
 
 
-# The two outside lanes.# The two outside lanes. LANE_L runs in the corridor between the AWS box
+# The two outside lanes. LANE_L runs in the corridor between the AWS box
 # and the EC2 box; LANE_R runs outside the AWS box entirely, which is what
 # keeps the support SSH path visibly separate from everything inside it.
+#
+# Unlike a lane from _lane(), these two are hardcoded and nothing checks
+# them, and they carry the tightest clearance in the diagram: LANE_R runs
+# 8.25px of ink from the AWS box's right edge, held parallel for 964px.
+# Moving either, or widening the boxes they run beside, needs that gap
+# re-measured by hand. lanes.py is what measures it.
 LANE_L = 36
 LANE_R = CANVAS_W - 14
 
@@ -488,19 +494,22 @@ def _arrows(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
     # The catalogue route crosses the AWS box's own bottom padding.
     below_ec2 = _lane(b["ec2"].bottom, b["aws"].bottom)
     # The band between the client box and the AWS box, which two routes
-    # turn in. It is GROUP_GAP tall and a labelled line needs LABEL_GAP +
-    # PLAQUE_H / 2 of clear height above it, so the line cannot sit in the
-    # middle: that hangs the plaque over the client box's bottom edge,
-    # which is the cut the source has here. _lane puts the plaque in the
-    # middle instead and the line just under it.
+    # turn in. It is GROUP_GAP tall, and a labelled line needs LABEL_GAP +
+    # PLAQUE_H / 2 of clear height above it, which is more than half the
+    # band. Both lines therefore sit in the middle, with 9.25px of ink
+    # either side, and both plaques hang over the client box's bottom
+    # edge and notch it. That is the trade _lane() documents, and the
+    # source makes it with these same two labels.
     below_client = _lane(b["client"].bottom, b["aws"].y)
     # The support route turns inside the client box's own bottom padding
     # rather than in the band below it, which has no room for a second
     # label.
     below_cards = _lane(b["support"].bottom, b["client"].bottom)
-    # The route leaving the pipeline band. Turning a fixed 8px below it
-    # put the label's plaque on the band's own bottom edge, so it read as
-    # the pipeline's caption rather than the arrow's.
+    # The route leaving the pipeline band, in the gap above the connectors
+    # band. This one used to turn a fixed 8px below the pipeline, which
+    # put the line itself almost on that edge; mid-band gives it 9.25px
+    # either side. Its plaque still notches the pipeline's bottom edge,
+    # which is the same trade the two lines above take.
     below_pipeline = _lane(b["pipeline"].bottom, b["connectors"].y)
     return [
         # 1. Users in through the reverse proxy.
