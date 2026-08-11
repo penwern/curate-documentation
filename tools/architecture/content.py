@@ -72,9 +72,10 @@ class Card:
     cards. A card may carry both: "Preservation lifecycle" has three
     chips and two explanatory lines beneath them.
 
-    `fill` and `stroke` are empty for the default card paint, which a card
-    takes from the group around it. They carry a colour only where the
-    source tints a card away from its siblings.
+    `fill` and `stroke` are empty only where the source paint happens to
+    equal the renderer's own default. Nothing inherits: a card sitting in
+    a teal group does not pick up teal, so any card the source paints
+    differently from that single default states its colour here.
     """
 
     title: str
@@ -241,7 +242,7 @@ CONNECTORS = [
 
 
 # Table 3: every connection crossing the deployment boundary. Columns
-# are (integration, direction, protocol, authentication, data).
+# are (interface, direction, protocol, authentication, data crossing).
 INTEGRATIONS = [
     (
         "User web access",
@@ -422,13 +423,17 @@ ARCH_TREE = Group(
                           fill="#fcfefe", stroke="#9fd0c7",
                           cards=(
                         Card(id="cells", title="Pydio Cells",
+                             stroke="#9fd0c7",
                              lines=("Files, workspaces,",
                                     "permissions, search")),
                         Card(id="curatejs", title="{product} JS",
+                             stroke="#9fd0c7",
                              lines=("User interface", "extensions")),
                         Card(id="jsworkers", title="JS Workers",
+                             stroke="#9fd0c7",
                              lines=("Scheduled and", "background tasks")),
                         Card(id="nats", title="NATS",
+                             stroke="#9fd0c7",
                              lines=("Internal event", "messaging")),
                         # The six tinted cards: supporting services, set
                         # apart from the four white cards above them.
@@ -472,7 +477,7 @@ ARCH_TREE = Group(
                           dashed=True, cols=1, cards=(
                         Card(id="conncard",
                              title="Source and catalogue connectors",
-                             dashed=True,
+                             stroke="#9ca3af", dashed=True,
                              lines=("Pure, CALM and SharePoint bring records "
                                     "in.  ArchivesSpace publishes out.",
                                     "One service per system you use")),
@@ -488,11 +493,11 @@ ARCH_TREE = Group(
                           fill="#f2fbf7", stroke="#a6e8ce",
                           cols=1, cards=(
                         Card(id="working", title="Working storage",
-                             chip_cols=3,
+                             stroke="#a6e8ce", chip_cols=3,
                              chips=("cells", "pydiods1", "personal",
                                     "thumbs", "versions", "binaries")),
                         Card(id="lifecycle", title="Preservation lifecycle",
-                             chip_cols=3,
+                             stroke="#a6e8ce", chip_cols=3,
                              chips=("quarantine", "appraisal", "archive"),
                              lines=("Virus scan and format characterisation",
                                     "on the way through")),
