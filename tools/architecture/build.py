@@ -478,11 +478,13 @@ def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
             f"--print-to-pdf={pdf_path}",
             html_path.as_uri(),
         ]
-        # Remove any previous PDF first. Chrome exiting 0 without writing
-        # would otherwise leave the last run's file in place, and it would
-        # be reported as this run's output and checked as if it were.
-        pdf_path.unlink(missing_ok=True)
         try:
+            # Remove any previous PDF first. Chrome exiting 0 without
+            # writing would otherwise leave the last run's file in place,
+            # and it would be reported as this run's output and checked as
+            # if it were. Inside the try because unlink raises too: a
+            # directory at the path, or an unwritable out/.
+            pdf_path.unlink(missing_ok=True)
             r = subprocess.run(
                 cmd, capture_output=True, text=True, timeout=PDF_TIMEOUT
             )
@@ -495,10 +497,13 @@ def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
             )
             return None
         except OSError as exc:
-            # The process could not be started at all: not executable,
-            # not a binary, gone between the check and the call.
-            # PermissionError is an OSError, so one clause covers both.
-            print(f"  could not run {chrome}, so no PDF: {exc}")
+            # Either the old PDF could not be cleared, or the process
+            # could not be started at all: not executable, not a binary,
+            # gone between the check and the call. PermissionError is an
+            # OSError, so one clause covers all of them. The message
+            # names no path of its own because every one of these
+            # exceptions carries the offending filename already.
+            print(f"  PDF step could not run, so no PDF: {exc}")
             return None
 
     if r.returncode != 0 or not pdf_path.is_file():
