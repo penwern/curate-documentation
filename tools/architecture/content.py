@@ -100,6 +100,12 @@ class Group:
     `lines` are caption lines drawn beneath the group label and above the
     group's contents, belonging to the group rather than to any card. The
     source emphasises the last of them, which is the single-tenancy claim.
+
+    `fill` and `stroke` work as they do on `Card`: empty means the
+    renderer default. Every labelled group states both, because the source
+    gives each one its own paint and that tinting is information, not
+    decoration. Nothing inherits, here or on `Card`: a colour is either
+    written down or it is the renderer's default.
     """
 
     label: str
@@ -107,6 +113,8 @@ class Group:
     cards: tuple[Card, ...] = ()
     children: tuple["Group", ...] = ()
     cols: int = 4
+    fill: str = ""
+    stroke: str = ""
     dashed: bool = False
     layout: str = "stack"
     weight: float = 1.0
@@ -383,7 +391,8 @@ ARCH_TREE = Group(
     layout="stack",
     children=(
         Group(
-            id="client", label="CLIENT ENVIRONMENT", dashed=True, cols=4,
+            id="client", label="CLIENT ENVIRONMENT", cols=4,
+            fill="#f6faf9", stroke="#83aba3", dashed=True,
             cards=(
                 Card(id="idp", title="Identity provider",
                      lines=("Azure AD or equivalent",
@@ -400,14 +409,17 @@ ARCH_TREE = Group(
         ),
         Group(
             id="aws", label="AWS  ·  EU-WEST-2 (LONDON) BY DEFAULT",
-            layout="row",
+            layout="row", fill="#fbfdfd", stroke="#83aba3",
             children=(
-                Group(id="ec2", label="EC2 INSTANCE", weight=2.0, children=(
+                Group(id="ec2", label="EC2 INSTANCE", weight=2.0,
+                      fill="#ffffff", stroke="#6b7280", children=(
                     Group(id="edge", label="", cols=1, cards=(
-                        Card(id="nginx", title="Nginx", fill="#f5f7f7",
+                        Card(id="nginx", title="Nginx",
+                             fill="#f5f7f7", stroke="#6b7280",
                              lines=("TLS termination and request routing",)),
                     )),
                     Group(id="platform", label="{product} PLATFORM", cols=4,
+                          fill="#fcfefe", stroke="#9fd0c7",
                           cards=(
                         Card(id="cells", title="Pydio Cells",
                              lines=("Files, workspaces,",
@@ -442,6 +454,7 @@ ARCH_TREE = Group(
                              lines=("File format and", "storage statistics")),
                     )),
                     Group(id="pipeline", label="PRESERVATION PIPELINE", cols=4,
+                          fill="#f7fcfb", stroke="#83aba3",
                           cards=(
                         Card(id="presapi", title="Preservation API",
                              lines=("Configuration", "service")),
@@ -455,6 +468,7 @@ ARCH_TREE = Group(
                     Group(id="connectors",
                           label="OPTIONAL CONNECTORS  ·  INSTALLED ONLY FOR "
                                 "SYSTEMS YOU USE",
+                          fill="#fafafa", stroke="#9ca3af",
                           dashed=True, cols=1, cards=(
                         Card(id="conncard",
                              title="Source and catalogue connectors",
@@ -470,6 +484,7 @@ ARCH_TREE = Group(
                                  "access blocked",
                                  "Every bucket is dedicated to you, "
                                  "never shared"),
+                          fill="#f2fbf7", stroke="#a6e8ce",
                           cols=1, cards=(
                         Card(id="working", title="Working storage",
                              chip_cols=3,
@@ -501,7 +516,7 @@ ARCH_TREE = Group(
         ),
         Group(
             id="catalogues", label="YOUR CATALOGUE SYSTEMS  ·  OPTIONAL",
-            dashed=True, cols=1,
+            fill="#f6faf9", stroke="#83aba3", dashed=True, cols=1,
             cards=(
                 Card(id="aspace", title="ArchivesSpace", dashed=True,
                      lines=("Archival objects linked to each preserved AIP",)),
