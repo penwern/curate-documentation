@@ -71,6 +71,10 @@ class Card:
     small pill labels used for S3 bucket names inside the two storage
     cards. A card may carry both: "Preservation lifecycle" has three
     chips and two explanatory lines beneath them.
+
+    `fill` and `stroke` are empty for the default card paint, which a card
+    takes from the group around it. They carry a colour only where the
+    source tints a card away from its siblings.
     """
 
     title: str
@@ -78,6 +82,7 @@ class Card:
     chips: tuple[str, ...] = ()
     chip_cols: int = 3
     fill: str = ""
+    stroke: str = ""
     dashed: bool = False
     id: str = ""
 
@@ -91,9 +96,14 @@ class Group:
 
     layout: "stack" places children top to bottom, "row" places them side
     by side sharing the width in proportion to their `weight`.
+
+    `lines` are caption lines drawn beneath the group label and above the
+    group's contents, belonging to the group rather than to any card. The
+    source emphasises the last of them, which is the single-tenancy claim.
     """
 
     label: str
+    lines: tuple[str, ...] = ()
     cards: tuple[Card, ...] = ()
     children: tuple["Group", ...] = ()
     cols: int = 4
@@ -104,7 +114,7 @@ class Group:
 
 
 # Table 1: what a deployment contains. Columns are
-# (component, purpose, technology, data held).
+# (component, role, technology, data held).
 COMPONENTS = [
     (
         "Nginx",
@@ -394,7 +404,7 @@ ARCH_TREE = Group(
             children=(
                 Group(id="ec2", label="EC2 INSTANCE", weight=2.0, children=(
                     Group(id="edge", label="", cols=1, cards=(
-                        Card(id="nginx", title="Nginx",
+                        Card(id="nginx", title="Nginx", fill="#f5f7f7",
                              lines=("TLS termination and request routing",)),
                     )),
                     Group(id="platform", label="{product} PLATFORM", cols=4,
@@ -408,19 +418,27 @@ ARCH_TREE = Group(
                              lines=("Scheduled and", "background tasks")),
                         Card(id="nats", title="NATS",
                              lines=("Internal event", "messaging")),
+                        # The six tinted cards: supporting services, set
+                        # apart from the four white cards above them.
                         Card(id="mysql", title="MySQL",
+                             fill="#f2fbf7", stroke="#a6e8ce",
                              lines=("Core platform", "metadata")),
                         Card(id="mongodb", title="MongoDB",
+                             fill="#f2fbf7", stroke="#a6e8ce",
                              lines=("Document store", "and search index")),
                         Card(id="clamav", title="ClamAV",
+                             fill="#f2fbf7", stroke="#a6e8ce",
                              lines=("Virus scanning", "on ingest")),
                         Card(id="siegfried", title="Siegfried",
+                             fill="#f2fbf7", stroke="#a6e8ce",
                              lines=("Format characterisation",
                                     "against PRONOM")),
                         Card(id="email", title="Email archives",
+                             fill="#f2fbf7", stroke="#a6e8ce",
                              lines=("Unpacks uploaded",
                                     "MBOX and PST files")),
                         Card(id="reporting", title="Reporting dashboards",
+                             fill="#f2fbf7", stroke="#a6e8ce",
                              lines=("File format and", "storage statistics")),
                     )),
                     Group(id="pipeline", label="PRESERVATION PIPELINE", cols=4,
@@ -448,6 +466,10 @@ ARCH_TREE = Group(
                 # Right column stacks three siblings, not one S3 box.
                 Group(id="right", label="", weight=1.0, children=(
                     Group(id="s3", label="AMAZON S3  ·  OBJECT STORAGE",
+                          lines=("Encrypted at rest (AES256) · public "
+                                 "access blocked",
+                                 "Every bucket is dedicated to you, "
+                                 "never shared"),
                           cols=1, cards=(
                         Card(id="working", title="Working storage",
                              chip_cols=3,
