@@ -27,6 +27,9 @@ CARD_H_CHIPS = 142
 CARD_GAP = 20
 CHIP_H = 26
 CHIP_GAP = 10
+CHIP_INSET = 16
+CHIP_TOP = 48
+PLAQUE_H = 16
 PAD = 24
 LABEL_H = 42
 GROUP_LINE_H = 15
@@ -223,6 +226,20 @@ def measure(group: Group, w: float) -> float:
     return head + stacked + GROUP_GAP * (len(group.children) - 1) + pad
 
 
+def _chip_box(box: Box, c: Card, i: int) -> Box:
+    """Where chip `i` of a card lands.
+
+    The single owner of chip geometry. _card() draws the chips from this
+    and _chip_chain() aims its arrows at them, so the promotion arrows
+    cannot drift off the gaps they are meant to sit in.
+    """
+    cols = c.chip_cols
+    w = (box.w - 2 * CHIP_INSET - CHIP_GAP * (cols - 1)) / cols
+    col, row = i % cols, i // cols
+    return Box(box.x + CHIP_INSET + col * (w + CHIP_GAP),
+               box.y + CHIP_TOP + row * (CHIP_H + CHIP_GAP), w, CHIP_H)
+
+
 def _card(c: Card, box: Box) -> str:
     """A card: rounded rect, bold title, then chips and/or grey lines."""
     # A dashed card is dashed more finely than a dashed group box.
@@ -235,16 +252,12 @@ def _card(c: Card, box: Box) -> str:
         # Title sits near the top; the chip grid fills the body below it.
         out.append(text(box.cx, box.y + 30, c.title, size=13, weight="600",
                         anchor="middle"))
-        cols = c.chip_cols
-        cw = (box.w - 2 * 16 - CHIP_GAP * (cols - 1)) / cols
         for i, name in enumerate(c.chips):
-            col, row = i % cols, i // cols
-            out.append(chip(box.x + 16 + col * (cw + CHIP_GAP),
-                            box.y + 48 + row * (CHIP_H + CHIP_GAP),
-                            cw, name,
+            cb = _chip_box(box, c, i)
+            out.append(chip(cb.x, cb.y, cb.w, name,
                             fill=c.chip_fill or PALETTE["white"]))
-        rows = (len(c.chips) + cols - 1) // cols
-        ly = box.y + 48 + rows * (CHIP_H + CHIP_GAP) + 10
+        # Lines sit under the last chip row, one gap and a little clear.
+        ly = _chip_box(box, c, len(c.chips) - 1).bottom + CHIP_GAP + 10
         for i, line in enumerate(c.lines):
             out.append(text(box.cx, ly + i * 16, line, size=10,
                             anchor="middle", fill=PALETTE["muted"]))
@@ -328,42 +341,64 @@ def render(group: Group, x: float, y: float, w: float,
     return "".join(out), h
 
 
-def markers(suffix: str) -> str:
-    """The two arrow heads, as a <defs> block of id-suffixed markers.
+@dataclass(frozen=True)
+class Pen:
+    """How one diagram draws its arrows, and which marker ids it owns.
 
-    An id is document-wide and both diagrams land in one HTML page, so a
-    second <defs> reusing "arrow" is invalid markup and its arrows may
-    resolve against the first diagram's marker instead of their own. Each
-    diagram claims a suffix and hands the same one to every connector it
-    draws. There is no default: a third diagram has to choose.
+    The three travel together because they cannot be chosen apart. An id
+    is document-wide and both diagrams land in one HTML page, so a second
+    <defs> reusing "arrow" is invalid markup and its arrows may resolve
+    against the first diagram's heads; and a marker is a filled shape, so
+    its fill has to be the colour of the stroke it terminates or the head
+    comes out a different colour from its own line.
+
+    `reverse` emits the second, backward-pointing head. A diagram with no
+    two-way arrow leaves it off rather than shipping an unreferenced def.
     """
-    return (
-        '<defs>'
-        f'<marker id="arrow{suffix}" viewBox="0 0 10 10" refX="9" refY="5" '
-        'markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">'
-        f'<path d="M 0 0 L 10 5 L 0 10 z" fill="{PALETTE["muted"]}"/></marker>'
-        f'<marker id="arrowrev{suffix}" viewBox="0 0 10 10" refX="1" refY="5" '
-        'markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">'
-        f'<path d="M 10 0 L 0 5 L 10 10 z" fill="{PALETTE["muted"]}"/></marker>'
-        '</defs>'
-    )
+
+    suffix: str
+    stroke: str
+    width: float
+    reverse: bool = False
+
+    def defs(self) -> str:
+        out = (
+            '<defs>'
+            f'<marker id="arrow{self.suffix}" viewBox="0 0 10 10" refX="9" '
+            'refY="5" markerWidth="6.5" markerHeight="6.5" '
+            'orient="auto-start-reverse">'
+            f'<path d="M 0 0 L 10 5 L 0 10 z" fill="{self.stroke}"/></marker>'
+        )
+        if self.reverse:
+            out += (
+                f'<marker id="arrowrev{self.suffix}" viewBox="0 0 10 10" '
+                'refX="1" refY="5" markerWidth="6.5" markerHeight="6.5" '
+                'orient="auto-start-reverse">'
+                f'<path d="M 10 0 L 0 5 L 10 10 z" fill="{self.stroke}"/>'
+                '</marker>'
+            )
+        return out + '</defs>'
 
 
-def connector(pts, *, suffix, dashed=False, both=False, label=None):
+def connector(pts, pen: Pen, dashed=False, both=False, label=None):
     """An orthogonal arrow through hand-chosen waypoints.
 
     `pts` is a list of (x, y). Endpoints come from the box registry; the
     intermediate points are the hand routing.
 
-    `suffix` names the marker pair to reference and must be the one the
-    enclosing diagram passed to markers(). It is keyword-only and has no
-    default, so an arrow cannot quietly point at another diagram's heads.
+    `pen` is the enclosing diagram's, and has no default, so an arrow
+    cannot quietly point at another diagram's heads or draw itself in
+    another diagram's colour.
     """
+    assert not both or pen.reverse, (
+        "a two-way arrow needs the reverse head, which this pen does not emit"
+    )
     d = "M " + " L ".join(f"{x:.1f} {y:.1f}" for x, y in pts)
-    a = [f'd="{d}"', 'fill="none"', f'stroke="{PALETTE["muted"]}"',
-         'stroke-width="1.5"', f'marker-end="url(#arrow{suffix})"']
+    a = [f'd="{d}"', 'fill="none"', f'stroke="{pen.stroke}"',
+         f'stroke-width="{pen.width}"',
+         f'marker-end="url(#arrow{pen.suffix})"']
     if both:
-        a.append(f'marker-start="url(#arrowrev{suffix})"')
+        a.append(f'marker-start="url(#arrowrev{pen.suffix})"')
     if dashed:
         a.append('stroke-dasharray="5 4"')
     out = f"<path {' '.join(a)}/>"
@@ -376,14 +411,22 @@ def connector(pts, *, suffix, dashed=False, both=False, label=None):
         i = 1 if len(pts) > 2 else 0
         (ax, ay), (bx, by) = pts[i], pts[i + 1]
         mx, my = (ax + bx) / 2, (ay + by) / 2
+        lw = 5.35 * len(label) + 12
         # A plaque behind the label. Every label is centred on its own
         # route, so without one the arrow strikes through the text. The
         # width is measured from the glyphs, since there is no text
         # metric available: 0.535em per character at this size, plus 6
         # either side.
-        lw = 5.35 * len(label) + 12
-        out += rect(mx - lw / 2, my - 17.5, lw, 16, rx=3)
-        out += text(mx, my - 6, label, size=10, anchor="middle",
+        #
+        # It is centred on the segment, not offset up from it. An offset
+        # is only perpendicular for one orientation: on a vertical segment
+        # a fixed -17.5 in y runs along the line instead of across it and
+        # overshoots the end of the segment into whatever box edge the
+        # route just left, erasing a length of it. Centred, the plaque
+        # cannot reach past the segment's own ends by more than half its
+        # height, whichever way the segment runs.
+        out += rect(mx - lw / 2, my - PLAQUE_H / 2, lw, PLAQUE_H, rx=3)
+        out += text(mx, my + 4.5, label, size=10, anchor="middle",
                     fill=PALETTE["muted"])
     return out
 
@@ -395,26 +438,34 @@ LANE_L = 36
 LANE_R = CANVAS_W - 14
 
 
-def _arrows(b: dict[str, Box], tree: Group, suffix: str) -> list[str]:
+def _arrows(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
     """The twelve routes. Endpoints come from the registry, waypoints are
     hand-chosen: the left and right lanes keep long routes outside the
     boxes, and the S3 corridor is left clear."""
     def route(pts, **kw):
-        """One route, drawn with this diagram's own arrow heads."""
-        return connector(pts, suffix=suffix, **kw)
+        """One route, drawn with this diagram's own pen."""
+        return connector(pts, pen, **kw)
 
     # The band between the AWS box and the catalogues box below it. The
     # support route crosses the full width of the diagram, so it needs a
     # clear horizontal lane; this is the only one there is.
     below_aws = (b["aws"].bottom + b["catalogues"].y) / 2
+    # The band between the client box and the AWS box. Two routes turn in
+    # it, and it is only GROUP_GAP tall, so the lane that carries a label
+    # takes the middle of it and the other is offset clear of that.
+    below_client = (b["client"].bottom + b["aws"].y) / 2
+    # Likewise for the route leaving the pipeline band: turning a fixed
+    # 8px below it puts the label's plaque on the band's own bottom edge,
+    # so it reads as the pipeline's caption rather than the arrow's.
+    below_pipeline = (b["pipeline"].bottom + b["connectors"].y) / 2
     return [
         # 1. Users in through the reverse proxy.
         route([(b["users"].cx, b["users"].bottom),
               (b["users"].cx, b["nginx"].y)], label="HTTPS  ·  TLS"),
         # 2. Optional single sign-on, down the left lane into the platform.
         route([(b["idp"].cx, b["idp"].bottom),
-              (b["idp"].cx, b["idp"].bottom + 36),
-              (LANE_L, b["idp"].bottom + 36),
+              (b["idp"].cx, below_client),
+              (LANE_L, below_client),
               (LANE_L, b["platform"].cy),
               (b["platform"].x, b["platform"].cy)],
              dashed=True, label="OIDC single sign-on"),
@@ -422,8 +473,8 @@ def _arrows(b: dict[str, Box], tree: Group, suffix: str) -> list[str]:
         #    LANE_R - 22 is the corridor between the S3 column and the AWS
         #    boundary, so this stays inside AWS while the SSH route does not.
         route([(b["sources"].cx, b["sources"].bottom),
-              (b["sources"].cx, b["sources"].bottom + 36),
-              (LANE_R - 22, b["sources"].bottom + 36),
+              (b["sources"].cx, below_client),
+              (LANE_R - 22, below_client),
               (LANE_R - 22, b["connectors"].cy),
               (b["connectors"].right, b["connectors"].cy)],
              dashed=True, label="HTTPS  ·  per-system credentials"),
@@ -448,8 +499,8 @@ def _arrows(b: dict[str, Box], tree: Group, suffix: str) -> list[str]:
              both=True, label="trigger and configure"),
         # 7. Access copies out to AtoM, down the left lane.
         route([(b["pipeline"].x + 232, b["pipeline"].bottom),
-              (b["pipeline"].x + 232, b["pipeline"].bottom + 8),
-              (LANE_L, b["pipeline"].bottom + 8),
+              (b["pipeline"].x + 232, below_pipeline),
+              (LANE_L, below_pipeline),
               (LANE_L, b["atom"].cy),
               (b["atom"].x, b["atom"].cy)],
              dashed=True, label="DIP deposit  ·  SWORD 2.0"),
@@ -472,7 +523,7 @@ def _arrows(b: dict[str, Box], tree: Group, suffix: str) -> list[str]:
               (b["ec2"].right, b["monitor"].cy)]),
         # 11, 12. The quarantine to appraisal to archive promotion chain,
         #         drawn between the chips of the lifecycle card.
-        *_chip_chain(b["lifecycle"], _card_by_id(tree, "lifecycle"), suffix),
+        *_chip_chain(b["lifecycle"], _card_by_id(tree, "lifecycle"), pen),
     ]
 
 
@@ -492,7 +543,7 @@ def _card_by_id(group: Group, card_id: str) -> Card | None:
     return None
 
 
-def _chip_chain(box: Box, card: Card | None, suffix: str) -> list[str]:
+def _chip_chain(box: Box, card: Card | None, pen: Pen) -> list[str]:
     """Short arrows between consecutive chips in a card's single chip row.
 
     Both counts are read off the card rather than passed in beside it. A
@@ -506,15 +557,10 @@ def _chip_chain(box: Box, card: Card | None, suffix: str) -> list[str]:
         f"{card.title} has {n} chips across {cols} columns; the chain is "
         "drawn along one row, so it needs two or more chips and no row break"
     )
-    inset, gap = 16, CHIP_GAP
-    # The width _card() gives each chip, which comes from the column count
-    # and not the chip count, so a part-filled row still lines up.
-    cw = (box.w - 2 * inset - gap * (cols - 1)) / cols
-    y = box.y + 48 + CHIP_H / 2
     out = []
     for i in range(n - 1):
-        x = box.x + inset + (i + 1) * cw + i * gap
-        out.append(connector([(x, y), (x + gap, y)], suffix=suffix))
+        a, b = _chip_box(box, card, i), _chip_box(box, card, i + 1)
+        out.append(connector([(a.right, a.cy), (b.x, b.cy)], pen))
     return out
 
 
@@ -540,21 +586,23 @@ def _resolved_tree(product: str) -> Group:
 
 def architecture_svg(product: str) -> str:
     """The deployment architecture. Canvas height is computed, not fixed."""
-    suffix = ""            # this diagram owns the unsuffixed marker ids
+    # This diagram owns the unsuffixed marker ids, and its two-way arrows
+    # need the reverse head.
+    pen = Pen(suffix="", stroke=PALETTE["muted"], width=1.5, reverse=True)
     inner_w = CANVAS_W - 48
     boxes: dict[str, Box] = {}
     tree = _resolved_tree(product)
     body, h = render(tree, 24, 24, inner_w, boxes)
     height = h + 48
 
-    arrows = _arrows(boxes, tree, suffix)
+    arrows = _arrows(boxes, tree, pen)
 
     return (
         f'<svg viewBox="0 0 {CANVAS_W} {height:.0f}" '
         'xmlns="http://www.w3.org/2000/svg" role="img" '
         f'aria-label="{esc(product)} architecture: components, dependencies '
         'and integration points">'
-        f'{markers(suffix)}'
+        f'{pen.defs()}'
         f'{rect(0, 0, CANVAS_W, height, rx=0)}'
         f'{body}{"".join(arrows)}'
         "</svg>"
@@ -571,41 +619,44 @@ def workflow_svg(product: str) -> str:
     The step count in the label is derived from the content, not written
     down: the source document says "six steps" over a seven-step diagram.
     """
-    suffix = "2"           # the architecture diagram owns the plain ids
+    # Sage arrows at 1.6, and no reverse head: every arrow here runs one
+    # way. The architecture diagram owns the unsuffixed marker ids.
+    pen = Pen(suffix="2", stroke=PALETTE["sage"], width=1.6)
     n = len(WORKFLOW)
     label = f"Preservation workflow, {_NUMBERS[n] if n < len(_NUMBERS) else n} steps"
 
-    # `top` leaves room above the cards for the number discs, which
-    # straddle the top edge and stand 31px proud of it.
-    pad, gap, top, ch = 40, 16, 60, 110
+    # The source's own vertical rhythm on a 262 canvas: discs centred at
+    # 70, cards 86 to 190, note baseline at 228.
+    pad, gap, top, ch = 40, 16, 86, 104
     cw = (CANVAS_W - 2 * pad - gap * (n - 1)) / n
 
     out = []
-    for i, (title, l1, l2) in enumerate(WORKFLOW):
+    for i, step in enumerate(WORKFLOW):
         x = pad + i * (cw + gap)
-        optional = l2 == "Optional"
-        # A dashed card is dashed more finely than a dashed group box.
-        out.append(rect(x, top, cw, ch, stroke=PALETTE["sage"], dashed=optional,
-                        dash="5 4"))
+        # A dashed card is dashed more finely than a dashed group box, and
+        # takes the neutral outline rather than sage: it is the same
+        # "optional" paint the connectors group carries.
+        out.append(rect(x, top, cw, ch, dashed=step.optional, dash="5 4",
+                        stroke=PALETTE["outline"] if step.optional
+                        else PALETTE["sage"]))
         # The step number: a deep teal disc straddling the card's top
-        # edge, carrying the numeral in white. A numeral set in sage on
-        # white, which is what this was, is about 2.2:1 against roughly
-        # 12:1 here.
+        # edge, carrying the numeral in white.
         out.append(circle(x + 26, top - 16, 15, PALETTE["teal_deep"]))
         out.append(text(x + 26, top - 11, str(i + 1), size=13, weight="600",
                         anchor="middle", fill=PALETTE["white"]))
-        out.append(text(x + cw / 2, top + 50, title, size=13, weight="600",
-                        anchor="middle"))
-        out.append(text(x + cw / 2, top + 70, l1, size=10.5, anchor="middle",
-                        fill=PALETTE["muted"]))
-        out.append(text(x + cw / 2, top + 83, l2, size=10.5, anchor="middle",
-                        fill=PALETTE["muted"]))
+        out.append(text(x + cw / 2, top + 36, step.title, size=15,
+                        weight="600", anchor="middle"))
+        out.append(text(x + cw / 2, top + 60, step.line1, size=12.5,
+                        anchor="middle", fill=PALETTE["muted"]))
+        out.append(text(x + cw / 2, top + 76, step.line2, size=12.5,
+                        anchor="middle", fill=PALETTE["muted"]))
         if i:
             # The arrow sits in the gap between two cards, clear of both.
+            # Solid even into the optional step: the dashed card carries
+            # that, and the source draws all six the same.
             xs = x - 3
             out.append(connector([(xs - gap + 6, top + ch / 2),
-                                  (xs, top + ch / 2)],
-                                 suffix=suffix, dashed=optional))
+                                  (xs, top + ch / 2)], pen))
 
     out.append(text(pad, 228, WORKFLOW_NOTE.replace("{product}", product),
                     size=12.5, fill=PALETTE["muted"]))
@@ -613,6 +664,6 @@ def workflow_svg(product: str) -> str:
     return (
         f'<svg viewBox="0 0 {CANVAS_W} 262" xmlns="http://www.w3.org/2000/svg" '
         f'role="img" aria-label="{esc(label)}">'
-        f'{markers(suffix)}{rect(0, 0, CANVAS_W, 262, rx=0)}'
+        f'{pen.defs()}{rect(0, 0, CANVAS_W, 262, rx=0)}'
         f'{"".join(out)}</svg>'
     )

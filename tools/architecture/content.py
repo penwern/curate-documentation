@@ -17,6 +17,9 @@ PALETTE = {
     "wash": "#f6faf9",
     "white": "#ffffff",
     "rule": "#e5e7eb",
+    # The neutral outline the source gives anything optional: the
+    # connectors group and card, and the optional workflow step.
+    "outline": "#9ca3af",
 }
 
 FONT_STACK = (
@@ -550,15 +553,31 @@ ARCH_TREE = Group(
 )
 
 
-# The preservation pipeline diagram, as (title, line 1, line 2).
+@dataclass(frozen=True)
+class Step:
+    """One step of the preservation pipeline diagram.
+
+    `optional` is a field rather than something read back out of the copy.
+    The step that carries it happens to say "Optional" on its second line,
+    but that line is display text: rewording it must not quietly turn a
+    dashed step solid.
+    """
+
+    title: str
+    line1: str
+    line2: str
+    optional: bool = False
+
+
+# The preservation pipeline diagram, one entry per step.
 WORKFLOW = [
-    ("Trigger", "A user selects content", "and chooses Preserve"),
-    ("Retrieve", "Package copied to the", "processing area"),
-    ("Pre-processing", "Transfer assembled,", "your metadata attached"),
-    ("Penwern A3M", "Characterisation,", "normalisation, PREMIS"),
-    ("Post-processing", "AIP assembled, and", "compressed if configured"),
-    ("Store", "AIP written to the", "Archive workspace"),
-    ("Access copy", "DIP deposited to AtoM", "Optional"),
+    Step("Trigger", "A user selects content", "and chooses Preserve"),
+    Step("Retrieve", "Package copied to the", "processing area"),
+    Step("Pre-processing", "Transfer assembled,", "your metadata attached"),
+    Step("Penwern A3M", "Characterisation,", "normalisation, PREMIS"),
+    Step("Post-processing", "AIP assembled, and", "compressed if configured"),
+    Step("Store", "AIP written to the", "Archive workspace"),
+    Step("Access copy", "DIP deposited to AtoM", "Optional", optional=True),
 ]
 
 WORKFLOW_NOTE = (
