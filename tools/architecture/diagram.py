@@ -34,6 +34,12 @@ PLAQUE_H = 16
 # centre. It has to exceed PLAQUE_H / 2 or the plaque touches the
 # arrow; one more than that is the source's own 9.
 LABEL_GAP = 9
+# Half the painted width of an arrow and of a group outline. A lane
+# needs LANE_CLEAR of ink between the two or they fuse when the
+# 1400-unit canvas is drawn at page width.
+ARROW_INK = 0.75
+GROUP_INK = 1.0
+LANE_CLEAR = 6.0
 PAD = 24
 LABEL_H = 42
 GROUP_LINE_H = 15
@@ -442,19 +448,25 @@ def connector(pts, pen: Pen, dashed=False, both=False, label=None):
 def _lane(top: float, bottom: float) -> float:
     """Where to run a labelled horizontal line inside a band.
 
-    A label sits LABEL_GAP above its line, so a line down the middle of a
-    band hangs its plaque over the band's top edge. Putting the plaque in
-    the middle instead puts the line LABEL_GAP below it.
-
-    The band needs LABEL_GAP + PLAQUE_H / 2 of clear height above the
-    line for this to fit, which every band it is used on has. A band too
-    short for that has no position at all that clears both edges, and the
-    caller would have to accept a cut.
+    Down the middle, which is the only place it can go. The label plaque
+    is offset LABEL_GAP above the line and a band is never tall enough to
+    hold both that and a centred line, so something has to give: either
+    the line sits hard against one border, or the plaque hangs over the
+    other. The line wins. A plaque overlapping a border leaves a notch in
+    an outline, which is cosmetic; a line running a fraction of a pixel
+    from a border fuses with it at print scale and stops reading as a
+    connection at all. The source makes the same trade.
     """
-    return (top + bottom) / 2 + LABEL_GAP
+    clear = (bottom - top) / 2 - ARROW_INK - GROUP_INK
+    assert clear >= LANE_CLEAR, (
+        f"a band {bottom - top:g}px tall leaves a lane down its middle "
+        f"{clear:.2f}px of ink from the borders either side, under the "
+        f"{LANE_CLEAR}px a line needs to stay legible as its own line"
+    )
+    return (top + bottom) / 2
 
 
-# The two outside lanes. LANE_L runs in the corridor between the AWS box
+# The two outside lanes.# The two outside lanes. LANE_L runs in the corridor between the AWS box
 # and the EC2 box; LANE_R runs outside the AWS box entirely, which is what
 # keeps the support SSH path visibly separate from everything inside it.
 LANE_L = 36
