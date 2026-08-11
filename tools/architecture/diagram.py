@@ -81,6 +81,17 @@ def rect(x, y, w, h, fill=None, stroke=None, dashed=False, rx=7, sw=1.5,
     return f"<rect {' '.join(a)}/>"
 
 
+def circle(cx, cy, r, fill):
+    """A filled disc, carrying a step number in the workflow diagram.
+
+    `fill` is required. There is no sensible default: an unfilled or white
+    disc would be invisible, and the one caller needs a dark ground for
+    white text.
+    """
+    return (f'<circle cx="{_n(cx)}" cy="{_n(cy)}" r="{_n(r)}" '
+            f'fill="{fill}"/>')
+
+
 def chip(x, y, w, label, fill=None):
     """A pill holding one S3 bucket name inside a storage card.
 
@@ -317,29 +328,42 @@ def render(group: Group, x: float, y: float, w: float,
     return "".join(out), h
 
 
-MARKERS = (
-    '<defs>'
-    '<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" '
-    'markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">'
-    f'<path d="M 0 0 L 10 5 L 0 10 z" fill="{PALETTE["muted"]}"/></marker>'
-    '<marker id="arrowrev" viewBox="0 0 10 10" refX="1" refY="5" '
-    'markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">'
-    f'<path d="M 10 0 L 0 5 L 10 10 z" fill="{PALETTE["muted"]}"/></marker>'
-    '</defs>'
-)
+def markers(suffix: str) -> str:
+    """The two arrow heads, as a <defs> block of id-suffixed markers.
+
+    An id is document-wide and both diagrams land in one HTML page, so a
+    second <defs> reusing "arrow" is invalid markup and its arrows may
+    resolve against the first diagram's marker instead of their own. Each
+    diagram claims a suffix and hands the same one to every connector it
+    draws. There is no default: a third diagram has to choose.
+    """
+    return (
+        '<defs>'
+        f'<marker id="arrow{suffix}" viewBox="0 0 10 10" refX="9" refY="5" '
+        'markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">'
+        f'<path d="M 0 0 L 10 5 L 0 10 z" fill="{PALETTE["muted"]}"/></marker>'
+        f'<marker id="arrowrev{suffix}" viewBox="0 0 10 10" refX="1" refY="5" '
+        'markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">'
+        f'<path d="M 10 0 L 0 5 L 10 10 z" fill="{PALETTE["muted"]}"/></marker>'
+        '</defs>'
+    )
 
 
-def connector(pts, dashed=False, both=False, label=None):
+def connector(pts, *, suffix, dashed=False, both=False, label=None):
     """An orthogonal arrow through hand-chosen waypoints.
 
     `pts` is a list of (x, y). Endpoints come from the box registry; the
     intermediate points are the hand routing.
+
+    `suffix` names the marker pair to reference and must be the one the
+    enclosing diagram passed to markers(). It is keyword-only and has no
+    default, so an arrow cannot quietly point at another diagram's heads.
     """
     d = "M " + " L ".join(f"{x:.1f} {y:.1f}" for x, y in pts)
     a = [f'd="{d}"', 'fill="none"', f'stroke="{PALETTE["muted"]}"',
-         'stroke-width="1.5"', 'marker-end="url(#arrow)"']
+         'stroke-width="1.5"', f'marker-end="url(#arrow{suffix})"']
     if both:
-        a.append('marker-start="url(#arrowrev)"')
+        a.append(f'marker-start="url(#arrowrev{suffix})"')
     if dashed:
         a.append('stroke-dasharray="5 4"')
     out = f"<path {' '.join(a)}/>"
@@ -371,92 +395,126 @@ LANE_L = 36
 LANE_R = CANVAS_W - 14
 
 
-def _arrows(b: dict[str, Box]) -> list[str]:
+def _arrows(b: dict[str, Box], tree: Group, suffix: str) -> list[str]:
     """The twelve routes. Endpoints come from the registry, waypoints are
     hand-chosen: the left and right lanes keep long routes outside the
     boxes, and the S3 corridor is left clear."""
+    def route(pts, **kw):
+        """One route, drawn with this diagram's own arrow heads."""
+        return connector(pts, suffix=suffix, **kw)
+
     # The band between the AWS box and the catalogues box below it. The
     # support route crosses the full width of the diagram, so it needs a
     # clear horizontal lane; this is the only one there is.
     below_aws = (b["aws"].bottom + b["catalogues"].y) / 2
     return [
         # 1. Users in through the reverse proxy.
-        connector([(b["users"].cx, b["users"].bottom),
-                   (b["users"].cx, b["nginx"].y)], label="HTTPS  ·  TLS"),
+        route([(b["users"].cx, b["users"].bottom),
+              (b["users"].cx, b["nginx"].y)], label="HTTPS  ·  TLS"),
         # 2. Optional single sign-on, down the left lane into the platform.
-        connector([(b["idp"].cx, b["idp"].bottom),
-                   (b["idp"].cx, b["idp"].bottom + 36),
-                   (LANE_L, b["idp"].bottom + 36),
-                   (LANE_L, b["platform"].cy),
-                   (b["platform"].x, b["platform"].cy)],
-                  dashed=True, label="OIDC single sign-on"),
+        route([(b["idp"].cx, b["idp"].bottom),
+              (b["idp"].cx, b["idp"].bottom + 36),
+              (LANE_L, b["idp"].bottom + 36),
+              (LANE_L, b["platform"].cy),
+              (b["platform"].x, b["platform"].cy)],
+             dashed=True, label="OIDC single sign-on"),
         # 3. Source systems, down the right lane into the connectors band.
         #    LANE_R - 22 is the corridor between the S3 column and the AWS
         #    boundary, so this stays inside AWS while the SSH route does not.
-        connector([(b["sources"].cx, b["sources"].bottom),
-                   (b["sources"].cx, b["sources"].bottom + 36),
-                   (LANE_R - 22, b["sources"].bottom + 36),
-                   (LANE_R - 22, b["connectors"].cy),
-                   (b["connectors"].right, b["connectors"].cy)],
-                  dashed=True, label="HTTPS  ·  per-system credentials"),
+        route([(b["sources"].cx, b["sources"].bottom),
+              (b["sources"].cx, b["sources"].bottom + 36),
+              (LANE_R - 22, b["sources"].bottom + 36),
+              (LANE_R - 22, b["connectors"].cy),
+              (b["connectors"].right, b["connectors"].cy)],
+             dashed=True, label="HTTPS  ·  per-system credentials"),
         # 4. Support SSH, its own lane outside the AWS boundary, then in
         #    under the AWS box and up into the instance from below. It
         #    cannot turn in along the right of the EC2 box: every height
         #    there is either the S3 column, AWS Backup or Monitoring.
-        connector([(b["support"].cx, b["support"].bottom),
-                   (b["support"].cx, b["support"].bottom + 42),
-                   (LANE_R, b["support"].bottom + 42),
-                   (LANE_R, below_aws),
-                   (b["ec2"].cx, below_aws),
-                   (b["ec2"].cx, b["ec2"].bottom)],
-                  dashed=True, label="SSH  ·  key based"),
+        route([(b["support"].cx, b["support"].bottom),
+              (b["support"].cx, b["support"].bottom + 42),
+              (LANE_R, b["support"].bottom + 42),
+              (LANE_R, below_aws),
+              (b["ec2"].cx, below_aws),
+              (b["ec2"].cx, b["ec2"].bottom)],
+             dashed=True, label="SSH  ·  key based"),
         # 5. Platform to object storage. The corridor between them is kept clear.
-        connector([(b["platform"].right, b["platform"].cy),
-                   (b["s3"].x, b["platform"].cy)],
-                  both=True, label="S3 API  ·  IAM role"),
+        route([(b["platform"].right, b["platform"].cy),
+              (b["s3"].x, b["platform"].cy)],
+             both=True, label="S3 API  ·  IAM role"),
         # 6. Platform triggers the preservation pipeline.
-        connector([(b["platform"].cx, b["platform"].bottom),
-                   (b["pipeline"].cx, b["pipeline"].y)],
-                  both=True, label="trigger and configure"),
+        route([(b["platform"].cx, b["platform"].bottom),
+              (b["pipeline"].cx, b["pipeline"].y)],
+             both=True, label="trigger and configure"),
         # 7. Access copies out to AtoM, down the left lane.
-        connector([(b["pipeline"].x + 232, b["pipeline"].bottom),
-                   (b["pipeline"].x + 232, b["pipeline"].bottom + 8),
-                   (LANE_L, b["pipeline"].bottom + 8),
-                   (LANE_L, b["atom"].cy),
-                   (b["atom"].x, b["atom"].cy)],
-                  dashed=True, label="DIP deposit  ·  SWORD 2.0"),
+        route([(b["pipeline"].x + 232, b["pipeline"].bottom),
+              (b["pipeline"].x + 232, b["pipeline"].bottom + 8),
+              (LANE_L, b["pipeline"].bottom + 8),
+              (LANE_L, b["atom"].cy),
+              (b["atom"].x, b["atom"].cy)],
+             dashed=True, label="DIP deposit  ·  SWORD 2.0"),
         # 8. Connectors publish catalogue records to ArchivesSpace. It
         #    leaves right of centre, as the source does: left of centre
         #    puts its label on top of the support route coming up into
         #    the instance.
-        connector([(b["connectors"].cx + 124, b["connectors"].bottom),
-                   (b["connectors"].cx + 124, b["aspace"].y - 76),
-                   (b["aspace"].cx, b["aspace"].y - 76),
-                   (b["aspace"].cx, b["aspace"].y)],
-                  dashed=True, label="catalogue records"),
+        route([(b["connectors"].cx + 124, b["connectors"].bottom),
+              (b["connectors"].cx + 124, b["aspace"].y - 76),
+              (b["aspace"].cx, b["aspace"].y - 76),
+              (b["aspace"].cx, b["aspace"].y)],
+             dashed=True, label="catalogue records"),
         # 9, 10. Backup and monitoring both point at the instance: they
         #        act on it rather than the other way round. They start on
         #        the left edge of their own card, which is the left edge
         #        of the S3 column, and cross the corridor.
-        connector([(b["s3"].x, b["backup"].cy),
-                   (b["ec2"].right, b["backup"].cy)]),
-        connector([(b["s3"].x, b["monitor"].cy),
-                   (b["ec2"].right, b["monitor"].cy)]),
+        route([(b["s3"].x, b["backup"].cy),
+              (b["ec2"].right, b["backup"].cy)]),
+        route([(b["s3"].x, b["monitor"].cy),
+              (b["ec2"].right, b["monitor"].cy)]),
         # 11, 12. The quarantine to appraisal to archive promotion chain,
         #         drawn between the chips of the lifecycle card.
-        *_chip_chain(b["lifecycle"], 3),
+        *_chip_chain(b["lifecycle"], _card_by_id(tree, "lifecycle"), suffix),
     ]
 
 
-def _chip_chain(card: Box, n: int) -> list[str]:
-    """Short arrows between consecutive chips in a card's single chip row."""
+def _card_by_id(group: Group, card_id: str) -> Card | None:
+    """The card carrying this id, from anywhere in the tree.
+
+    The box registry records where things landed but not what they hold,
+    and the chip chain needs the chips themselves.
+    """
+    for c in group.cards:
+        if c.id == card_id:
+            return c
+    for k in group.children:
+        found = _card_by_id(k, card_id)
+        if found is not None:
+            return found
+    return None
+
+
+def _chip_chain(box: Box, card: Card | None, suffix: str) -> list[str]:
+    """Short arrows between consecutive chips in a card's single chip row.
+
+    Both counts are read off the card rather than passed in beside it. A
+    count given as an argument is a second source of truth: add a chip in
+    content.py and the arrows would keep being drawn at the old gaps, with
+    nothing to notice.
+    """
+    assert card is not None, "the chip chain was given no card"
+    n, cols = len(card.chips), card.chip_cols
+    assert 2 <= n <= cols, (
+        f"{card.title} has {n} chips across {cols} columns; the chain is "
+        "drawn along one row, so it needs two or more chips and no row break"
+    )
     inset, gap = 16, CHIP_GAP
-    cw = (card.w - 2 * inset - gap * (n - 1)) / n
-    y = card.y + 48 + CHIP_H / 2
+    # The width _card() gives each chip, which comes from the column count
+    # and not the chip count, so a part-filled row still lines up.
+    cw = (box.w - 2 * inset - gap * (cols - 1)) / cols
+    y = box.y + 48 + CHIP_H / 2
     out = []
     for i in range(n - 1):
-        x = card.x + inset + (i + 1) * cw + i * gap
-        out.append(connector([(x, y), (x + gap, y)]))
+        x = box.x + inset + (i + 1) * cw + i * gap
+        out.append(connector([(x, y), (x + gap, y)], suffix=suffix))
     return out
 
 
@@ -482,19 +540,21 @@ def _resolved_tree(product: str) -> Group:
 
 def architecture_svg(product: str) -> str:
     """The deployment architecture. Canvas height is computed, not fixed."""
+    suffix = ""            # this diagram owns the unsuffixed marker ids
     inner_w = CANVAS_W - 48
     boxes: dict[str, Box] = {}
-    body, h = render(_resolved_tree(product), 24, 24, inner_w, boxes)
+    tree = _resolved_tree(product)
+    body, h = render(tree, 24, 24, inner_w, boxes)
     height = h + 48
 
-    arrows = _arrows(boxes)
+    arrows = _arrows(boxes, tree, suffix)
 
     return (
         f'<svg viewBox="0 0 {CANVAS_W} {height:.0f}" '
         'xmlns="http://www.w3.org/2000/svg" role="img" '
         f'aria-label="{esc(product)} architecture: components, dependencies '
         'and integration points">'
-        f'{MARKERS}'
+        f'{markers(suffix)}'
         f'{rect(0, 0, CANVAS_W, height, rx=0)}'
         f'{body}{"".join(arrows)}'
         "</svg>"
@@ -511,10 +571,13 @@ def workflow_svg(product: str) -> str:
     The step count in the label is derived from the content, not written
     down: the source document says "six steps" over a seven-step diagram.
     """
+    suffix = "2"           # the architecture diagram owns the plain ids
     n = len(WORKFLOW)
     label = f"Preservation workflow, {_NUMBERS[n] if n < len(_NUMBERS) else n} steps"
 
-    pad, gap, top, ch = 40, 16, 42, 110
+    # `top` leaves room above the cards for the number discs, which
+    # straddle the top edge and stand 31px proud of it.
+    pad, gap, top, ch = 40, 16, 60, 110
     cw = (CANVAS_W - 2 * pad - gap * (n - 1)) / n
 
     out = []
@@ -524,8 +587,13 @@ def workflow_svg(product: str) -> str:
         # A dashed card is dashed more finely than a dashed group box.
         out.append(rect(x, top, cw, ch, stroke=PALETTE["sage"], dashed=optional,
                         dash="5 4"))
-        out.append(text(x + 12, top + 22, str(i + 1), size=11, weight="700",
-                        fill=PALETTE["sage"]))
+        # The step number: a deep teal disc straddling the card's top
+        # edge, carrying the numeral in white. A numeral set in sage on
+        # white, which is what this was, is about 2.2:1 against roughly
+        # 12:1 here.
+        out.append(circle(x + 26, top - 16, 15, PALETTE["teal_deep"]))
+        out.append(text(x + 26, top - 11, str(i + 1), size=13, weight="600",
+                        anchor="middle", fill=PALETTE["white"]))
         out.append(text(x + cw / 2, top + 50, title, size=13, weight="600",
                         anchor="middle"))
         out.append(text(x + cw / 2, top + 70, l1, size=10.5, anchor="middle",
@@ -535,8 +603,9 @@ def workflow_svg(product: str) -> str:
         if i:
             # The arrow sits in the gap between two cards, clear of both.
             xs = x - 3
-            out.append(connector([(xs - gap + 6, top + ch / 2), (xs, top + ch / 2)],
-                                 dashed=optional))
+            out.append(connector([(xs - gap + 6, top + ch / 2),
+                                  (xs, top + ch / 2)],
+                                 suffix=suffix, dashed=optional))
 
     out.append(text(pad, 228, WORKFLOW_NOTE.replace("{product}", product),
                     size=12.5, fill=PALETTE["muted"]))
@@ -544,5 +613,6 @@ def workflow_svg(product: str) -> str:
     return (
         f'<svg viewBox="0 0 {CANVAS_W} 262" xmlns="http://www.w3.org/2000/svg" '
         f'role="img" aria-label="{esc(label)}">'
-        f'{MARKERS}{rect(0, 0, CANVAS_W, 262, rx=0)}{"".join(out)}</svg>'
+        f'{markers(suffix)}{rect(0, 0, CANVAS_W, 262, rx=0)}'
+        f'{"".join(out)}</svg>'
     )
