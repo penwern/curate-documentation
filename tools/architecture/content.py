@@ -41,6 +41,13 @@ class Brand:
     `vendor` is the commercial entity and moves between builds. It is used
     only on branding surfaces. Literal "Penwern" in the copy names who
     operates or builds something and never moves.
+
+    `logo_tile` is the paint behind the logo in the masthead, and it is
+    data rather than a rule in the stylesheet because the two marks have
+    opposite polarity: one needs a light ground and the other needs the
+    dark bar it already sits on. Empty means no tile at all, the same
+    "empty is the renderer's default" convention `Card.fill` and
+    `Group.fill` use.
     """
 
     key: str
@@ -49,6 +56,7 @@ class Brand:
     entity: str
     logo: str
     out: str
+    logo_tile: str = ""
 
 
 PRODUCTS = {
@@ -59,6 +67,10 @@ PRODUCTS = {
         entity="Penwern Limited",
         logo="Penwern Logo Large.png",
         out="curate-architecture-overview",
+        # No tile. The Penwern mark is a pale mint glyph drawn for a dark
+        # ground, so it goes straight onto the teal bar. A light tile
+        # behind it puts pale on pale and the mark loses its edges.
+        logo_tile="",
     ),
     "soteria": Brand(
         key="soteria",
@@ -69,6 +81,10 @@ PRODUCTS = {
         entity="Max Communications",
         logo="Max Communications Logo Large.png",
         out="soteria-architecture-overview",
+        # The opposite case: the Max lockup is a dark navy block, which
+        # goes murky straight on the teal bar, so it gets a light tile.
+        # Sage to mint, the same two brand colours the diagrams use.
+        logo_tile="linear-gradient(135deg,#83aba3,#a6e8ce)",
     ),
 }
 

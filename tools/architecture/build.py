@@ -165,7 +165,6 @@ header.masthead img{
   height:52px; width:auto; display:block;
 }
 header.masthead .logotile{
-  background:linear-gradient(135deg,#83aba3,#a6e8ce);
   border-radius:10px; padding:8px 12px; display:flex; align-items:center;
 }
 header.masthead .titles{display:flex; flex-direction:column}
@@ -176,6 +175,7 @@ header.masthead .eyebrow{
 header.masthead .title{font-weight:700; font-size:1.15rem; color:#e8efed}
 
 header.doc h1{font-size:1.6rem; margin:0 0 10px}
+p{max-width:76ch}
 p.lede{font-size:1.05rem; color:#374151; max-width:62ch}
 .meta{display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 4px}
 .pill{
@@ -232,6 +232,7 @@ footer.doc{margin-top:44px; padding-top:16px; border-top:1px solid var(--rule);
   table{min-width:0; font-size:11.5px}
   thead{display:table-header-group}
   tr{break-inside:avoid; page-break-inside:avoid}
+  .note,.fact{break-inside:avoid}
   .grid{grid-template-columns:repeat(2,1fr)}
 }
 """
@@ -266,6 +267,15 @@ def render_page(brand: Brand) -> str:
     """
     p = {k: resolve(v, brand) for k, v in content.PROSE.items()}
     logo = logo_data_uri(brand)
+    # The tile is wrapped around the mark only for a brand that asks for
+    # one, so a brand with no tile gets no empty element either. The
+    # renderer never asks which product it is drawing.
+    mark = f'<img src="{logo}" alt="{brand.vendor}">'
+    if brand.logo_tile:
+        mark = (
+            f'<div class="logotile" style="background:{brand.logo_tile}">'
+            f"{mark}</div>"
+        )
     pills = "".join(
         f"<span class=pill>{resolve(x, brand)}</span>" for x in content.PILLS
     )
@@ -284,7 +294,7 @@ def render_page(brand: Brand) -> str:
 <div class=wrap>
 
 <header class="masthead">
-  <div class="logotile"><img src="{logo}" alt="{brand.vendor}"></div>
+  {mark}
   <div class="titles">
     <span class="eyebrow">{brand.vendor} &middot; {brand.product}</span>
     <span class="title">Architecture overview</span>
