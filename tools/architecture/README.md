@@ -27,7 +27,7 @@ curate-architecture-overview.pdf     soteria-architecture-overview.pdf
 ```
 
 Options: `--product curate|soteria` for one product, `--no-pdf` for HTML
-only. Neither flag means an error rather than a default build.
+only. Giving neither flag is an error rather than a default build.
 
 Python 3.10 or newer, standard library only. No `pip install`, and nothing
 is added to `requirements.txt`, which belongs to mkdocs.
@@ -72,12 +72,15 @@ canvas with no coordinate edits. Arrows are hand-routed but anchor to the
 computed box registry, so their endpoints follow a reflow. A new
 *component* is automatic; a new *connection* needs a route added.
 
-Two things in the diagram are load-bearing and easy to break quietly.
-Every `id` in `ARCH_TREE` is an arrow anchor, so renaming one detaches an
-arrow rather than raising. The two hardcoded outside lanes, `LANE_L` and
-`LANE_R`, carry the tightest clearances in the drawing and nothing checks
-them, so widening the boxes they run beside means re-measuring that gap by
-hand.
+Ids in `ARCH_TREE` are arrow anchors. Renaming one that a route
+references stops the build with a `KeyError` naming the old id, so that
+mistake is loud rather than silent, but the route still has to be pointed
+at the new name by hand.
+
+The two hardcoded outside lanes, `LANE_L` and `LANE_R`, carry the tightest
+clearances in the drawing and nothing checks them, so widening the boxes
+they run beside means re-measuring that gap by hand. That is the one place
+a change can degrade the diagram without anything complaining.
 
 The diagrams resolve `{product}` only, in group labels, card titles and
 the workflow note. A `{vendor}` or `{entity}` placed in diagram content
