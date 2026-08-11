@@ -64,14 +64,14 @@ def _pdf_orientations(pdf: Path) -> list[str]:
 
 
 def check_output(html: str, brand: Brand, pdf: Path | None) -> None:
-    """Run every build-time check. Raise CheckError on the first failure.
+    """Run every check and raise CheckError once, listing every failure.
 
     Checks 2 and 3 guard failures that are silent and would reach a client.
     """
     problems = []
 
     # 1. No unresolved placeholder survived into the output.
-    stray = sorted(set(re.findall(r"\{(product|vendor)\}", html)))
+    stray = sorted(set(re.findall(r"\{(product|vendor|entity)\}", html)))
     if stray:
         problems.append(f"unresolved placeholders: {stray}")
 
