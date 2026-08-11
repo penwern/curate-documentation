@@ -7,11 +7,13 @@ Run from anywhere:
 
 import argparse
 import base64
+import os
 import re
 import subprocess
 import sys
 import tempfile
 import xml.etree.ElementTree as ET
+from html import escape
 from pathlib import Path
 
 import content
@@ -64,6 +66,32 @@ def _pdf_orientations(pdf: Path) -> list[str]:
         h = float(y1) - float(y0)
         out.append("landscape" if w > h else "portrait")
     return out
+
+
+# The three places the document names the vendor. Check 7 reads only
+# these, because a literal vendor name is legitimate everywhere else.
+_SURFACES = (
+    ("masthead", r'<header class="masthead">.*?</header>'),
+    ("'Managed by' pill", r"<span class=pill>Managed by[^<]*</span>"),
+    ("footer", r"<footer class=doc>.*?</footer>"),
+)
+
+
+def _branding_surfaces(html: str) -> list[tuple[str, str]]:
+    """The markup of each branding surface, paired with its name.
+
+    A surface that matches nothing is returned with an empty string
+    rather than dropped, so check 7 can fail on it: a renamed class would
+    otherwise turn the check into one that silently cannot fire.
+
+    Base64 payloads are stripped first. They are image bytes, not copy,
+    and a chance run of letters inside one would be a false failure.
+    """
+    text = re.sub(r"data:image/png;base64,[A-Za-z0-9+/=]+", "", html)
+    return [
+        (name, "".join(re.findall(pat, text, flags=re.S)))
+        for name, pat in _SURFACES
+    ]
 
 
 def check_output(html: str, brand: Brand, pdf: Path | None) -> None:
@@ -119,6 +147,26 @@ def check_output(html: str, brand: Brand, pdf: Path | None) -> None:
             problems.append(
                 f"expected exactly 1 landscape page, got {landscape} "
                 f"of {len(orient)}: {orient}"
+            )
+
+    # 7. The other brand's vendor names no branding surface.
+    #    Deliberately not a whole-document check. Check 3 catches the
+    #    other product's name anywhere, but a vendor cannot be treated
+    #    the same way: literal "Penwern" is correct and required in both
+    #    builds wherever it names who built or operates something
+    #    ("Penwern A3M", "Penwern support access", "Named Penwern
+    #    engineers"). Only the masthead, the "Managed by" pill and the
+    #    footer carry the vendor as branding, and only there is the
+    #    other brand's name a leak.
+    other_key = "soteria" if brand.key == "curate" else "curate"
+    other_vendor = PRODUCTS[other_key].vendor
+    for name, surface in _branding_surfaces(html):
+        if not surface:
+            problems.append(f"branding surface not found in the page: {name}")
+        elif other_vendor in surface:
+            problems.append(
+                f"{brand.key} build names the vendor {other_vendor!r} "
+                f"in the {name}"
             )
 
     if problems:
@@ -222,6 +270,8 @@ footer.doc{margin-top:44px; padding-top:16px; border-top:1px solid var(--rule);
   .wrap{max-width:none}
   header.masthead{box-shadow:none; break-inside:avoid}
   h2{break-after:avoid; page-break-after:avoid; margin-top:30px}
+  h3{break-after:avoid; page-break-after:avoid}
+  p,figcaption{orphans:3; widows:3}
   figure{break-inside:avoid; page-break-inside:avoid}
   .frame{break-inside:avoid; box-shadow:none; overflow:visible; padding:0;
          border:none}
@@ -234,6 +284,7 @@ footer.doc{margin-top:44px; padding-top:16px; border-top:1px solid var(--rule);
   tr{break-inside:avoid; page-break-inside:avoid}
   .note,.fact{break-inside:avoid}
   .grid{grid-template-columns:repeat(2,1fr)}
+  footer.doc{break-inside:avoid}
 }
 """
 
@@ -270,10 +321,14 @@ def render_page(brand: Brand) -> str:
     # The tile is wrapped around the mark only for a brand that asks for
     # one, so a brand with no tile gets no empty element either. The
     # renderer never asks which product it is drawing.
-    mark = f'<img src="{logo}" alt="{brand.vendor}">'
+    # Brand data goes into attributes escaped. No current value contains
+    # a quote, so this changes nothing today; it means a value that one
+    # day does cannot break out of the attribute and mangle the markup
+    # silently.
+    mark = f'<img src="{logo}" alt="{escape(brand.vendor)}">'
     if brand.logo_tile:
         mark = (
-            f'<div class="logotile" style="background:{brand.logo_tile}">'
+            f'<div class="logotile" style="background:{escape(brand.logo_tile)}">'
             f"{mark}</div>"
         )
     pills = "".join(
@@ -347,16 +402,76 @@ def render_page(brand: Brand) -> str:
 """
 
 
+CHROME_CANDIDATES = (
+    "/usr/bin/google-chrome",
+    "/usr/bin/google-chrome-stable",
+    "/usr/bin/chromium",
+    "/usr/bin/chromium-browser",
+    "/snap/bin/chromium",
+)
+
+
+def find_chrome() -> Path | None:
+    """$CHROME, then the usual paths, then the puppeteer cache."""
+    env = os.environ.get("CHROME")
+    if env and Path(env).is_file():
+        return Path(env)
+    for c in CHROME_CANDIDATES:
+        if Path(c).is_file():
+            return Path(c)
+    cache = Path.home() / ".cache" / "puppeteer" / "chrome"
+    if cache.is_dir():
+        found = sorted(cache.glob("*/chrome-linux64/chrome"))
+        if found:
+            return found[-1]        # newest by version-sorted name
+    return None
+
+
+def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
+    """Print the page to PDF. Returns None when no Chrome is available."""
+    chrome = find_chrome()
+    if chrome is None:
+        print(
+            "  no Chrome found, so no PDF. Set CHROME=/path/to/chrome, "
+            "or print the HTML from a browser."
+        )
+        return None
+
+    with tempfile.TemporaryDirectory() as tmp:
+        cmd = [
+            str(chrome),
+            "--headless",
+            "--disable-gpu",
+            "--no-sandbox",
+            f"--user-data-dir={tmp}",
+            "--no-pdf-header-footer",
+            f"--print-to-pdf={pdf_path}",
+            html_path.as_uri(),
+        ]
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+
+    if r.returncode != 0 or not pdf_path.is_file():
+        print(f"  PDF step failed (exit {r.returncode}): {r.stderr.strip()[:300]}")
+        return None
+    return pdf_path
+
+
 def build(brand: Brand, want_pdf: bool = True) -> Path:
     OUT.mkdir(parents=True, exist_ok=True)
     html = render_page(brand)
     html_path = OUT / f"{brand.out}.html"
     html_path.write_text(html, encoding="utf-8")
 
-    pdf_path = None  # Task 6 fills this in.
+    pdf_path = None
+    if want_pdf:
+        pdf_path = to_pdf(html_path, OUT / f"{brand.out}.pdf")
 
     check_output(html, brand, pdf_path)
+
     print(f"  {html_path.relative_to(REPO)}")
+    if pdf_path:
+        pages = len(_pdf_orientations(pdf_path))
+        print(f"  {pdf_path.relative_to(REPO)} ({pages} pages)")
     return html_path
 
 
