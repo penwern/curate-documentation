@@ -8,9 +8,19 @@ and stroke in content.py, or it takes the single renderer default below.
 A card sitting inside a teal group does not pick up teal.
 """
 
+import dataclasses
 from dataclasses import dataclass
 
-from content import FONT_STACK, MONO_STACK, PALETTE, Card, Group
+from content import (
+    ARCH_TREE,
+    FONT_STACK,
+    MONO_STACK,
+    PALETTE,
+    WORKFLOW,
+    WORKFLOW_NOTE,
+    Card,
+    Group,
+)
 
 CARD_H = 88
 CARD_H_CHIPS = 142
@@ -305,3 +315,234 @@ def render(group: Group, x: float, y: float, w: float,
             cy += ch + GROUP_GAP
 
     return "".join(out), h
+
+
+MARKERS = (
+    '<defs>'
+    '<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" '
+    'markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">'
+    f'<path d="M 0 0 L 10 5 L 0 10 z" fill="{PALETTE["muted"]}"/></marker>'
+    '<marker id="arrowrev" viewBox="0 0 10 10" refX="1" refY="5" '
+    'markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">'
+    f'<path d="M 10 0 L 0 5 L 10 10 z" fill="{PALETTE["muted"]}"/></marker>'
+    '</defs>'
+)
+
+
+def connector(pts, dashed=False, both=False, label=None):
+    """An orthogonal arrow through hand-chosen waypoints.
+
+    `pts` is a list of (x, y). Endpoints come from the box registry; the
+    intermediate points are the hand routing.
+    """
+    d = "M " + " L ".join(f"{x:.1f} {y:.1f}" for x, y in pts)
+    a = [f'd="{d}"', 'fill="none"', f'stroke="{PALETTE["muted"]}"',
+         'stroke-width="1.5"', 'marker-end="url(#arrow)"']
+    if both:
+        a.append('marker-start="url(#arrowrev)"')
+    if dashed:
+        a.append('stroke-dasharray="5 4"')
+    out = f"<path {' '.join(a)}/>"
+    if label:
+        # The label sits on the middle of the route's first turn, which is
+        # the segment after the short stub leaving the box. A centroid of
+        # all the waypoints is not on the line at all once a route is
+        # L-shaped, and on this tree it lands three labels on top of cards
+        # the route never touches.
+        i = 1 if len(pts) > 2 else 0
+        (ax, ay), (bx, by) = pts[i], pts[i + 1]
+        mx, my = (ax + bx) / 2, (ay + by) / 2
+        # A plaque behind the label. Every label is centred on its own
+        # route, so without one the arrow strikes through the text. The
+        # width is measured from the glyphs, since there is no text
+        # metric available: 0.535em per character at this size, plus 6
+        # either side.
+        lw = 5.35 * len(label) + 12
+        out += rect(mx - lw / 2, my - 17.5, lw, 16, rx=3)
+        out += text(mx, my - 6, label, size=10, anchor="middle",
+                    fill=PALETTE["muted"])
+    return out
+
+
+# The two outside lanes. LANE_L runs in the corridor between the AWS box
+# and the EC2 box; LANE_R runs outside the AWS box entirely, which is what
+# keeps the support SSH path visibly separate from everything inside it.
+LANE_L = 36
+LANE_R = CANVAS_W - 14
+
+
+def _arrows(b: dict[str, Box]) -> list[str]:
+    """The twelve routes. Endpoints come from the registry, waypoints are
+    hand-chosen: the left and right lanes keep long routes outside the
+    boxes, and the S3 corridor is left clear."""
+    # The band between the AWS box and the catalogues box below it. The
+    # support route crosses the full width of the diagram, so it needs a
+    # clear horizontal lane; this is the only one there is.
+    below_aws = (b["aws"].bottom + b["catalogues"].y) / 2
+    return [
+        # 1. Users in through the reverse proxy.
+        connector([(b["users"].cx, b["users"].bottom),
+                   (b["users"].cx, b["nginx"].y)], label="HTTPS  ·  TLS"),
+        # 2. Optional single sign-on, down the left lane into the platform.
+        connector([(b["idp"].cx, b["idp"].bottom),
+                   (b["idp"].cx, b["idp"].bottom + 36),
+                   (LANE_L, b["idp"].bottom + 36),
+                   (LANE_L, b["platform"].cy),
+                   (b["platform"].x, b["platform"].cy)],
+                  dashed=True, label="OIDC single sign-on"),
+        # 3. Source systems, down the right lane into the connectors band.
+        #    LANE_R - 22 is the corridor between the S3 column and the AWS
+        #    boundary, so this stays inside AWS while the SSH route does not.
+        connector([(b["sources"].cx, b["sources"].bottom),
+                   (b["sources"].cx, b["sources"].bottom + 36),
+                   (LANE_R - 22, b["sources"].bottom + 36),
+                   (LANE_R - 22, b["connectors"].cy),
+                   (b["connectors"].right, b["connectors"].cy)],
+                  dashed=True, label="HTTPS  ·  per-system credentials"),
+        # 4. Support SSH, its own lane outside the AWS boundary, then in
+        #    under the AWS box and up into the instance from below. It
+        #    cannot turn in along the right of the EC2 box: every height
+        #    there is either the S3 column, AWS Backup or Monitoring.
+        connector([(b["support"].cx, b["support"].bottom),
+                   (b["support"].cx, b["support"].bottom + 42),
+                   (LANE_R, b["support"].bottom + 42),
+                   (LANE_R, below_aws),
+                   (b["ec2"].cx, below_aws),
+                   (b["ec2"].cx, b["ec2"].bottom)],
+                  dashed=True, label="SSH  ·  key based"),
+        # 5. Platform to object storage. The corridor between them is kept clear.
+        connector([(b["platform"].right, b["platform"].cy),
+                   (b["s3"].x, b["platform"].cy)],
+                  both=True, label="S3 API  ·  IAM role"),
+        # 6. Platform triggers the preservation pipeline.
+        connector([(b["platform"].cx, b["platform"].bottom),
+                   (b["pipeline"].cx, b["pipeline"].y)],
+                  both=True, label="trigger and configure"),
+        # 7. Access copies out to AtoM, down the left lane.
+        connector([(b["pipeline"].x + 232, b["pipeline"].bottom),
+                   (b["pipeline"].x + 232, b["pipeline"].bottom + 8),
+                   (LANE_L, b["pipeline"].bottom + 8),
+                   (LANE_L, b["atom"].cy),
+                   (b["atom"].x, b["atom"].cy)],
+                  dashed=True, label="DIP deposit  ·  SWORD 2.0"),
+        # 8. Connectors publish catalogue records to ArchivesSpace. It
+        #    leaves right of centre, as the source does: left of centre
+        #    puts its label on top of the support route coming up into
+        #    the instance.
+        connector([(b["connectors"].cx + 124, b["connectors"].bottom),
+                   (b["connectors"].cx + 124, b["aspace"].y - 76),
+                   (b["aspace"].cx, b["aspace"].y - 76),
+                   (b["aspace"].cx, b["aspace"].y)],
+                  dashed=True, label="catalogue records"),
+        # 9, 10. Backup and monitoring both point at the instance: they
+        #        act on it rather than the other way round. They start on
+        #        the left edge of their own card, which is the left edge
+        #        of the S3 column, and cross the corridor.
+        connector([(b["s3"].x, b["backup"].cy),
+                   (b["ec2"].right, b["backup"].cy)]),
+        connector([(b["s3"].x, b["monitor"].cy),
+                   (b["ec2"].right, b["monitor"].cy)]),
+        # 11, 12. The quarantine to appraisal to archive promotion chain,
+        #         drawn between the chips of the lifecycle card.
+        *_chip_chain(b["lifecycle"], 3),
+    ]
+
+
+def _chip_chain(card: Box, n: int) -> list[str]:
+    """Short arrows between consecutive chips in a card's single chip row."""
+    inset, gap = 16, CHIP_GAP
+    cw = (card.w - 2 * inset - gap * (n - 1)) / n
+    y = card.y + 48 + CHIP_H / 2
+    out = []
+    for i in range(n - 1):
+        x = card.x + inset + (i + 1) * cw + i * gap
+        out.append(connector([(x, y), (x + gap, y)]))
+    return out
+
+
+def _resolved_tree(product: str) -> Group:
+    """A copy of the tree with {product} resolved and group labels upper-cased.
+
+    Built with dataclasses.replace so the module-level ARCH_TREE is never
+    mutated: two builds run in one process and the second must not see the
+    first product's name.
+    """
+    def fix(g: Group) -> Group:
+        return dataclasses.replace(
+            g,
+            label=g.label.replace("{product}", product).upper() if g.label else "",
+            cards=tuple(
+                dataclasses.replace(c, title=c.title.replace("{product}", product))
+                for c in g.cards
+            ),
+            children=tuple(fix(k) for k in g.children),
+        )
+    return fix(ARCH_TREE)
+
+
+def architecture_svg(product: str) -> str:
+    """The deployment architecture. Canvas height is computed, not fixed."""
+    inner_w = CANVAS_W - 48
+    boxes: dict[str, Box] = {}
+    body, h = render(_resolved_tree(product), 24, 24, inner_w, boxes)
+    height = h + 48
+
+    arrows = _arrows(boxes)
+
+    return (
+        f'<svg viewBox="0 0 {CANVAS_W} {height:.0f}" '
+        'xmlns="http://www.w3.org/2000/svg" role="img" '
+        f'aria-label="{esc(product)} architecture: components, dependencies '
+        'and integration points">'
+        f'{MARKERS}'
+        f'{rect(0, 0, CANVAS_W, height, rx=0)}'
+        f'{body}{"".join(arrows)}'
+        "</svg>"
+    )
+
+
+_NUMBERS = ("zero", "one", "two", "three", "four", "five", "six", "seven",
+            "eight", "nine", "ten")
+
+
+def workflow_svg(product: str) -> str:
+    """The preservation pipeline, one card per step.
+
+    The step count in the label is derived from the content, not written
+    down: the source document says "six steps" over a seven-step diagram.
+    """
+    n = len(WORKFLOW)
+    label = f"Preservation workflow, {_NUMBERS[n] if n < len(_NUMBERS) else n} steps"
+
+    pad, gap, top, ch = 40, 16, 42, 110
+    cw = (CANVAS_W - 2 * pad - gap * (n - 1)) / n
+
+    out = []
+    for i, (title, l1, l2) in enumerate(WORKFLOW):
+        x = pad + i * (cw + gap)
+        optional = l2 == "Optional"
+        # A dashed card is dashed more finely than a dashed group box.
+        out.append(rect(x, top, cw, ch, stroke=PALETTE["sage"], dashed=optional,
+                        dash="5 4"))
+        out.append(text(x + 12, top + 22, str(i + 1), size=11, weight="700",
+                        fill=PALETTE["sage"]))
+        out.append(text(x + cw / 2, top + 50, title, size=13, weight="600",
+                        anchor="middle"))
+        out.append(text(x + cw / 2, top + 70, l1, size=10.5, anchor="middle",
+                        fill=PALETTE["muted"]))
+        out.append(text(x + cw / 2, top + 83, l2, size=10.5, anchor="middle",
+                        fill=PALETTE["muted"]))
+        if i:
+            # The arrow sits in the gap between two cards, clear of both.
+            xs = x - 3
+            out.append(connector([(xs - gap + 6, top + ch / 2), (xs, top + ch / 2)],
+                                 dashed=optional))
+
+    out.append(text(pad, 228, WORKFLOW_NOTE.replace("{product}", product),
+                    size=12.5, fill=PALETTE["muted"]))
+
+    return (
+        f'<svg viewBox="0 0 {CANVAS_W} 262" xmlns="http://www.w3.org/2000/svg" '
+        f'role="img" aria-label="{esc(label)}">'
+        f'{MARKERS}{rect(0, 0, CANVAS_W, 262, rx=0)}{"".join(out)}</svg>'
+    )
