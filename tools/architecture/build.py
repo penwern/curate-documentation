@@ -24,7 +24,13 @@ OUT = HERE / "out"
 
 
 class CheckError(Exception):
-    """A build-time check failed. The build must not produce output."""
+    """A build-time check failed.
+
+    Output is written before checks run, because the PDF step prints from
+    the HTML on disk and check 6 reads the resulting PDF. A failed build
+    therefore leaves its rejected output in out/ for inspection, and exits
+    non-zero.
+    """
 
 
 def resolve(text: str, brand: Brand) -> str:

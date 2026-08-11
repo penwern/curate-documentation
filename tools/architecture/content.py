@@ -4,7 +4,7 @@ Nothing in this module knows how to render. Correcting a fact about the
 architecture should mean editing this file and nothing else.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 # Brand colours, taken from the --pw-* custom properties in penwern-design-system.
 PALETTE = {
