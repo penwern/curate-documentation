@@ -472,6 +472,7 @@ ARCH_TREE = Group(
                           dashed=True, cols=1, cards=(
                         Card(id="conncard",
                              title="Source and catalogue connectors",
+                             dashed=True,
                              lines=("Pure, CALM and SharePoint bring records "
                                     "in.  ArchivesSpace publishes out.",
                                     "One service per system you use")),
@@ -518,9 +519,11 @@ ARCH_TREE = Group(
             id="catalogues", label="YOUR CATALOGUE SYSTEMS  ·  OPTIONAL",
             fill="#f6faf9", stroke="#83aba3", dashed=True, cols=1,
             cards=(
-                Card(id="aspace", title="ArchivesSpace", dashed=True,
+                # Solid in the source: the dashed group box around them
+                # already carries the optionality, and its label says so.
+                Card(id="aspace", title="ArchivesSpace",
                      lines=("Archival objects linked to each preserved AIP",)),
-                Card(id="atom", title="AtoM", dashed=True,
+                Card(id="atom", title="AtoM",
                      lines=("Archival access and public catalogue",)),
             ),
         ),
