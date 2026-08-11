@@ -416,19 +416,36 @@ CHROME_CANDIDATES = (
 )
 
 
+def _runnable(p: Path) -> bool:
+    """A file we could actually execute.
+
+    Existence is not enough. `$CHROME` pointing at a downloaded archive
+    or a text file is the likeliest way anyone meets this code, since
+    setting it is the remedy the tool itself prints when it finds no
+    browser, and executing a non-executable file raises rather than
+    returning a non-zero exit.
+    """
+    return p.is_file() and os.access(p, os.X_OK)
+
+
 def find_chrome() -> Path | None:
     """$CHROME, then the usual paths, then the puppeteer cache."""
     env = os.environ.get("CHROME")
-    if env and Path(env).is_file():
+    if env and _runnable(Path(env)):
         return Path(env)
     for c in CHROME_CANDIDATES:
-        if Path(c).is_file():
+        if _runnable(Path(c)):
             return Path(c)
     cache = Path.home() / ".cache" / "puppeteer" / "chrome"
     if cache.is_dir():
-        found = sorted(cache.glob("*/chrome-linux64/chrome"))
+        found = sorted(
+            p for p in cache.glob("*/chrome-linux64/chrome") if _runnable(p)
+        )
         if found:
-            return found[-1]        # newest by version-sorted name
+            # Last by plain name sort, which is not a version sort:
+            # linux-99 would beat linux-121. Good enough to pick one
+            # installed browser, not a version-selection policy.
+            return found[-1]
     return None
 
 
@@ -436,10 +453,11 @@ def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
     """Print the page to PDF. Returns None when no PDF could be made.
 
     Every way this can go wrong returns None rather than raising: no
-    Chrome, a Chrome that fails, and a Chrome that hangs. The PDF is
-    best-effort, so none of them may take the build down with them. Each
-    prints a different note, because "not installed", "crashed" and
-    "still running after three minutes" need different responses.
+    Chrome, a Chrome that will not start, a Chrome that fails, and a
+    Chrome that hangs. The PDF is best-effort, so none of them may take
+    the build down with them. Each prints a different note, because
+    "not installed", "not a browser", "crashed" and "still running after
+    three minutes" need different responses.
     """
     chrome = find_chrome()
     if chrome is None:
@@ -460,6 +478,10 @@ def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
             f"--print-to-pdf={pdf_path}",
             html_path.as_uri(),
         ]
+        # Remove any previous PDF first. Chrome exiting 0 without writing
+        # would otherwise leave the last run's file in place, and it would
+        # be reported as this run's output and checked as if it were.
+        pdf_path.unlink(missing_ok=True)
         try:
             r = subprocess.run(
                 cmd, capture_output=True, text=True, timeout=PDF_TIMEOUT
@@ -471,6 +493,12 @@ def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
                 f"  Chrome timed out after {PDF_TIMEOUT}s, so no PDF. The "
                 "HTML is written; print it from a browser."
             )
+            return None
+        except OSError as exc:
+            # The process could not be started at all: not executable,
+            # not a binary, gone between the check and the call.
+            # PermissionError is an OSError, so one clause covers both.
+            print(f"  could not run {chrome}, so no PDF: {exc}")
             return None
 
     if r.returncode != 0 or not pdf_path.is_file():
