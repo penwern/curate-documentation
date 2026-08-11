@@ -481,13 +481,18 @@ ARCH_TREE = Group(
                              lines=("Virus scan and format characterisation",
                                     "on the way through")),
                     )),
+                    # Both grey, because both sit outside the tenant. The
+                    # groups around them draw no box, so the stroke cannot
+                    # be inherited and has to be stated.
                     Group(id="backupg", label="", cols=1, cards=(
-                        Card(id="backup", title="AWS Backup", fill="#f5f7f7",
+                        Card(id="backup", title="AWS Backup",
+                             fill="#f5f7f7", stroke="#6b7280",
                              lines=("Daily EC2 snapshots, 7 day retention",
                                     "Managed in the same region")),
                     )),
                     Group(id="monitorg", label="", cols=1, cards=(
-                        Card(id="monitor", title="Monitoring", fill="#f5f7f7",
+                        Card(id="monitor", title="Monitoring",
+                             fill="#f5f7f7", stroke="#6b7280",
                              lines=("Penwern operated, outside the tenant",
                                     "Availability and resource checks")),
                     )),
