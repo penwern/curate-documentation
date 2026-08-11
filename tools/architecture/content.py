@@ -23,6 +23,13 @@ FONT_STACK = (
     "'Geist','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
 )
 
+# Bucket names are set in the brand's monospace face, so they read as the
+# literal identifiers they are.
+MONO_STACK = (
+    "'Geist Mono','JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,"
+    "Consolas,monospace"
+)
+
 
 @dataclass(frozen=True)
 class Brand:
@@ -76,12 +83,18 @@ class Card:
     equal the renderer's own default. Nothing inherits: a card sitting in
     a teal group does not pick up teal, so any card the source paints
     differently from that single default states its colour here.
+
+    `chip_fill` is stated for the same reason. Every chip in a card shares
+    one fill, but it is not the card's fill: the source tints both chip
+    cards differently from the card behind them, so the value is written
+    down here rather than taken from the card.
     """
 
     title: str
     lines: tuple[str, ...] = ()
     chips: tuple[str, ...] = ()
     chip_cols: int = 3
+    chip_fill: str = ""
     fill: str = ""
     stroke: str = ""
     dashed: bool = False
@@ -498,6 +511,7 @@ ARCH_TREE = Group(
                                     "thumbs", "versions", "binaries")),
                         Card(id="lifecycle", title="Preservation lifecycle",
                              stroke="#a6e8ce", chip_cols=3,
+                             chip_fill="#f2fbf7",
                              chips=("quarantine", "appraisal", "archive"),
                              lines=("Virus scan and format characterisation",
                                     "on the way through")),

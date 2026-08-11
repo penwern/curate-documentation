@@ -10,7 +10,7 @@ A card sitting inside a teal group does not pick up teal.
 
 from dataclasses import dataclass
 
-from content import FONT_STACK, PALETTE, Card, Group
+from content import FONT_STACK, MONO_STACK, PALETTE, Card, Group
 
 CARD_H = 88
 CARD_H_CHIPS = 142
@@ -31,11 +31,18 @@ def esc(s: str) -> str:
     )
 
 
-def text(x, y, s, size=13, weight=None, anchor=None, fill=None, spacing=None):
-    a = [f'x="{x}"', f'y="{y}"']
+def _n(v):
+    """Round a coordinate for the markup. Full float precision is valid
+    SVG but makes the output noisy to read and to diff."""
+    return round(v, 2)
+
+
+def text(x, y, s, size=13, weight=None, anchor=None, fill=None, spacing=None,
+         mono=False):
+    a = [f'x="{_n(x)}"', f'y="{_n(y)}"']
     if anchor:
         a.append(f'text-anchor="{anchor}"')
-    a.append(f'font-family="{FONT_STACK}"')
+    a.append(f'font-family="{MONO_STACK if mono else FONT_STACK}"')
     a.append(f'font-size="{size}"')
     if weight:
         a.append(f'font-weight="{weight}"')
@@ -46,22 +53,27 @@ def text(x, y, s, size=13, weight=None, anchor=None, fill=None, spacing=None):
 
 
 def rect(x, y, w, h, fill=None, stroke=None, dashed=False, rx=7, sw=1.5):
-    a = [f'x="{x}"', f'y="{y}"', f'width="{w}"', f'height="{h}"', f'rx="{rx}"']
+    a = [f'x="{_n(x)}"', f'y="{_n(y)}"', f'width="{_n(w)}"',
+         f'height="{_n(h)}"', f'rx="{rx}"']
     a.append(f'fill="{fill or PALETTE["white"]}"')
     if stroke:
         a.append(f'stroke="{stroke}"')
         a.append(f'stroke-width="{sw}"')
         if dashed:
-            a.append('stroke-dasharray="6 5"')
+            a.append('stroke-dasharray="5 4"')
     return f"<rect {' '.join(a)}/>"
 
 
 def chip(x, y, w, label, fill=None):
-    """A small pill used for S3 bucket names inside a storage card."""
-    return rect(x, y, w, CHIP_H, fill=fill, stroke=PALETTE["sage"],
-                rx=5, sw=1) + text(
+    """A pill holding one S3 bucket name inside a storage card.
+
+    A full-height corner radius makes it a pill rather than a rounded
+    rectangle. The label is monospaced because it is a literal bucket name.
+    """
+    return rect(x, y, w, CHIP_H, fill=fill, stroke=PALETTE["mint"],
+                rx=CHIP_H / 2, sw=1.2) + text(
         x + w / 2, y + 17, label, size=10, anchor="middle",
-        fill=PALETTE["teal_deep"]
+        fill=PALETTE["ink"], mono=True
     )
 
 
@@ -117,6 +129,18 @@ def _row_heights(cards, cols: int) -> list[float]:
     return rows
 
 
+def _row_widths(children, avail: float) -> list[float]:
+    """Width of each child in a row layout: its share of avail by weight.
+
+    Both passes read row widths from here. Computed separately they could
+    drift, and then measure() would size a child at one width while
+    render() drew it at another, overflowing the child in silence.
+    """
+    total = sum(c.weight for c in children)
+    gaps = GROUP_GAP * (len(children) - 1)
+    return [(avail - gaps) * c.weight / total for c in children]
+
+
 def _insets(group: Group) -> tuple[float, float]:
     """(head, pad) for a group.
 
@@ -134,7 +158,23 @@ def _insets(group: Group) -> tuple[float, float]:
 
 
 def measure(group: Group, w: float) -> float:
-    """Height this group needs at the given width. Recurses into children."""
+    """Height this group needs at the given width. Recurses into children.
+
+    The two assertions guard content loss that no geometry check can see.
+    Both passes would still agree and nothing would overlap; the content
+    would simply not be drawn. render() calls measure() first, so these
+    cover it too.
+    """
+    who = group.id or group.label or "an unidentified group"
+    assert not (group.cards and group.children), (
+        f"{who} carries both cards and children; the cards branch would "
+        "draw the cards and silently drop the children"
+    )
+    assert group.label or not group.lines, (
+        f"{who} is unlabelled but carries lines; lines render under a "
+        "label, so they would be silently dropped"
+    )
+
     head, pad = _insets(group)
     if group.cards:
         hs = _row_heights(group.cards, group.cols)
@@ -144,11 +184,10 @@ def measure(group: Group, w: float) -> float:
 
     avail = w - 2 * pad
     if group.layout == "row":
-        total = sum(c.weight for c in group.children)
-        gaps = GROUP_GAP * (len(group.children) - 1)
         tallest = max(
-            measure(c, (avail - gaps) * c.weight / total)
-            for c in group.children
+            measure(c, cw)
+            for c, cw in zip(group.children,
+                             _row_widths(group.children, avail))
         )
         return head + tallest + pad
 
@@ -172,7 +211,8 @@ def _card(c: Card, box: Box) -> str:
             col, row = i % cols, i // cols
             out.append(chip(box.x + 16 + col * (cw + CHIP_GAP),
                             box.y + 48 + row * (CHIP_H + CHIP_GAP),
-                            cw, name, fill=c.fill or None))
+                            cw, name,
+                            fill=c.chip_fill or PALETTE["white"]))
         rows = (len(c.chips) + cols - 1) // cols
         ly = box.y + 48 + rows * (CHIP_H + CHIP_GAP) + 10
         for i, line in enumerate(c.lines):
@@ -241,11 +281,9 @@ def render(group: Group, x: float, y: float, w: float,
             out.append(_card(c, box))
 
     elif group.children and group.layout == "row":
-        total = sum(c.weight for c in group.children)
-        gaps = GROUP_GAP * (len(group.children) - 1)
         cx = inner_x
-        for child in group.children:
-            cw = (avail - gaps) * child.weight / total
+        for child, cw in zip(group.children,
+                             _row_widths(group.children, avail)):
             svg, _ = render(child, cx, top, cw, boxes)
             out.append(svg)
             cx += cw + GROUP_GAP
