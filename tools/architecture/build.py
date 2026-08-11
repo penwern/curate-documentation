@@ -279,6 +279,7 @@ footer.doc{margin-top:44px; padding-top:16px; border-top:1px solid var(--rule);
   figure.arch{page:wide; break-before:page; break-after:page}
   figure.arch .frame svg{max-height:176mm}
   figure.flow .frame svg{max-height:60mm}
+  .tw{break-inside:auto; overflow:visible}
   table{min-width:0; font-size:11.5px}
   thead{display:table-header-group}
   tr{break-inside:avoid; page-break-inside:avoid}
@@ -402,6 +403,10 @@ def render_page(brand: Brand) -> str:
 """
 
 
+# Seconds to wait for Chrome. Named rather than inline so the timeout and
+# the note that reports it cannot drift apart.
+PDF_TIMEOUT = 180
+
 CHROME_CANDIDATES = (
     "/usr/bin/google-chrome",
     "/usr/bin/google-chrome-stable",
@@ -428,7 +433,14 @@ def find_chrome() -> Path | None:
 
 
 def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
-    """Print the page to PDF. Returns None when no Chrome is available."""
+    """Print the page to PDF. Returns None when no PDF could be made.
+
+    Every way this can go wrong returns None rather than raising: no
+    Chrome, a Chrome that fails, and a Chrome that hangs. The PDF is
+    best-effort, so none of them may take the build down with them. Each
+    prints a different note, because "not installed", "crashed" and
+    "still running after three minutes" need different responses.
+    """
     chrome = find_chrome()
     if chrome is None:
         print(
@@ -448,7 +460,18 @@ def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
             f"--print-to-pdf={pdf_path}",
             html_path.as_uri(),
         ]
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+        try:
+            r = subprocess.run(
+                cmd, capture_output=True, text=True, timeout=PDF_TIMEOUT
+            )
+        except subprocess.TimeoutExpired:
+            # run() kills the child before re-raising, so nothing is left
+            # behind. A hang is a failed PDF, never a failed build.
+            print(
+                f"  Chrome timed out after {PDF_TIMEOUT}s, so no PDF. The "
+                "HTML is written; print it from a browser."
+            )
+            return None
 
     if r.returncode != 0 or not pdf_path.is_file():
         print(f"  PDF step failed (exit {r.returncode}): {r.stderr.strip()[:300]}")
