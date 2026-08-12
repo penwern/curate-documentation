@@ -47,6 +47,22 @@ GROUP_GAP = 22
 CANVAS_W = 1400
 
 
+class DiagramError(Exception):
+    """An invariant of the diagram source is broken.
+
+    Raised rather than asserted because `python3 -O` deletes assert
+    statements, and these guards are the only thing standing between a
+    mistake in content.py and a diagram that silently drops content or
+    draws it in the wrong place. A tool whose test harness is its own
+    runtime checks cannot have those checks removed by an interpreter
+    flag.
+
+    Nothing catches this. Every case is a programming error in the box
+    tree rather than anything a user supplied, so the traceback naming
+    the line that raised is the useful outcome.
+    """
+
+
 def esc(s: str) -> str:
     """Escape text for an SVG text node."""
     return (
@@ -201,20 +217,22 @@ def _insets(group: Group) -> tuple[float, float]:
 def measure(group: Group, w: float) -> float:
     """Height this group needs at the given width. Recurses into children.
 
-    The two assertions guard content loss that no geometry check can see.
+    The two guards catch content loss that no geometry check can see.
     Both passes would still agree and nothing would overlap; the content
     would simply not be drawn. render() calls measure() first, so these
     cover it too.
     """
     who = group.id or group.label or "an unidentified group"
-    assert not (group.cards and group.children), (
-        f"{who} carries both cards and children; the cards branch would "
-        "draw the cards and silently drop the children"
-    )
-    assert group.label or not group.lines, (
-        f"{who} is unlabelled but carries lines; lines render under a "
-        "label, so they would be silently dropped"
-    )
+    if group.cards and group.children:
+        raise DiagramError(
+            f"{who} carries both cards and children; the cards branch would "
+            "draw the cards and silently drop the children"
+        )
+    if group.lines and not group.label:
+        raise DiagramError(
+            f"{who} is unlabelled but carries lines; lines render under a "
+            "label, so they would be silently dropped"
+        )
 
     head, pad = _insets(group)
     if group.cards:
@@ -250,6 +268,40 @@ def _chip_box(box: Box, c: Card, i: int) -> Box:
                box.y + CHIP_TOP + row * (CHIP_H + CHIP_GAP), w, CHIP_H)
 
 
+def _card_text(c: Card, box: Box) -> tuple[float, float, float]:
+    """(title baseline, first line baseline, line step) for a card.
+
+    The single owner of a card's text geometry. _card() draws from this
+    and _card_content_bottom() measures from it, so what the containment
+    check compares against _card_height() is what the card actually draws.
+    """
+    if c.chips:
+        # Title sits near the top; the chip grid fills the body below it,
+        # and the lines sit under the last chip row, one gap and a little
+        # clear.
+        last = _chip_box(box, c, len(c.chips) - 1)
+        return box.y + 30, last.bottom + CHIP_GAP + 10, 16
+    # Title sits above centre when there are lines, centred when there are
+    # none, so a card with no lines reads as one centred label.
+    ty = box.cy + (-4 if c.lines else 5)
+    return ty, ty + 18, 13
+
+
+def _card_content_bottom(c: Card, box: Box) -> float:
+    """The lowest y _card() draws inside this box.
+
+    Text is measured to its baseline, because that is the only y the
+    drawing states. A few pixels of descender hang below it, which every
+    current card has the slack for.
+    """
+    ty, ly, step = _card_text(c, box)
+    if c.lines:
+        return ly + step * (len(c.lines) - 1)
+    if c.chips:
+        return _chip_box(box, c, len(c.chips) - 1).bottom
+    return ty
+
+
 def _card(c: Card, box: Box) -> str:
     """A card: rounded rect, bold title, then chips and/or grey lines."""
     # A dashed card is dashed more finely than a dashed group box.
@@ -257,27 +309,23 @@ def _card(c: Card, box: Box) -> str:
                 fill=c.fill or PALETTE["white"],
                 stroke=c.stroke or PALETTE["sage"], dashed=c.dashed,
                 dash="5 4")]
+    ty, ly, step = _card_text(c, box)
 
     if c.chips:
-        # Title sits near the top; the chip grid fills the body below it.
-        out.append(text(box.cx, box.y + 30, c.title, size=13, weight="600",
+        out.append(text(box.cx, ty, c.title, size=13, weight="600",
                         anchor="middle"))
         for i, name in enumerate(c.chips):
             cb = _chip_box(box, c, i)
             out.append(chip(cb.x, cb.y, cb.w, name,
                             fill=c.chip_fill or PALETTE["white"]))
-        # Lines sit under the last chip row, one gap and a little clear.
-        ly = _chip_box(box, c, len(c.chips) - 1).bottom + CHIP_GAP + 10
         for i, line in enumerate(c.lines):
-            out.append(text(box.cx, ly + i * 16, line, size=10,
+            out.append(text(box.cx, ly + i * step, line, size=10,
                             anchor="middle", fill=PALETTE["muted"]))
         return "".join(out)
 
-    # Title sits above centre when there are lines, centred when there are none.
-    ty = box.cy + (-4 if c.lines else 5)
     out.append(text(box.cx, ty, c.title, size=13, weight="600", anchor="middle"))
     for i, line in enumerate(c.lines):
-        out.append(text(box.cx, ty + 18 + i * 13, line, size=10.5,
+        out.append(text(box.cx, ly + i * step, line, size=10.5,
                         anchor="middle", fill=PALETTE["muted"]))
     return "".join(out)
 
@@ -400,9 +448,11 @@ def connector(pts, pen: Pen, dashed=False, both=False, label=None):
     cannot quietly point at another diagram's heads or draw itself in
     another diagram's colour.
     """
-    assert not both or pen.reverse, (
-        "a two-way arrow needs the reverse head, which this pen does not emit"
-    )
+    if both and not pen.reverse:
+        raise DiagramError(
+            "a two-way arrow needs the reverse head, which this pen does "
+            "not emit"
+        )
     d = "M " + " L ".join(f"{x:.1f} {y:.1f}" for x, y in pts)
     a = [f'd="{d}"', 'fill="none"', f'stroke="{pen.stroke}"',
          f'stroke-width="{pen.width}"',
@@ -458,11 +508,12 @@ def _lane(top: float, bottom: float) -> float:
     connection at all. The source makes the same trade.
     """
     clear = (bottom - top) / 2 - ARROW_INK - GROUP_INK
-    assert clear >= LANE_CLEAR, (
-        f"a band {bottom - top:g}px tall leaves a lane down its middle "
-        f"{clear:.2f}px of ink from the borders either side, under the "
-        f"{LANE_CLEAR}px a line needs to stay legible as its own line"
-    )
+    if clear < LANE_CLEAR:
+        raise DiagramError(
+            f"a band {bottom - top:g}px tall leaves a lane down its middle "
+            f"{clear:.2f}px of ink from the borders either side, under the "
+            f"{LANE_CLEAR}px a line needs to stay legible as its own line"
+        )
     return (top + bottom) / 2
 
 
@@ -607,12 +658,15 @@ def _chip_chain(box: Box, card: Card | None, pen: Pen) -> list[str]:
     content.py and the arrows would keep being drawn at the old gaps, with
     nothing to notice.
     """
-    assert card is not None, "the chip chain was given no card"
+    if card is None:
+        raise DiagramError("the chip chain was given no card")
     n, cols = len(card.chips), card.chip_cols
-    assert 2 <= n <= cols, (
-        f"{card.title} has {n} chips across {cols} columns; the chain is "
-        "drawn along one row, so it needs two or more chips and no row break"
-    )
+    if not 2 <= n <= cols:
+        raise DiagramError(
+            f"{card.title} has {n} chips across {cols} columns; the chain is "
+            "drawn along one row, so it needs two or more chips and no row "
+            "break"
+        )
     out = []
     for i in range(n - 1):
         a, b = _chip_box(box, card, i), _chip_box(box, card, i + 1)
@@ -663,6 +717,62 @@ def architecture_svg(product: str) -> str:
         f'{body}{"".join(arrows)}'
         "</svg>"
     )
+
+
+def geometry_problems(product: str) -> list[str]:
+    """Everything wrong with the architecture tree's own geometry.
+
+    Two failures live here, and both are silent in the drawing:
+
+    A card whose content overruns its box. _card_height() is a two-valued
+    constant, so measure() reserves the same 88 or 142 whatever the card
+    holds, while _card() draws content that grows with every line and
+    every chip row. This is the one level at which the two passes can
+    disagree: everywhere above it, both read the same helper for every
+    geometric fact and cannot drift.
+
+    An id used twice. render() records boxes in a plain dict, so a repeat
+    overwrites and its arrows anchor to the wrong box with no error. The
+    duplicate cannot be seen in the finished registry, only while it is
+    being built, which is why this walks the tree rather than reading the
+    boxes back.
+
+    The workflow diagram has neither: its cards are drawn to fixed
+    coordinates and it carries no ids, so there is nothing here for it.
+
+    Returned rather than raised so build.py can report these beside its
+    own checks and list every problem in one go.
+    """
+    problems: list[str] = []
+    seen: dict[str, int] = {}
+
+    def visit(g: Group) -> None:
+        if g.id:
+            seen[g.id] = seen.get(g.id, 0) + 1
+        for c in g.cards:
+            if c.id:
+                seen[c.id] = seen.get(c.id, 0) + 1
+            # Width never enters the vertical extent: _chip_box puts row i
+            # at the same y whatever the card is wide. Height does, and it
+            # is the height measure() reserved.
+            box = Box(0, 0, CANVAS_W, _card_height(c))
+            bottom = _card_content_bottom(c, box)
+            if bottom > box.bottom:
+                problems.append(
+                    f"card {c.title!r} draws content down to {bottom:g}px "
+                    f"in the {box.h:g}px box measure() reserves for it"
+                )
+        for k in g.children:
+            visit(k)
+
+    visit(_resolved_tree(product))
+    problems.extend(
+        f"id {i!r} is used {n} times; the box registry is a plain dict, so "
+        "the later box wins and every arrow anchored to the earlier one "
+        "moves silently"
+        for i, n in seen.items() if n > 1
+    )
+    return problems
 
 
 _NUMBERS = ("zero", "one", "two", "three", "four", "five", "six", "seven",

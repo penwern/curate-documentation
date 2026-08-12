@@ -47,7 +47,10 @@ written and the build still succeeds. Point at a specific binary with
 `CHROME=/path/to/chrome`.
 
 A current PDF is six pages, of which page 2 is the landscape architecture
-diagram.
+diagram. The step reads that page setup back out of the file and prints a
+note if it came out any other way, which is what a browser that ignores
+the named `@page` rule does. A note and not a failure: the document is
+correct, the printing of it is not.
 
 ## Files
 
@@ -72,12 +75,17 @@ canvas with no coordinate edits. Arrows are hand-routed but anchor to the
 computed box registry, so their endpoints follow a reflow. A new
 *component* is automatic; a new *connection* needs a route added.
 
+A card's own height does not reflow. It is 88, or 142 with chips,
+whatever the card holds, so a fourth grey line on a plain card, or a third
+chip row, draws past the bottom of the card. Check 8 measures the content
+against the box and fails the build rather than letting it ship.
+
 Ids in `ARCH_TREE` are arrow anchors. Renaming one that a route
 references stops the build with a `KeyError` naming the old id, so that
 mistake is loud rather than silent, but the route still has to be pointed
-at the new name by hand. Renaming one *onto an id already in use* is the
-quiet case: the registry is a plain dict, so the later box wins and the
-arrow anchors to the wrong thing with no error.
+at the new name by hand. Renaming one *onto an id already in use* was the
+quiet case, since the registry is a plain dict and the later box wins;
+check 8 walks the tree and fails the build on a repeated id.
 
 The two hardcoded outside lanes, `LANE_L` and `LANE_R`, carry the tightest
 clearances in the drawing and nothing checks them, so widening the boxes
@@ -126,21 +134,32 @@ in the stylesheet.
 
 ## Checks
 
-Seven checks run inside the build. Any failure raises, listing every
-problem at once, and the build exits non-zero.
+Seven checks run inside the build, numbered 1 to 8 with 6 retired. Any
+failure raises, listing every problem at once, and the build exits
+non-zero.
 
 1. No `{product}`, `{vendor}` or `{entity}` survived unresolved.
 2. Zero em dashes.
-3. The other product's name appears nowhere in the document.
+3. No other product's name appears anywhere in the document.
 4. Both SVGs are present and parse as XML.
 5. The referenced logo file exists.
-6. The PDF has exactly one landscape page and every other page is
-   portrait. Skipped when no PDF was produced, and therefore skipped
-   entirely under `--no-pdf`.
-7. The other brand's vendor names none of the three branding surfaces
+6. Retired. This was the PDF's page orientation, which the PDF step now
+   reports as a note of its own. A build whose HTML is correct must not
+   fail over how a browser paginated it. The number is left standing so
+   the two either side still mean what they have always meant.
+7. No other brand's vendor names any of the three branding surfaces
    (masthead, "Managed by" pill, footer). A surface whose markup cannot be
    found fails too, so renaming a class cannot turn this into a check that
    silently cannot fire.
+8. The architecture diagram's own geometry: no card draws past the box
+   the layout reserved for it, and no id is used twice. Both are silent
+   in the drawing, which is why they are checked. `diagram.py` measures
+   them, from the same helpers that place the ink, and `build.py` reports
+   them with the rest.
+
+Checks 3 and 7 hold a build against every other brand rather than one
+named opposite, so adding a third entry to `PRODUCTS` extends them on its
+own.
 
 Check 7 is deliberately narrower than check 3. A vendor name cannot be
 banned document-wide the way a product name can, because literal `Penwern`
@@ -151,8 +170,17 @@ and only there is the other brand's name a leak.
 Output is written before the checks run, so a failed build leaves its
 rejected files in `out/` for inspection.
 
-The checks cannot catch a visual regression. A colliding label or a card
-overflowing its group still needs someone to open the output and look.
+Separately from the checks, `diagram.py` raises on a broken invariant in
+the box tree: a group holding both cards and children, caption lines with
+no label to sit under, a two-way arrow drawn with a one-way pen, a band
+too shallow to run a labelled line down, and a chip chain that would break
+across a row. These raise rather than assert, because `python3 -O` deletes
+assertions and this tool's tests are its own runtime checks.
+
+The checks still cannot catch most visual regressions. A card overrunning
+its own box is caught; an arrow that now crosses a card, a label plaque
+landing on something it should not, or a route that has stopped reading as
+a connection all still need someone to open the output and look.
 
 ## Publishing
 

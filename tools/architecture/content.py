@@ -98,6 +98,10 @@ class Card:
     cards. A card may carry both: "Preservation lifecycle" has three
     chips and two explanatory lines beneath them.
 
+    Neither is free. A card's box is one of two fixed heights, so a fourth
+    line on a plain card, or a third chip row, draws past the bottom of
+    the card it sits in. Check 8 measures that and fails the build.
+
     `fill` and `stroke` are empty only where the source paint happens to
     equal the renderer's own default. Nothing inherits: a card sitting in
     a teal group does not pick up teal, so any card the source paints
@@ -419,9 +423,10 @@ PILLS = [
 
 # The architecture diagram, as a box tree. Every id below is an arrow
 # anchor. Renaming one to a fresh id stops the build with a KeyError
-# naming the old id; renaming one onto an id already in use is the case
-# to watch, because the registry is a plain dict and the later box
-# silently wins, leaving the arrow anchored to the wrong thing.
+# naming the old id; renaming one onto an id already in use was the case
+# to watch, because the registry is a plain dict and the later box wins,
+# leaving the arrow anchored to the wrong thing. Check 8 walks this tree
+# and fails the build on a repeated id, so that case is loud too now.
 ARCH_TREE = Group(
     label="",
     layout="stack",

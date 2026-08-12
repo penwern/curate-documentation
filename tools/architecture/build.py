@@ -30,9 +30,8 @@ class CheckError(Exception):
     """A build-time check failed.
 
     Output is written before checks run, because the PDF step prints from
-    the HTML on disk and check 6 reads the resulting PDF. A failed build
-    therefore leaves its rejected output in out/ for inspection, and exits
-    non-zero.
+    the HTML on disk. A failed build therefore leaves its rejected output
+    in out/ for inspection, and exits non-zero.
     """
 
 
@@ -49,21 +48,43 @@ def resolve(text: str, brand: Brand) -> str:
     )
 
 
+# One PDF real: an optional sign, then digits with an optional point, or
+# a leading point. Written out rather than the [\d.]+ it replaces, which
+# also matched "." and "1.2.3" and handed both to float(), which raises.
+# A signed number is legal in a /MediaBox and the old class refused it.
+_PDF_NUM = rb"[-+]?(?:\d+\.?\d*|\.\d+)"
+
+
 def _pdf_orientations(pdf: Path) -> list[str]:
     """Read each page's orientation from its /MediaBox.
 
     Parsed with a regex rather than a PDF library because the tool is
     standard-library only. Chrome writes one /MediaBox per page in a
-    predictable form, which is all this needs to handle.
+    predictable form, which is all this needs to handle. A /MediaBox this
+    cannot read is left out of the list rather than guessed at.
+
+    Never raises. Both callers, the orientation note in to_pdf and the
+    page count in build, treat a bad PDF as something to report and carry
+    on from, so neither can afford an exception here, and reading the same
+    file twice has to give the same answer both times.
     """
     raw = pdf.read_bytes()
     boxes = re.findall(
-        rb"/MediaBox\s*\[\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\]", raw
+        rb"/MediaBox\s*\[\s*(" + _PDF_NUM + rb")\s+(" + _PDF_NUM
+        + rb")\s+(" + _PDF_NUM + rb")\s+(" + _PDF_NUM + rb")\s*\]",
+        raw,
     )
     out = []
     for x0, y0, x1, y1 in boxes:
-        w = float(x1) - float(x0)
-        h = float(y1) - float(y0)
+        try:
+            w = float(x1) - float(x0)
+            h = float(y1) - float(y0)
+        except ValueError:
+            # Unreachable through the pattern above, which admits only
+            # well-formed reals. Kept because "never raises" is a promise
+            # to two callers, and a later hand widening the pattern must
+            # not be able to break it from a distance.
+            return []
         out.append("landscape" if w > h else "portrait")
     return out
 
@@ -94,8 +115,23 @@ def _branding_surfaces(html: str) -> list[tuple[str, str]]:
     ]
 
 
-def check_output(html: str, brand: Brand, pdf: Path | None) -> None:
+def _other_brands(brand: Brand) -> list[Brand]:
+    """Every brand this build is not.
+
+    Iterated rather than paired off against a single other name. PRODUCTS
+    is a dict and --product already takes its choices from it, so a third
+    brand is one entry away, and on that day checks 3 and 7 have to hold
+    it to the same standard instead of comparing it with Curate alone.
+    """
+    return [PRODUCTS[k] for k in sorted(PRODUCTS) if k != brand.key]
+
+
+def check_output(html: str, brand: Brand) -> None:
     """Run every check and raise CheckError once, listing every failure.
+
+    Everything collected here is fatal. The one build-time result that is
+    not, whether the PDF paginated the way the print rules ask, is
+    reported by to_pdf instead, so that "check" keeps meaning one thing.
 
     Checks 2 and 3 guard failures that are silent and would reach a client.
     """
@@ -111,10 +147,12 @@ def check_output(html: str, brand: Brand, pdf: Path | None) -> None:
         n = html.count("\u2014")
         problems.append(f"{n} em dash(es) in output; use commas or colons")
 
-    # 3. The other product's name appears nowhere.
-    other = "Soteria+" if brand.key == "curate" else "Curate"
-    if other in html:
-        problems.append(f"{brand.key} build leaks the name {other!r}")
+    # 3. No other product's name appears anywhere.
+    for other in _other_brands(brand):
+        if other.product in html:
+            problems.append(
+                f"{brand.key} build leaks the name {other.product!r}"
+            )
 
     # 4. Both SVGs parse as XML.
     #    stdlib ElementTree is used deliberately. The usual XXE and
@@ -136,20 +174,14 @@ def check_output(html: str, brand: Brand, pdf: Path | None) -> None:
     if not (ASSETS / brand.logo).is_file():
         problems.append(f"missing logo asset: {ASSETS / brand.logo}")
 
-    # 6. Exactly one landscape page, every other page portrait.
-    #    Skipped when the PDF was not produced; the PDF is best-effort.
-    if pdf is not None and pdf.is_file():
-        orient = _pdf_orientations(pdf)
-        landscape = orient.count("landscape")
-        if not orient:
-            problems.append("no /MediaBox found in the PDF")
-        elif landscape != 1:
-            problems.append(
-                f"expected exactly 1 landscape page, got {landscape} "
-                f"of {len(orient)}: {orient}"
-            )
+    # 6 was the PDF's page orientation. It is now a note printed by
+    # to_pdf, with the rest of the best-effort PDF diagnostics: a browser
+    # that ignores the named @page rule makes a bad PDF, not a bad
+    # document, and must not fail a build whose HTML is correct. The
+    # numbers either side are left standing so they still name the checks
+    # the README names.
 
-    # 7. The other brand's vendor names no branding surface.
+    # 7. No other brand's vendor names a branding surface.
     #    Deliberately not a whole-document check. Check 3 catches the
     #    other product's name anywhere, but a vendor cannot be treated
     #    the same way: literal "Penwern" is correct and required in both
@@ -158,16 +190,23 @@ def check_output(html: str, brand: Brand, pdf: Path | None) -> None:
     #    engineers"). Only the masthead, the "Managed by" pill and the
     #    footer carry the vendor as branding, and only there is the
     #    other brand's name a leak.
-    other_key = "soteria" if brand.key == "curate" else "curate"
-    other_vendor = PRODUCTS[other_key].vendor
     for name, surface in _branding_surfaces(html):
         if not surface:
             problems.append(f"branding surface not found in the page: {name}")
-        elif other_vendor in surface:
-            problems.append(
-                f"{brand.key} build names the vendor {other_vendor!r} "
-                f"in the {name}"
-            )
+            continue
+        for other in _other_brands(brand):
+            if other.vendor in surface:
+                problems.append(
+                    f"{brand.key} build names the vendor {other.vendor!r} "
+                    f"in the {name}"
+                )
+
+    # 8. The architecture diagram's own geometry: no card draws past the
+    #    box measure() reserved for it, and no id is used twice. Both are
+    #    silent in the drawing, and both are asked of diagram.py rather
+    #    than worked out again from the SVG here: a second reading of the
+    #    geometry is a second thing to keep in step with the first.
+    problems.extend(diagram.geometry_problems(brand.product))
 
     if problems:
         raise CheckError(
@@ -458,6 +497,11 @@ def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
     the build down with them. Each prints a different note, because
     "not installed", "not a browser", "crashed" and "still running after
     three minutes" need different responses.
+
+    A PDF that printed with the wrong page setup is still a PDF, so it is
+    returned, with a note naming what is wrong. It is reported here and
+    not in check_output because a build whose HTML is correct must not
+    fail over how a browser chose to paginate it.
     """
     chrome = find_chrome()
     if chrome is None:
@@ -509,6 +553,26 @@ def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
     if r.returncode != 0 or not pdf_path.is_file():
         print(f"  PDF step failed (exit {r.returncode}): {r.stderr.strip()[:300]}")
         return None
+
+    # A wrong page setup is one more way the PDF can come out bad, so it
+    # is reported here with the rest of them rather than failing the
+    # build. The likeliest cause is a Chromium that does not honour the
+    # named @page rule the landscape diagram page relies on, which prints
+    # every page portrait from HTML that is perfectly correct.
+    orient = _pdf_orientations(pdf_path)
+    landscape = orient.count("landscape")
+    if not orient:
+        print(
+            "  PDF has no readable /MediaBox, so its page setup could not "
+            "be checked. Open it before sending it out."
+        )
+    elif landscape != 1:
+        print(
+            f"  PDF page setup is wrong: {landscape} landscape page(s) of "
+            f"{len(orient)}, expected exactly 1: {orient}. The HTML is "
+            "correct; the browser printing it may not honour the named "
+            "@page rule the diagram page uses."
+        )
     return pdf_path
 
 
@@ -522,7 +586,7 @@ def build(brand: Brand, want_pdf: bool = True) -> Path:
     if want_pdf:
         pdf_path = to_pdf(html_path, OUT / f"{brand.out}.pdf")
 
-    check_output(html, brand, pdf_path)
+    check_output(html, brand)
 
     print(f"  {html_path.relative_to(REPO)}")
     if pdf_path:
