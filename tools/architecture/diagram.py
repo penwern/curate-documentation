@@ -724,7 +724,10 @@ def geometry_problems(product: str) -> list[str]:
 
     Two failures live here, and both are silent in the drawing:
 
-    A card whose content overruns its box. _card_height() is a two-valued
+    A card whose content overruns the bottom of its box. Vertical only:
+    a title too wide for its card overflows sideways and is not caught,
+    because measuring rendered text needs font metrics the standard
+    library does not have. _card_height() is a two-valued
     constant, so measure() reserves the same 88 or 142 whatever the card
     holds, while _card() draws content that grows with every line and
     every chip row. This is the one level at which the two passes can

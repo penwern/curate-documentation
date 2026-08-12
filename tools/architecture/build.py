@@ -61,7 +61,10 @@ def _pdf_orientations(pdf: Path) -> list[str]:
     Parsed with a regex rather than a PDF library because the tool is
     standard-library only. Chrome writes one /MediaBox per page in a
     predictable form, which is all this needs to handle. A /MediaBox this
-    cannot read is left out of the list rather than guessed at.
+    cannot read is not guessed at: an unparseable one is skipped by the
+    pattern, and a parseable one that will not convert abandons the whole
+    list rather than returning a partial one, because a partial list
+    would let a caller report "1 landscape of 3" for a six-page file.
 
     Never raises. Both callers, the orientation note in to_pdf and the
     page count in build, treat a bad PDF as something to report and carry

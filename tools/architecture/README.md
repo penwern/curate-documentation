@@ -151,11 +151,14 @@ non-zero.
    (masthead, "Managed by" pill, footer). A surface whose markup cannot be
    found fails too, so renaming a class cannot turn this into a check that
    silently cannot fire.
-8. The architecture diagram's own geometry: no card draws past the box
-   the layout reserved for it, and no id is used twice. Both are silent
-   in the drawing, which is why they are checked. `diagram.py` measures
-   them, from the same helpers that place the ink, and `build.py` reports
-   them with the rest.
+8. The architecture diagram's own geometry: no card draws past the
+   *bottom* of the box the layout reserved for it, and no id is used
+   twice. Both are silent in the drawing, which is why they are checked.
+   `diagram.py` measures them, from the same helpers that place the ink,
+   and `build.py` reports them with the rest. Vertical only: a title too
+   long for its card still overflows sideways uncaught, because measuring
+   rendered text width needs font metrics the standard library does not
+   have.
 
 Checks 3 and 7 hold a build against every other brand rather than one
 named opposite, so adding a third entry to `PRODUCTS` extends them on its
@@ -178,7 +181,8 @@ across a row. These raise rather than assert, because `python3 -O` deletes
 assertions and this tool's tests are its own runtime checks.
 
 The checks still cannot catch most visual regressions. A card overrunning
-its own box is caught; an arrow that now crosses a card, a label plaque
+the bottom of its own box is caught; a title too wide for its card, an
+arrow that now crosses a card, a label plaque
 landing on something it should not, or a route that has stopped reading as
 a connection all still need someone to open the output and look.
 
