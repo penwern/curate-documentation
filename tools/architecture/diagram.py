@@ -474,7 +474,8 @@ def _lane(top: float, bottom: float) -> float:
 # them, and they carry the tightest clearance in the diagram: LANE_R runs
 # 8.25px of ink from the AWS box's right edge, held parallel for 964px.
 # Moving either, or widening the boxes they run beside, needs that gap
-# re-measured by hand. lanes.py is what measures it.
+# re-measured by hand. Nothing in the tool measures it: the figures above
+# came from a throwaway script that was never committed.
 LANE_L = 36
 LANE_R = CANVAS_W - 14
 

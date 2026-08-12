@@ -418,7 +418,10 @@ PILLS = [
 
 
 # The architecture diagram, as a box tree. Every id below is an arrow
-# anchor, so renaming one silently detaches an arrow.
+# anchor. Renaming one to a fresh id stops the build with a KeyError
+# naming the old id; renaming one onto an id already in use is the case
+# to watch, because the registry is a plain dict and the later box
+# silently wins, leaving the arrow anchored to the wrong thing.
 ARCH_TREE = Group(
     label="",
     layout="stack",

@@ -75,7 +75,9 @@ computed box registry, so their endpoints follow a reflow. A new
 Ids in `ARCH_TREE` are arrow anchors. Renaming one that a route
 references stops the build with a `KeyError` naming the old id, so that
 mistake is loud rather than silent, but the route still has to be pointed
-at the new name by hand.
+at the new name by hand. Renaming one *onto an id already in use* is the
+quiet case: the registry is a plain dict, so the later box wins and the
+arrow anchors to the wrong thing with no error.
 
 The two hardcoded outside lanes, `LANE_L` and `LANE_R`, carry the tightest
 clearances in the drawing and nothing checks them, so widening the boxes
@@ -98,11 +100,13 @@ Three placeholder forms plus the literal, and the distinction matters:
 | literal `Penwern` | never substituted | who operates or builds something |
 
 `Penwern A3M`, `Penwern support access`, `Penwern-operated endpoint`,
-`Named Penwern engineers` and `Penwern operated, outside the tenant` stay
-as written in both builds. Nine occurrences across six distinct phrases
-survive into the Soteria+ document, in the tables, the security note, the
-facts panel and the diagram. Penwern operates Soteria+ deployments too,
-and A3M is the name of an upstream fork rather than a brand.
+`Named Penwern engineers over SSH`, the lowercase `named Penwern
+engineers` in the security note, and `Penwern operated, outside the
+tenant` stay as written in both builds. Nine occurrences across those six
+distinct phrases survive into the Soteria+ document, in the tables, the
+security note, the facts panel and the diagram. Penwern operates Soteria+
+deployments too, and A3M is the name of an upstream fork rather than a
+brand.
 
 This is why the tool uses named placeholders rather than the site's global
 `sed` rebrand, which cannot express the distinction. See
