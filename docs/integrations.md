@@ -209,6 +209,8 @@ Curate offers several single sign-on (SSO) options for your users. This means th
 
 Microsoft Entra is a cloud-based identity provider that allows you to manage your users and their identities in a single place. Many organisations already use Microsoft Entra to manage their users.
 
+The setup in this section uses OpenID Connect (OIDC). If your organisation requires SAML 2.0 instead, follow the [SAML 2.0](#saml-20) guide, which includes a separate Microsoft Entra walkthrough.
+
 This guide attempts to provide a comprehensive walkthrough for setting up Curate with Microsoft Entra as your IdP. If you would like to read additional information about Entra or would like an additional resource to guide you through this process, please visit the Microsoft Documentation for setting up Entra app registrations: [Microsoft Entra app registration documentation](https://learn.microsoft.com/en-us/graph/auth-register-app-v2)
 
 If you are using Microsoft Entra as your IdP, you will need to follow the steps below to enable Curate to use it as your SSO provider.
@@ -446,6 +448,216 @@ Upon completion of the mapping configuration, user permissions will be automatic
 **Ongoing Management**
 
 After initial setup, your IT administrators can manage user permissions entirely through Entra ID group memberships, providing a streamlined and auditable approach to access control within Curate.
+
+### SAML 2.0
+
+Curate can use a SAML 2.0-compatible identity provider (IdP) for single sign-on. SAML 2.0 is an open standard, so this option can be used with Microsoft Entra ID and other compatible identity providers such as Okta, Google Workspace, Active Directory Federation Services (AD FS) and Shibboleth.
+
+Every identity provider presents its configuration differently. This guide therefore explains the information that must be exchanged for any SAML 2.0 connection, followed by a complete example using Microsoft Entra ID. If you use another identity provider, your identity administrator can use the same Curate service provider values with that provider's SAML documentation.
+
+<div class="tip">
+    <span class="mdi mdi-information-outline"></span>
+    <span>
+        <strong>Things you'll need:</strong>
+        </br>
+        <ul>
+            <li>Administrative access to your identity provider, or help from someone who has it.</li>
+            <li>Assistance from the Curate support team to enable SAML 2.0 and provide the settings for your Curate instance.</li>
+            <li>A test user account that you can grant access to Curate.</li>
+            <li>30-45 minutes of time.</li>
+        </ul>
+    </span>
+</div>
+
+#### How the SAML 2.0 Setup Works
+
+In a SAML connection, Curate is the **service provider (SP)** and your authentication system is the **identity provider (IdP)**. Each side needs information about the other before it can trust and process sign-in messages.
+
+The setup is completed in the following order:
+
+1. Contact Curate support to request SAML 2.0 SSO.
+2. Curate support provides the callback URL and Entity ID for your Curate instance.
+3. Create a SAML 2.0 application in your identity provider, using the callback URL as both the SP Entity ID and ACS URL unless support instructs you otherwise.
+4. Provide Curate support with your IdP login URL, signing certificate and claim names.
+5. Curate support completes the connector and confirms that it is ready to test.
+6. Test the connection with a non-administrative user before making it available more widely.
+
+The following values are exchanged during setup:
+
+| SAML term | Microsoft Entra field | Purpose |
+| --- | --- | --- |
+| Curate callback URL | Reply URL (Assertion Consumer Service URL) | The Curate endpoint to which the identity provider sends its SAML response. |
+| Curate Entity ID | Identifier (Entity ID) | Identifies Curate in the authentication request. Curate support will normally supply the callback URL as this value. |
+| IdP SSO URL | Login URL | The identity provider endpoint to which Curate posts its authentication request. |
+| IdP signing certificate | Certificate (Base64) | Allows Curate to verify the signature on the SAML response. |
+| Username and email claim names | Attributes & Claims | Tells Curate which values in the SAML response identify the user. |
+
+<div class="warning">
+    <span class="mdi mdi-alert"></span>
+    <span>Copy SAML URLs and claim names exactly. Differences such as a missing path, changed connector ID or trailing slash can prevent sign-in.</span>
+</div>
+
+The login URL and signing certificate are not client secrets or passwords. However, send configuration details using the support channel agreed during setup and never send a user's password or an unredacted SAML response by email.
+
+#### Setting up SAML 2.0 in Microsoft Entra
+
+Microsoft Entra configures SAML applications under **Enterprise applications**, rather than by creating the type of **App registration** used in the preceding Microsoft Entra guide. The current Microsoft instructions are available in [Enable SAML single sign-on for an enterprise application](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/add-application-portal-setup-sso).
+
+##### 1. Request the Curate Service Provider Settings
+
+Contact Curate support and request SAML 2.0 SSO for your Curate instance. If you are a new customer, you can do this during onboarding. If you are an existing customer, create a support ticket.
+
+Support will create or prepare the connection and provide the Curate callback URL and Entity ID. The callback URL will normally have the following form:
+
+```
+https://<your-curate-domain>/auth/login/<connector-id>/callback
+```
+
+Curate support will normally ask you to use this exact URL as both the **Identifier (Entity ID)** and **Reply URL (ACS URL)** in Entra. Always use the values supplied by support.
+
+##### 2. Create a Non-gallery Enterprise Application
+
+1. **Log in to Microsoft Entra as an administrator** and open the [Microsoft Entra admin center](https://entra.microsoft.com/). You will normally need at least the Cloud Application Administrator or Application Administrator role.
+
+2. **Switch to the correct tenant**, where applicable.
+
+3. Navigate to **Entra ID** > **Enterprise apps** > **All applications**.
+
+4. Select **New application**.
+
+5. Select **Create your own application**.
+
+6. Enter a descriptive name, such as "Curate SAML" or "Curate Enterprise SAML".
+
+7. Select **Integrate any other application you don't find in the gallery (Non-gallery)**.
+
+8. Select **Create**.
+
+For more information about this process, see [Add an enterprise application in Microsoft Entra](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/add-application-portal).
+
+##### 3. Configure SAML Single Sign-on
+
+1. Open the enterprise application you created in the previous section.
+
+2. Select **Single sign-on** from the left-hand menu.
+
+3. Select **SAML** as the single sign-on method.
+
+4. In **Basic SAML Configuration**, select **Edit**.
+
+5. Enter the callback URL supplied by Curate support:
+
+   - In **Identifier (Entity ID)**, enter the complete Curate callback URL.
+   - In **Reply URL (Assertion Consumer Service URL)**, enter the same complete Curate callback URL.
+   - Leave **Sign on URL** empty unless Curate support supplied a separate value.
+   - Leave **Relay State** and **Logout URL** empty unless Curate support supplied values for them.
+
+6. Select **Save**.
+
+<div class="tip">
+    <span class="mdi mdi-information-outline"></span>
+    <span>A SAML configuration does not require the client secret, API permissions, redirect URI platform or implicit grant settings used by the OpenID Connect-based Microsoft Entra integration.</span>
+</div>
+
+##### 4. Configure User Attributes and Claims
+
+1. On the **Set up Single Sign-On with SAML** page, locate **Attributes & Claims** and select **Edit**.
+
+2. Locate the additional claims whose source values are `user.userprincipalname` and `user.mail`.
+
+3. Record the complete **Claim name** shown for each one. Curate needs the claim name from the left-hand column, not the Entra source value from the right-hand column.
+
+For a default Entra SAML application, the mappings are normally:
+
+| Curate field | Entra source value | Default Entra claim name |
+| --- | --- | --- |
+| Username attribute | `user.userprincipalname` | `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name` |
+| Email attribute | `user.mail` | `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress` |
+
+If your tenant shows different claim names, record and provide the exact names displayed in your tenant. You do not need to add replacement claims when the existing claims supply the correct username and email values.
+
+The identifier you choose must be present for every user who will sign in and should remain stable. Do not assume that `user.mail` and `user.userprincipalname` contain the same value in your tenant. If Curate uses an email address to identify an account, confirm which Entra attribute reliably contains that address for all intended users.
+
+<div class="warning">
+    <span class="mdi mdi-alert"></span>
+    <span>Changing the identifier sent for an existing user can cause Curate to treat that person as a different account. Contact Curate support before changing the NameID or primary identity claim after the connection is in use.</span>
+</div>
+
+Microsoft provides additional guidance for diagnosing missing or incorrectly formatted attributes in [Troubleshoot SAML application sign-in](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/application-sign-in-problem-application-error).
+
+##### 5. Collect the Microsoft Entra Login URL and Certificate
+
+1. Return to the **Set up Single Sign-On with SAML** page for your enterprise application.
+
+2. In the section headed **Set up [application name]**, copy the **Login URL**. It normally resembles `https://login.microsoftonline.com/<tenant-id>/saml2`.
+
+3. In the same section, copy the **Microsoft Entra Identifier**. It normally resembles `https://sts.windows.net/<tenant-id>/`.
+
+4. Locate **SAML Certificates** and download **Certificate (Base64)**.
+
+5. Send Curate support:
+
+   - The Login URL.
+   - The Microsoft Entra Identifier.
+   - The downloaded Base64 certificate file.
+   - The complete username and email claim names recorded in the previous section.
+
+The **App Federation Metadata URL** and **Federation Metadata XML** contain much of the same information, but please send the individual values and certificate listed above unless Curate support requests the metadata instead.
+
+<div class="warning">
+    <span class="mdi mdi-alert"></span>
+    <span>Your Curate site must permit the identity provider in its Content Security Policy before SAML sign-in can work. Contact Curate support to confirm that the required CSP configuration is in place before testing.</span>
+</div>
+
+##### 6. Grant a Test User Access
+
+1. In the enterprise application, select **Properties**.
+
+2. Decide whether **Assignment required?** should be enabled. Enabling it restricts sign-in to users or groups explicitly assigned to the application and is recommended when only selected people should have access to Curate.
+
+3. Select **Save** if you changed the setting.
+
+4. Select **Users and groups** from the left-hand menu.
+
+5. Select **Add user/group**.
+
+6. Select a test user, then select **Select** and **Assign**.
+
+Group-based assignment requires an appropriate Microsoft Entra licence and does not include members of nested groups. For more information, see [Manage users and groups assigned to an application](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/assign-user-or-group-access-portal).
+
+##### 7. Test the Connection
+
+Keep an existing Curate administrative session open in a separate browser while testing, so that you retain access if the SAML configuration needs to be corrected.
+
+1. Open a private or incognito browser window.
+
+2. Navigate to your Curate instance and select the SAML sign-in option configured for your organisation.
+
+3. Sign in with the Entra test user that you assigned to the application.
+
+4. Confirm that the user is returned to Curate and that the correct existing account is used, or that a new account is created as agreed with Curate support.
+
+5. Confirm that the user's name, email address and permissions are correct.
+
+6. Sign out, then sign in again to confirm that the same Curate account is used.
+
+If sign-in fails, record the time of the attempt, the user account, the Entra error code or Curate error message, and the Entra correlation and request IDs where available. Send these details to Curate support; do not send the user's password or an unredacted SAML response by email.
+
+Once testing succeeds, assign the remaining users or groups that should have access. Curate accounts and permissions remain subject to your organisation's Curate configuration and licensed user quota.
+
+#### Troubleshooting SAML Sign-in
+
+| Symptom | Likely cause |
+| --- | --- |
+| **Connector not found** appears immediately, or a blank page appears before reaching Entra | Contact Curate support to confirm that the connection is complete and that the identity provider is permitted by the site's Content Security Policy. |
+| Entra reports a reply URL, audience or issuer error | Confirm that Entra's **Reply URL** and **Identifier (Entity ID)** exactly match the values supplied by Curate support. If they match, send the Entra error code and correlation details to support. |
+| Authentication succeeds but Curate cannot identify the user | Confirm that the claim names supplied to Curate support exactly match those in Entra's **Attributes & Claims** page. Claim names are case-sensitive. Also confirm that the selected Entra source attributes contain values for the affected user. |
+
+#### Maintaining the SAML Connection
+
+Microsoft Entra signs SAML responses using a certificate associated with the enterprise application. Record its expiry date and arrange renewal with Curate support before it expires. A certificate change must be coordinated so that Curate trusts the new certificate when Entra begins using it; otherwise, users may be unable to sign in.
+
+Microsoft recommends using SHA-256 for SAML signing unless an application specifically requires SHA-1. Do not change the signing option, signing algorithm, Entity ID, ACS URL or identity claims after testing without coordinating the change with Curate support. For more information, see [Certificate signing options in Microsoft Entra](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/certificate-signing-options) and [Plan a single sign-on deployment](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/plan-sso-deployment).
 
 ## Microsoft SharePoint
 
