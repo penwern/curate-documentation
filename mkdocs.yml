@@ -35,6 +35,7 @@ nav:
   - General: general.md
   - Application Areas: application-areas.md
   - Upload & Ingest: upload-ingest.md
+  - Command-line Uploads: command-line-uploads.md
   - Appraisal: appraisal.md
   - Preservation: preservation.md
   - Packaging: packaging.md

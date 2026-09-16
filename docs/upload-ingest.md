@@ -28,6 +28,11 @@ This will greatly improve your upload performance.</span></div>
 We would strongly recommend using the advanced web-uploader for the
 majority of your ingests, where the size and volume is appropriate.
 
+For larger uploads where the web uploader is not suitable, Curate support can
+provide the Curate command-line client and an API key. See
+[Uploading with the Curate command-line client](command-line-uploads.md) for
+setup and upload instructions.
+
 Try uploading files and folders (you can upload any complex folder
 structure) using the advanced web-uploader. You can do this by selecting
 'New' at the top of the screen, and then Upload.
