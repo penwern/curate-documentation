@@ -775,8 +775,6 @@ If your organisation prefers not to manage site-level grants:
 
 This permission allows the integration application to read and write content across all SharePoint site collections in the tenant, so no separate site assignment is required. The integration service will still reject submissions from sites that the Curate support team has not configured, but the Entra application credential itself has tenant-wide SharePoint access.
 
-`Files.ReadWrite.All` is not a substitute for `Sites.ReadWrite.All` in this integration. The service also updates SharePoint list-item fields, including `PreservationStatus`, so it requires site-level write permission.
-
 ### Creating the backend credential
 
 Create a client secret that the integration service can use for its Microsoft Graph application access:
