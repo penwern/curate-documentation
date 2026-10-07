@@ -703,7 +703,7 @@ As a result, to access and retrieve your specified data, Curate requires specifi
 The integration uses one customer-specific Microsoft Entra application registration for two separate authentication flows:
 
 - When a user selects **Preserve**, the SharePoint extension obtains a delegated Entra access token for the integration API. The API verifies the token's signature, tenant, audience and `Preservation.Upload` scope. The user's identity is taken from this verified token.
-- The integration service uses its own Entra credential to access Microsoft Graph. Its application access is restricted to approved SharePoint sites with the `Sites.Selected` permission.
+- The integration service uses its own Entra credential to access Microsoft Graph. We recommend restricting its application access to approved SharePoint sites with `Sites.Selected`. Customers who do not want to manage individual site grants can instead grant the application tenant-wide `Sites.ReadWrite.All` access.
 
 The Curate API key and the Entra client credential are held only by the integration service. They must not be entered into a SharePoint list, packaged with the extension or sent by the browser. The customer does not need to maintain a separate list of authorised users: Entra authenticates users from the customer tenant, normal use begins with content the user can access in SharePoint, and the integration service separately restricts requests to configured sites and, optionally, Document Libraries.
 
@@ -730,7 +730,9 @@ The complete delegated permission will be shown as `api://<application-client-id
 
 ### Granting Microsoft Graph access
 
-The integration service needs application access to the SharePoint sites from which it will retrieve content and update preservation status.
+The integration service needs application access to retrieve content and update the `PreservationStatus` field in the enabled SharePoint sites. Choose one of the following permission models. Do not add both unless there is a specific reason to do so.
+
+#### Option 1: Restrict access to selected sites (recommended)
 
 1. In the app registration, open **API permissions**.
 2. Select **Add a permission → Microsoft Graph → Application permissions**.
@@ -760,7 +762,20 @@ with the following body:
 }
 ```
 
-You can obtain the site ID with `GET https://graph.microsoft.com/v1.0/sites/<tenant>.sharepoint.com:/sites/<site-name>` and verify the completed assignment with `GET https://graph.microsoft.com/v1.0/sites/{site-id}/permissions`. The account making these requests must have sufficient Microsoft Graph administrative permission.
+You can obtain the site ID with `GET https://graph.microsoft.com/v1.0/sites/<tenant>.sharepoint.com:/sites/<site-name>` and verify the completed assignment with `GET https://graph.microsoft.com/v1.0/sites/{site-id}/permissions`. The account making these requests must have sufficient Microsoft Graph administrative permission. Repeat the site-level grant for every SharePoint site where the integration will be enabled.
+
+#### Option 2: Allow access to all SharePoint sites
+
+If your organisation prefers not to manage site-level grants:
+
+1. In the app registration, open **API permissions**.
+2. Select **Add a permission → Microsoft Graph → Application permissions**.
+3. Add `Sites.ReadWrite.All`.
+4. Select **Grant admin consent** for the tenant.
+
+This permission allows the integration application to read and write content across all SharePoint site collections in the tenant, so no separate site assignment is required. The integration service will still reject submissions from sites that the Curate support team has not configured, but the Entra application credential itself has tenant-wide SharePoint access.
+
+`Files.ReadWrite.All` is not a substitute for `Sites.ReadWrite.All` in this integration. The service also updates SharePoint list-item fields, including `PreservationStatus`, so it requires site-level write permission.
 
 ### Creating the backend credential
 
