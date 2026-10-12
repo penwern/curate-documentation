@@ -30,7 +30,7 @@ Options: `--product curate|soteria` for one product, `--no-pdf` for HTML
 only. Giving neither flag is an error rather than a default build.
 
 Python 3.10 or newer, standard library only. No `pip install`, and nothing
-is added to `requirements.txt`, which belongs to mkdocs.
+is added to `pyproject.toml`, which belongs to mkdocs.
 
 Each HTML file is self-contained: the CSS is inlined and the brand logo is
 embedded as a data URI, once as the masthead mark and once as the favicon,
