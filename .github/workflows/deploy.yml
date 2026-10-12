@@ -15,21 +15,21 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Python
-        uses: actions/setup-python@v7
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.2.0
         with:
-          python-version: '3.x'
+          version: "0.12.18"  # keep in step with UV_VERSION in penwern-ci
+          python-version: "3.12"
+          enable-cache: false
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: uv sync --frozen
 
       - name: Build and Deploy Curate Documentation
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mkdocs build --clean
+          uv run mkdocs build --clean
           cd site
           git init
           git config user.name "GitHub Actions"
@@ -51,7 +51,7 @@ jobs:
         env:
           SOTERIA_PLUS_PAT: ${{ secrets.SOTERIA_PLUS_PAT }}
         run: |
-          mkdocs build --clean --config-file mkdocs-soteria-plus.yml --site-dir soteria-plus-site
+          uv run mkdocs build --clean --config-file mkdocs-soteria-plus.yml --site-dir soteria-plus-site
           cd soteria-plus-site
           git init
           git config user.name "GitHub Actions"
