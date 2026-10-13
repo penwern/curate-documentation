@@ -801,27 +801,42 @@ Create a client secret that the integration service can use for its Microsoft Gr
 
 Transfer the tenant ID, application ID and credential to the Curate support team using the secure method they provide. Do not email an unencrypted client secret and do not place the credential in SharePoint. The support team will also configure the Curate API key, allowed SharePoint origin, allowed site ID and, if required, allowed Document Library drive IDs on the integration service.
 
-### Creating the SharePoint configuration list
+### Configuring the SharePoint tenant property
 
-On every site where the integration is enabled:
+Configure the extension once for the customer tenant. A SharePoint tenant administrator must store the following JSON in the App Catalog tenant-property store under the key `CurateSharePointIntegration`:
 
-- Log in to your SharePoint environment.
-- Select the site from which you would like to use the Curate integration.
-- Find the "Create" button in the left-hand navigation panel and select a new "List".
+```json
+{
+  "apiApplicationId": "<application-client-id>",
+  "integrationApiUrl": "https://<integration-host>/api/sharepoint"
+}
+```
 
-You must call the list `soteria-details`.
+`apiApplicationId` is the Entra Application (client) ID recorded earlier. `integrationApiUrl` is the HTTPS URL supplied by the Curate support team. Do not add credentials, a query string or a fragment to the URL.
 
-Next, you must add columns to the list for the following fields:
+Using the SharePoint Online Management Shell, set the value once with the customer's actual App Catalog URL:
 
-- `ApiApplicationId`: Single line of text containing the Entra Application (client) ID.
-- `IntegrationApiUrl`: Single line of text containing the HTTPS URL supplied by the Curate support team, for example `https://integration.example.org/api/sharepoint`.
-- `Active`: Choice field with `Active` and `Inactive` options.
+```powershell
+$configuration = '{"apiApplicationId":"<application-client-id>","integrationApiUrl":"https://<integration-host>/api/sharepoint"}'
+Set-SPOStorageEntity `
+  -Site "https://<tenant>.sharepoint.com/sites/<app-catalog>" `
+  -Key "CurateSharePointIntegration" `
+  -Value $configuration `
+  -Description "Curate SharePoint integration configuration" `
+  -Comments "Managed by the SharePoint tenant administrator"
+```
 
-Add one item containing the Application (client) ID and integration API URL, then set `Active` to `Active`. If more than one item is active, the extension uses the most recently created one.
+Verify the stored value with:
 
-Restrict editing of this list to site administrators. The list contains no Curate API key or client secret, but changing its values can redirect requests or stop the integration working.
+```powershell
+Get-SPOStorageEntity `
+  -Site "https://<tenant>.sharepoint.com/sites/<app-catalog>" `
+  -Key "CurateSharePointIntegration"
+```
 
-If you are upgrading an older installation, remove the Curate API key from the SharePoint list after all sites have been upgraded to the new extension. Ask the Curate support team to rotate the exposed key and store the replacement only on the integration service.
+Every site-scoped or tenant-wide installation reads this same property through SharePoint. The application ID and API URL are public configuration rather than credentials, but only tenant administrators should be able to change them. Do not store the Entra client secret or Curate API key in this property.
+
+The extension does not require a configuration list on each site. If you are upgrading an older installation, remove the Curate API key from the old `soteria-details` list after all sites have been upgraded. Ask the Curate support team to rotate the exposed key and store the replacement only on the integration service; the old list can then be deleted.
 
 ### Installing the SharePoint Extension
 
@@ -887,7 +902,7 @@ If the test fails, provide the time of the attempt, SharePoint site URL, affecte
 
 ### Sending files to Curate via SharePoint
 
-To send a file to Curate from SharePoint, select the items you would like to send, then select the **Preserve** button in the SharePoint ribbon. Provided the [SharePoint configuration list](#creating-the-sharepoint-configuration-list), Entra permissions and server-side settings are complete, the integration will accept the submission and process it in the background.
+To send a file to Curate from SharePoint, select the items you would like to send, then select the **Preserve** button in the SharePoint ribbon. Provided the [SharePoint tenant property](#configuring-the-sharepoint-tenant-property), Entra permissions and server-side settings are complete, the integration will accept the submission and process it in the background.
 
 The **Preservation Status** column reports progress and the final outcome. If SharePoint reports that the sign-in could not be authenticated, check that the delegated API permission has been approved. If it reports that the site or tenant is not enabled, ask the Curate support team to confirm the tenant, site ID and optional drive restrictions configured on the integration service.
 
