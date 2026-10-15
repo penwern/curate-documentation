@@ -205,6 +205,22 @@ Curate provides a complete embedded user authentication solution with an interna
 
 Curate offers several single sign-on (SSO) options for your users. This means that you can log in to Curate using your existing identity provider (IdP) and have your user details automatically populated into Curate. This is particularly useful for organisations that have a central identity provider such as an LDAP server, Google Accounts or Microsoft Entra, and want to allow their users to log in to Curate with the same credentials they use for your other systems or services.
 
+### OpenID Connect (OIDC) Callback URL
+
+For all OpenID Connect (OIDC) SSO setups, including Microsoft Entra and Google, use the following callback URL (also called a redirect URI):
+
+```text
+customersiteurl/auth/login/oidc/callback
+```
+
+Replace `customersiteurl` with the full URL of your Curate site, including `https://`, without a trailing slash. The connector ID is always `oidc` for every OIDC identity provider.
+
+For example, if your Curate site is `https://www.curate.penwern.co.uk`, your callback URL is:
+
+```text
+https://www.curate.penwern.co.uk/auth/login/oidc/callback
+```
+
 ### Microsoft Entra (formerly Azure AD)
 
 Microsoft Entra is a cloud-based identity provider that allows you to manage your users and their identities in a single place. Many organisations already use Microsoft Entra to manage their users.
@@ -260,7 +276,7 @@ _Configuration Details_
 | ----------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------- |
 | Name                    | "Curate" or "Curate Enterprise"                                                      | Choose a descriptive display name                   |
 | Supported account types | "Accounts in this organizational directory only<br>(Microsoft only - Single tenant)" | For most configurations. Contact support if unsure. |
-| Redirect URI (optional) | https://www.exampleinstance.com/auth/login/entra/callback                            | Replace with your actual Curate instance URL        |
+| Redirect URI (optional) | https://www.exampleinstance.com/auth/login/oidc/callback                             | Replace with your actual Curate instance URL; keep `/auth/login/oidc/callback` |
 
 _Next Steps_
 
@@ -345,7 +361,7 @@ At this point, if you decided to add the callback URL in the previous section, y
 
 7. **Select "Web"** from the "Configure platforms" menu that appears on the right hand side of the screen.
 
-8. **Enter the callback URL** for your Curate instance in the "Redirect URI" field. This should be the URL of your Curate instance with the path "/auth/sso/callback/microsoft-entra". For example, if your Curate instance is at https://www.exampleinstance.com, then your callback URL would be https://www.exampleinstance.com/auth/sso/callback/microsoft-entra.
+8. **Enter the callback URL** for your Curate instance in the "Redirect URI" field. Use your Curate site URL followed by `/auth/login/oidc/callback`, as described in [OpenID Connect (OIDC) Callback URL](#openid-connect-oidc-callback-url). For example, if your Curate instance is at `https://www.exampleinstance.com`, then your callback URL would be `https://www.exampleinstance.com/auth/login/oidc/callback`. The connector ID is always `oidc`, including for Microsoft Entra.
 
 9. **Select "Add platform"** to add the callback URL.
 
