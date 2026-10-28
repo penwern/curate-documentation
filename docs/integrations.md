@@ -679,7 +679,7 @@ Microsoft recommends using SHA-256 for SAML signing unless an application specif
 
 Curate's SharePoint integration provides a robust and user-friendly solution for organisations to safeguard their valuable digital content stored in Microsoft 365 environments. This integration seamlessly connects SharePoint with Curate, enabling efficient management and long-term protection of records directly from within SharePoint.
 
-This documentation will guide you through setting up the integration between Curate and SharePoint, and also using the feature.
+This guide covers a new installation and an upgrade from the legacy connector. The technical setup is completed by the customer's Microsoft 365 administrators and the Curate support team; the day-to-day workflow for records and archive staff remains **select content → Preserve → monitor status**.
 
 NB: Curate SharePoint is an additional feature available to Curate Enterprise customers. If you have not yet added SharePoint integration to your Curate Enterprise contract and you would like to explore your options, please get in touch with us.
 
@@ -689,16 +689,30 @@ NB: Curate SharePoint is an additional feature available to Curate Enterprise cu
         <strong>Things you'll need:</strong>
         </br>
         <ul>
-            <li>Administrative access to your organisations SharePoint, or help from someone who does.</li>
+            <li>Administrative access to your organisation's SharePoint environment, or help from someone who has it.</li>
             <li>Administrative access to Microsoft Entra, including permission to create an app registration, grant admin consent and create a credential.</li>
             <li>Permission to approve SharePoint Framework API access requests in the SharePoint admin centre.</li>
-            <li>Permission to upload and deploy SharePoint extensions to your organisations SharePoint environment.</li>
-            <li>An account on your organisations Curate Enterprise system with a user-admin tier role.</li>
+            <li>Permission to upload and deploy SharePoint extensions to your organisation's SharePoint environment.</li>
+            <li>An account on your organisation's Curate Enterprise system with a user-admin tier role.</li>
             <li>Assistance from the Curate support team to configure the server-side integration.</li>
             <li>30-45 minutes of time.</li>
         </ul>
     </span>
 </div>
+
+### Setup overview and responsibilities
+
+Complete the setup in this order. The extension will not work until both the Microsoft 365 configuration and the Curate server configuration are in place.
+
+| Stage | Customer Microsoft 365 administrator | Curate support team |
+| --- | --- | --- |
+| Entra | Create the single-tenant app registration, expose the delegated API scope, grant Graph application permission and create the client secret | Supply naming and URL values; confirm the expected tenant and application IDs |
+| SharePoint access | Grant the app `write` access to each agreed site with `Sites.Selected` | Record the same permitted site IDs, and optional Document Library drive IDs, on the integration service |
+| Server | Transfer the tenant ID, application ID and client-secret value through the agreed secure channel | Install the Entra credential and Curate API key, configure the public API route and restart the service |
+| Extension | Upload and enable the `.sppkg`, approve its API request, configure the extension and add it to each agreed site | Supply the current package and integration API URL |
+| Verification | Select a small test file and confirm the Preserve command and status updates | Confirm the request and resulting content in Curate |
+
+For an upgrade, complete the Entra, Graph and server stages before activating the new extension. This avoids a period in which the new extension is present but its authenticated API is not ready.
 
 ### Security Setup
 
@@ -719,9 +733,11 @@ As a result, to access and retrieve your specified data, Curate requires specifi
 The integration uses one customer-specific Microsoft Entra application registration for two separate authentication flows:
 
 - When a user selects **Preserve**, the SharePoint extension obtains a delegated Entra access token for the integration API. The API verifies the token's signature, tenant, audience and `Preservation.Upload` scope. The user's identity is taken from this verified token.
-- The integration service uses its own Entra credential to access Microsoft Graph. We recommend restricting its application access to approved SharePoint sites with `Sites.Selected`. Customers who do not want to manage individual site grants can instead grant the application tenant-wide `Sites.ReadWrite.All` access.
+- The integration service uses its own Entra credential to access Microsoft Graph. Its application access is restricted to approved SharePoint sites with `Sites.Selected`.
 
-The Curate API key and the Entra client credential are held only by the integration service. They must not be entered into a SharePoint list, packaged with the extension or sent by the browser. The customer does not need to maintain a separate list of authorised users: Entra authenticates users from the customer tenant, normal use begins with content the user can access in SharePoint, and the integration service separately restricts requests to configured sites and, optionally, Document Libraries.
+The Curate API key and the Entra client credential are held only by the integration service. They must not be entered into a SharePoint list, packaged with the extension or sent by the browser. The customer does not need to maintain a separate list of authorised users: Entra authenticates users from the customer tenant, while the integration service restricts submissions to configured sites and, optionally, Document Libraries.
+
+The integration service reads selected content using its own `Sites.Selected` application permission. It does not impersonate the submitting user for Graph access. Consequently, a signed-in user who can invoke the extension may submit identifiers for content within an integration-enabled site. Limit installation of the extension and the `Sites.Selected` grants to the sites where that behaviour is intended.
 
 ### Registering the Curate SharePoint Integration in Entra
 
@@ -746,9 +762,7 @@ The complete delegated permission will be shown as `api://<application-client-id
 
 ### Granting Microsoft Graph access
 
-The integration service needs application access to retrieve content and update the `PreservationStatus` field in the enabled SharePoint sites. Choose one of the following permission models. Do not add both unless there is a specific reason to do so.
-
-#### Option 1: Restrict access to selected sites (recommended)
+The integration service needs application access to retrieve content and update the `PreservationStatus` field in the enabled SharePoint sites. Use `Sites.Selected` so that the credential has no access until an administrator explicitly enables a site.
 
 1. In the app registration, open **API permissions**.
 2. Select **Add a permission → Microsoft Graph → Application permissions**.
@@ -778,18 +792,20 @@ with the following body:
 }
 ```
 
-You can obtain the site ID with `GET https://graph.microsoft.com/v1.0/sites/<tenant>.sharepoint.com:/sites/<site-name>` and verify the completed assignment with `GET https://graph.microsoft.com/v1.0/sites/{site-id}/permissions`. The account making these requests must have sufficient Microsoft Graph administrative permission. Repeat the site-level grant for every SharePoint site where the integration will be enabled.
+When using [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer) to create this assignment:
 
-#### Option 2: Allow access to all SharePoint sites
+1. Sign in with an administrator from the customer tenant and confirm that Graph Explorer is using the correct tenant.
+2. Consent to the delegated `Sites.FullControl.All` permission for Graph Explorer. This elevated permission is used by the administrator only to create the site assignment; do **not** add it to the Curate application registration.
+3. Ensure that the signed-in account is a SharePoint Administrator or higher and is also a member of the target site.
 
-If your organisation prefers not to manage site-level grants:
+Obtain the site ID with the appropriate request:
 
-1. In the app registration, open **API permissions**.
-2. Select **Add a permission → Microsoft Graph → Application permissions**.
-3. Add `Sites.ReadWrite.All`.
-4. Select **Grant admin consent** for the tenant.
+- Named site: `GET https://graph.microsoft.com/v1.0/sites/<tenant>.sharepoint.com:/sites/<site-name>`
+- Root site: `GET https://graph.microsoft.com/v1.0/sites/<tenant>.sharepoint.com:/`
 
-This permission allows the integration application to read and write content across all SharePoint site collections in the tenant, so no separate site assignment is required. The integration service will still reject submissions from sites that the Curate support team has not configured, but the Entra application credential itself has tenant-wide SharePoint access.
+Copy the complete `id` value returned by Graph, including the hostname and both GUIDs, and use it as `{site-id}`. Verify the completed assignment with `GET https://graph.microsoft.com/v1.0/sites/{site-id}/permissions`. Repeat the site-level grant for every SharePoint site where the integration will be enabled. For Microsoft's permission requirements and request format, see [Create permission](https://learn.microsoft.com/en-gb/graph/api/site-post-permissions?tabs=http&view=graph-rest-1.0) and [Selected permissions overview](https://learn.microsoft.com/en-us/graph/permissions-selected-overview).
+
+The permission shown in the site assignment must be `write`, because the integration updates `PreservationStatus` while processing content. Do not grant the application `Sites.ReadWrite.All` as well; doing so would bypass the site-level restriction provided by `Sites.Selected`.
 
 ### Creating the backend credential
 
@@ -801,46 +817,84 @@ Create a client secret that the integration service can use for its Microsoft Gr
 
 Transfer the tenant ID, application ID and credential to the Curate support team using the secure method they provide. Do not email an unencrypted client secret and do not place the credential in SharePoint. The support team will also configure the Curate API key, allowed SharePoint origin, allowed site ID and, if required, allowed Document Library drive IDs on the integration service.
 
-### Creating the SharePoint configuration list
+### Configuring the SharePoint tenant property
 
-On every site where the integration is enabled:
+The recommended configuration is a tenant property, set once for the customer tenant. Every site-scoped connector instance can read it, so the application ID and API URL do not need to be repeated in a list on every site.
 
-- Log in to your SharePoint environment.
-- Select the site from which you would like to use the Curate integration.
-- Find the "Create" button in the left-hand navigation panel and select a new "List".
+A SharePoint tenant administrator must store the following JSON in the App Catalog tenant-property store under the key `CurateSharePointIntegration`:
 
-You must call the list `soteria-details`.
+```json
+{
+  "apiApplicationId": "<application-client-id>",
+  "integrationApiUrl": "https://<integration-host>/api/sharepoint"
+}
+```
 
-Next, you must add columns to the list for the following fields:
+`apiApplicationId` is the Entra Application (client) ID recorded earlier. `integrationApiUrl` is the HTTPS URL supplied by the Curate support team. Do not add credentials, a query string or a fragment to the URL.
 
-- `ApiApplicationId`: Single line of text containing the Entra Application (client) ID.
-- `IntegrationApiUrl`: Single line of text containing the HTTPS URL supplied by the Curate support team, for example `https://integration.example.org/api/sharepoint`.
-- `Active`: Choice field with `Active` and `Inactive` options.
+Before setting the property, locate the App Catalog in **SharePoint admin centre → Sites → Active sites** and check **Settings → Custom scripts**. If it is **Blocked**, temporarily change it to **Allowed**. Unless the tenant has separately enabled property-bag updates while custom script is blocked, `Set-SPOStorageEntity` returns `Access denied`, even when the operator is an App Catalog site-collection administrator. See Microsoft's guidance on [allowing or preventing custom script](https://learn.microsoft.com/en-us/sharepoint/allow-or-prevent-custom-script).
 
-Add one item containing the Application (client) ID and integration API URL, then set `Active` to `Active`. If more than one item is active, the extension uses the most recently created one.
+Using the SharePoint Online Management Shell, set the value once with the customer's actual App Catalog URL:
 
-Restrict editing of this list to site administrators. The list contains no Curate API key or client secret, but changing its values can redirect requests or stop the integration working.
+```powershell
+$configuration = '{"apiApplicationId":"<application-client-id>","integrationApiUrl":"https://<integration-host>/api/sharepoint"}'
+Set-SPOStorageEntity `
+  -Site "https://<tenant>.sharepoint.com/sites/<app-catalog>" `
+  -Key "CurateSharePointIntegration" `
+  -Value $configuration `
+  -Description "Curate SharePoint integration configuration" `
+  -Comments "Managed by the SharePoint tenant administrator"
+```
 
-If you are upgrading an older installation, remove the Curate API key from the SharePoint list after all sites have been upgraded to the new extension. Ask the Curate support team to rotate the exposed key and store the replacement only on the integration service.
+Verify the stored value with:
+
+```powershell
+Get-SPOStorageEntity `
+  -Site "https://<tenant>.sharepoint.com/sites/<app-catalog>" `
+  -Key "CurateSharePointIntegration"
+```
+
+Every site-scoped or tenant-wide installation reads this same property through SharePoint. The application ID and API URL are public configuration rather than credentials, but only tenant administrators should be able to change them. Do not store the Entra client secret or Curate API key in this property.
+
+After the value has been verified, return the App Catalog's **Custom scripts** setting to **Blocked**. Custom script does not need to remain enabled for the extension to read the property. SharePoint also resets this setting automatically within 24 hours by default, but it is better to restore it immediately.
+
+#### Component-properties fallback
+
+If the customer's policy does not permit the temporary App Catalog custom-script change, configure the same two fields as the extension instance's `ClientSideComponentProperties`:
+
+```json
+{
+  "apiApplicationId": "<application-client-id>",
+  "integrationApiUrl": "https://<integration-host>/api/sharepoint"
+}
+```
+
+- For a site-scoped installation, set `ClientSideComponentProperties` on the connector custom action in each enabled site using the customer's approved SharePoint provisioning tooling.
+- For a tenant-wide installation, set **Component Properties** on the connector entry in the App Catalog's **Tenant Wide Extensions** list.
+
+The tenant property takes precedence when both sources are valid. Component properties are a fallback and do not override a centrally managed tenant property. Ask Curate support for the exact provisioning command if this fallback is required.
+
+The extension does not require a configuration list on any site. If you are upgrading an older installation, leave its list in place until the authenticated connector has passed verification. Then remove the Curate API key from the old `soteria-details` or `soteria-details-1` list, ask the Curate support team to rotate that key, and delete the obsolete list. Store the replacement key only on the integration service.
 
 ### Installing the SharePoint Extension
 
-When you add the SharePoint integration to your Curate enterprise contract, you will be provided a SharePoint extension package that you can install in your SharePoint environment.
+Curate support will provide the current `soteriaplus-sharepoint-connector.sppkg` package. The authenticated setup requires connector version **1.3.1 or later**.
 
-To install the SharePoint extension, follow the instructions below:
+1. Sign in to SharePoint as an administrator and open the tenant App Catalog, normally `https://<tenant>.sharepoint.com/sites/appcatalog`.
+2. Open **Manage apps** and select **Upload**.
+3. Upload `soteriaplus-sharepoint-connector.sppkg`.
+4. If SharePoint reports that a file with the same name already exists, choose **Replace**. This creates a new version of the existing package rather than a second connector entry.
+5. Select the connector package and choose **Enable**. This step is important after an upgrade: replacing the file updates the package version, but enabling it causes SharePoint to deploy the new client-side assets.
+6. In **Confirm data access**, choose **Only enable this app** unless tenant-wide installation has been explicitly agreed, then select **Confirm**.
+7. If SharePoint offers to open the API access page, continue there or choose **I'll do it later** and complete the approval step below.
 
-- Log in to your SharePoint environment.
-- Navigate to the SharePoint app catalog, which can be found at the url: www.yourorganisation.sharepoint.com/sites/appcatalog
-- From the app catalog, select the "Apps for SharePoint" button.
-- Next, you can simply drag and drop the provided SharePoint extension package into the list of installed extensions.
+The App Catalog should show the expected package version, **Enabled**, **Valid app package: Yes**, and **Added to all sites: No** for the normal site-scoped setup. Allow a short propagation delay after enabling an upgraded package.
 
-After a brief wait, SharePoint will prompt you to deploy the extension. It will ask whether you want to enable it for all sites automatically. Leave this option unselected unless tenant-wide deployment has been explicitly agreed.
+Uploading and deploying the package also creates a pending SharePoint Framework API permission request; it does not approve that permission automatically. In the **SharePoint admin centre**, open **API access**, locate `Curate SharePoint Integration / Preservation.Upload`, and approve it. This allows the extension to request a delegated access token for the integration API on behalf of the signed-in user.
 
-Once the extension has been installed, you will be able to see the Curate integration in the SharePoint app catalog we navigated to earlier. You should see "yes" underneath the "Enabled", "Valid app package" and "Deployed" columns, "No" under the "Added to all sites" column, and "No errors" under the "App package error message" column. This confirms that the extension has been successfully installed.
+The App Catalog deployment and site installation serve different purposes: deployment makes the package available and creates the API request, while adding the app to a site enables the extension on that site. Uploading a package is not the same as installing it on a site. If tenant-wide deployment was selected, the separate site-installation step below is not required.
 
-Uploading and deploying the package also creates a pending SharePoint Framework API permission request; it does not approve that permission automatically. In the **SharePoint admin centre**, open **Advanced → API access**, locate `Curate SharePoint Integration / Preservation.Upload`, and approve it. This allows the extension to request a delegated access token for the integration API on behalf of the signed-in user.
-
-The App Catalog deployment and site installation serve different purposes: deployment makes the package available and creates the API request, while adding the app to a site enables the extension on that site. If tenant-wide deployment was selected, the separate site-installation step below is not required.
+Do not continue to user testing until the API request is approved. Without it, SharePoint cannot obtain the delegated Entra token and users will receive an authentication error.
 
 <div class="main-content-img-container">
     <img src="/curate-documentation/assets/sharepoint-extension-installed.png" alt="Curate SharePoint extension installed in app catalog" style=""></img>
@@ -848,15 +902,17 @@ The App Catalog deployment and site installation serve different purposes: deplo
 
 ### Adding the SharePoint extension to your site
 
-To add the Curate integration to your site, follow the instructions below:
+Before adding the extension, confirm that the same site has both:
 
-- Log in to your SharePoint environment.
-- Select the site from which you would like to use the Curate integration.
-- Find and select the "Site Contents" menu from the main site areas navigation strip.
+- a Microsoft Graph `Sites.Selected` assignment for the integration application; and
+- a matching allowed site ID on the Curate integration service.
 
-You should find the Curate SharePoint extension in the list of available site content.
+Then, for each agreed SharePoint site:
 
-You can now simply select the Curate SharePoint extension and click the "Add" button. This will add the Curate SharePoint extension to your site.
+1. Open the site and select **Site contents**.
+2. Select **New → App**, or open the available apps page.
+3. Select the Curate SharePoint extension and choose **Add**.
+4. Wait for SharePoint to finish installing it.
 
 At this point, it's a good idea to perform a hard-refresh in your web-browser by holding control/command, shift and pressing r.
 
@@ -866,6 +922,20 @@ To check that the installation worked as expected, you can now navigate to one o
     <span class="mdi mdi-information-outline"></span>
     <span>Depending on your screen resolution, you might not see the "Preserve" button in the SharePoint ribbon. If you do not see the button, you can simply click the "More" button in the top right-hand corner of the screen and "Preserve" will appear in the dropdown menu.</span>
 </div>
+
+### Upgrading a legacy installation
+
+The authenticated connector and server must be introduced as one coordinated change. Use this sequence:
+
+1. Create the Entra registration, delegated scope, Graph permission, site assignment and backend credential.
+2. Give Curate support the required IDs and secret through the agreed secure channel.
+3. Wait for Curate support to confirm that the authenticated backend, allowed origin and allowed site IDs are configured.
+4. Configure the tenant property, or the documented component-properties fallback.
+5. Replace and enable the package in the App Catalog, approve `Preservation.Upload`, and upgrade the app on each enabled site.
+6. Hard-refresh SharePoint and complete the verification test below.
+7. Only after a successful test, remove the legacy configuration list and rotate its former Curate API key.
+
+Do not update only the extension and leave the legacy backend in place: version 1.3.1 sends an Entra bearer token and no longer sends the Curate API key from SharePoint. Likewise, do not delete the legacy list until every intended site has completed the new setup.
 
 ### Adding the Status Column to your Document Library
 
@@ -880,14 +950,27 @@ To receive updates about the status of your deposits, you will need to add a new
 
 1. Open an enabled Document Library and select a test file.
 2. Confirm that the **Preserve** command appears, then select it.
-3. Confirm that SharePoint accepts the request and that the `PreservationStatus` value changes while the item is processed.
-4. Confirm that the content appears in the **SharePoint Uploads** folder in Curate and that the final SharePoint status indicates success.
+3. Confirm that SharePoint reports **Upload task initiated successfully**. This confirms that the extension configuration, delegated token and backend request boundary are working.
+4. Confirm that the `PreservationStatus` value changes while the item is processed.
+5. Confirm that the content appears in the **SharePoint Uploads** folder in Curate and that the final SharePoint status indicates success.
 
 If the test fails, provide the time of the attempt, SharePoint site URL, affected item name and displayed error to the Curate support team. Never send a client secret or Curate API key in a support email.
 
+#### Setup troubleshooting
+
+| Symptom | Most likely cause or next check |
+| --- | --- |
+| **Preserve** does not appear after selecting an item | Confirm that the app is installed on this site, then hard-refresh the page. On narrower screens, check the **More** menu. |
+| SharePoint still loads the previous connector after a package replacement | In **Manage apps**, select the package and choose **Enable** again, choose **Only enable this app**, then allow time for the client-side asset manifest to propagate before hard-refreshing. |
+| **The preservation integration is not configured** | Verify `CurateSharePointIntegration` with `Get-SPOStorageEntity`, or verify the instance's `ClientSideComponentProperties`. Confirm the application ID is a GUID and the API URL is HTTPS with no query string or fragment. |
+| `Set-SPOStorageEntity` returns **Access denied** | Temporarily allow custom script on the App Catalog site, set and verify the property, then return custom script to **Blocked**. |
+| **Your Microsoft sign-in could not be authenticated** | Confirm that `Curate SharePoint Integration / Preservation.Upload` is approved in SharePoint API access and that the backend expects the same tenant, audience and scope. |
+| **This SharePoint site or tenant is not enabled** | Confirm the backend's allowed site ID and optional drive IDs, and verify the site's `Sites.Selected` permission assignment. |
+| SharePoint accepts the task but processing fails | Check the integration-service logs and Graph site permission, then provide the attempt time, site URL and item name to Curate support. |
+
 ### Sending files to Curate via SharePoint
 
-To send a file to Curate from SharePoint, select the items you would like to send, then select the **Preserve** button in the SharePoint ribbon. Provided the [SharePoint configuration list](#creating-the-sharepoint-configuration-list), Entra permissions and server-side settings are complete, the integration will accept the submission and process it in the background.
+To send content to Curate from SharePoint, select one or more files or folders, then select the **Preserve** button in the SharePoint ribbon. Provided the [extension configuration](#configuring-the-sharepoint-tenant-property), Entra permissions and server-side settings are complete, the integration will accept the submission and process it in the background. The browser sends identifiers and metadata; the integration service retrieves the content directly from Microsoft Graph and streams it into Curate.
 
 The **Preservation Status** column reports progress and the final outcome. If SharePoint reports that the sign-in could not be authenticated, check that the delegated API permission has been approved. If it reports that the site or tenant is not enabled, ask the Curate support team to confirm the tenant, site ID and optional drive restrictions configured on the integration service.
 
