@@ -1,0 +1,17 @@
+var accordions = document.querySelectorAll('.md-nav__item');
+
+// Loop through each list item
+accordions.forEach(function(accordion) {
+  // Add click event listener
+  accordion.addEventListener('click', function(event) {
+    // Prevent the default behavior of the link
+    event.preventDefault();
+    // Toggle the visibility of the nested list
+    var sublist = this.querySelector('ul');
+    if (sublist) {
+      sublist.style.display = (sublist.style.display === 'block') ? 'none' : 'block';
+    }
+    // Toggle the active class on the clicked link
+    this.querySelector('.md-nav__link').classList.toggle('md-nav__link--active');
+  });
+});
