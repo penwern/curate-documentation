@@ -18,7 +18,7 @@ from pathlib import Path
 
 import content
 import diagram
-from content import PRODUCTS, Brand
+from content import PRODUCTS, PROFILES, Brand, Profile
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]              # curate-documentation/
@@ -129,7 +129,7 @@ def _other_brands(brand: Brand) -> list[Brand]:
     return [PRODUCTS[k] for k in sorted(PRODUCTS) if k != brand.key]
 
 
-def check_output(html: str, brand: Brand) -> None:
+def check_output(html: str, brand: Brand, profile: Profile) -> None:
     """Run every check and raise CheckError once, listing every failure.
 
     Everything collected here is fatal. The one build-time result that is
@@ -209,7 +209,7 @@ def check_output(html: str, brand: Brand) -> None:
     #    silent in the drawing, and both are asked of diagram.py rather
     #    than worked out again from the SVG here: a second reading of the
     #    geometry is a second thing to keep in step with the first.
-    problems.extend(diagram.geometry_problems(brand.product))
+    problems.extend(diagram.geometry_problems(brand.product, profile))
 
     if problems:
         raise CheckError(
@@ -351,7 +351,7 @@ def _table(headers, widths, rows, brand: Brand) -> str:
     )
 
 
-def render_page(brand: Brand) -> str:
+def render_page(brand: Brand, profile: Profile = content.STANDARD) -> str:
     """The whole document, as one self-contained HTML file.
 
     The masthead is the only place the vendor is named, and it is taken
@@ -359,7 +359,8 @@ def render_page(brand: Brand) -> str:
     ship the wrong company's name in the other product's build, and check
     3 only catches the other product's name, not the other vendor's.
     """
-    p = {k: resolve(v, brand) for k, v in content.PROSE.items()}
+    p = {k: resolve(v, brand)
+         for k, v in {**content.PROSE, **(profile.prose or {})}.items()}
     logo = logo_data_uri(brand)
     # The tile is wrapped around the mark only for a brand that asks for
     # one, so a brand with no tile gets no empty element either. The
@@ -375,17 +376,18 @@ def render_page(brand: Brand) -> str:
             f"{mark}</div>"
         )
     pills = "".join(
-        f"<span class=pill>{resolve(x, brand)}</span>" for x in content.PILLS
+        f"<span class=pill>{resolve(x, brand)}</span>"
+        for x in (profile.pills or content.PILLS)
     )
     facts = "".join(
         f"<div class=fact><div class=k>{resolve(k, brand)}</div>"
         f"<div class=v>{resolve(v, brand)}</div></div>"
-        for k, v in content.FACTS
+        for k, v in (profile.facts or content.FACTS)
     )
 
     return f"""<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{brand.product} architecture overview</title>
+<title>{resolve(profile.doc_title, brand) or brand.product + " architecture overview"}</title>
 <link rel="icon" type="image/png" href="{logo}">
 <style>{CSS}</style>
 
@@ -395,12 +397,12 @@ def render_page(brand: Brand) -> str:
   {mark}
   <div class="titles">
     <span class="eyebrow">{brand.vendor} &middot; {brand.product}</span>
-    <span class="title">Architecture overview</span>
+    <span class="title">{resolve(profile.masthead_title, brand)}</span>
   </div>
 </header>
 
 <header class=doc>
-  <h1>Components, dependencies and integration points</h1>
+  <h1>{resolve(profile.title, brand)}</h1>
   <p class=lede>{p["lede"]}</p>
   <div class=meta>{pills}</div>
 </header>
@@ -408,24 +410,24 @@ def render_page(brand: Brand) -> str:
 <h2>System architecture</h2>
 <p>{p["arch_intro"]}</p>
 <figure class=arch>
-  <div class=frame>{diagram.architecture_svg(brand.product)}</div>
+  <div class=frame>{diagram.architecture_svg(brand.product, profile)}</div>
   <figcaption>{p["arch_caption"]}</figcaption>
 </figure>
 
 <h2>Components</h2>
 <p>{p["components_intro"]}</p>
 {_table(("Component", "Role", "Technology", "Data held"),
-        (17, 34, 16, 33), content.COMPONENTS, brand)}
+        (17, 34, 16, 33), profile.components or content.COMPONENTS, brand)}
 
 <h3>Optional connectors</h3>
 <p>{p["connectors_intro"]}</p>
 {_table(("Connector", "What it does", "Technology", "Notes"),
-        (19, 38, 14, 29), content.CONNECTORS, brand)}
+        (19, 38, 14, 29), profile.connectors or content.CONNECTORS, brand)}
 
 <h2>Integration points</h2>
 <p>{p["integrations_intro"]}</p>
 {_table(("Interface", "Direction", "Protocol", "Authentication", "Data crossing"),
-        (14, 11, 16, 31, 28), content.INTEGRATIONS, brand)}
+        (14, 11, 16, 31, 28), profile.integrations or content.INTEGRATIONS, brand)}
 
 <div class=note>{p["security_note"]}</div>
 
@@ -579,17 +581,25 @@ def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
     return pdf_path
 
 
-def build(brand: Brand, want_pdf: bool = True) -> Path:
+def build(brand: Brand, profile: Profile = content.STANDARD,
+          want_pdf: bool = True) -> Path:
+    if profile.products and brand.key not in profile.products:
+        raise CheckError(
+            f"profile {profile.key!r} is written for {list(profile.products)}, "
+            f"not {brand.key!r}"
+        )
     OUT.mkdir(parents=True, exist_ok=True)
-    html = render_page(brand)
-    html_path = OUT / f"{brand.out}.html"
+    html = render_page(brand, profile)
+    # The standard profile keeps the original file names.
+    stem = brand.out + ("" if profile.key == "standard" else f"-{profile.key}")
+    html_path = OUT / f"{stem}.html"
     html_path.write_text(html, encoding="utf-8")
 
     pdf_path = None
     if want_pdf:
-        pdf_path = to_pdf(html_path, OUT / f"{brand.out}.pdf")
+        pdf_path = to_pdf(html_path, OUT / f"{stem}.pdf")
 
-    check_output(html, brand)
+    check_output(html, brand, profile)
 
     print(f"  {html_path.relative_to(REPO)}")
     if pdf_path:
@@ -605,6 +615,10 @@ def main() -> int:
     )
     ap.add_argument("--all", action="store_true", help="build both products")
     ap.add_argument(
+        "--profile", choices=sorted(PROFILES), default="standard",
+        help="deployment profile (default: standard)",
+    )
+    ap.add_argument(
         "--no-pdf", action="store_true", help="emit HTML only, skip the PDF"
     )
     args = ap.parse_args()
@@ -618,7 +632,8 @@ def main() -> int:
 
     try:
         for key in keys:
-            build(PRODUCTS[key], want_pdf=not args.no_pdf)
+            build(PRODUCTS[key], PROFILES[args.profile],
+                  want_pdf=not args.no_pdf)
     except CheckError as exc:
         print(f"\nFAILED: {exc}", file=sys.stderr)
         return 1

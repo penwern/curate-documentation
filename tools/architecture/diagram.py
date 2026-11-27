@@ -18,8 +18,10 @@ from content import (
     PALETTE,
     WORKFLOW,
     WORKFLOW_NOTE,
+    STANDARD,
     Card,
     Group,
+    Profile,
 )
 
 CARD_H = 88
@@ -531,7 +533,7 @@ LANE_L = 36
 LANE_R = CANVAS_W - 14
 
 
-def _arrows(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
+def _arrows_standard(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
     """The twelve routes. Endpoints come from the registry, waypoints are
     hand-chosen: the left and right lanes keep long routes outside the
     boxes, and the S3 corridor is left clear."""
@@ -674,7 +676,7 @@ def _chip_chain(box: Box, card: Card | None, pen: Pen) -> list[str]:
     return out
 
 
-def _resolved_tree(product: str) -> Group:
+def _resolved_tree(product: str, root: Group | None = None) -> Group:
     """A copy of the tree with {product} resolved and group labels upper-cased.
 
     Built with dataclasses.replace so the module-level ARCH_TREE is never
@@ -691,21 +693,23 @@ def _resolved_tree(product: str) -> Group:
             ),
             children=tuple(fix(k) for k in g.children),
         )
-    return fix(ARCH_TREE)
+    return fix(root or ARCH_TREE)
 
 
-def architecture_svg(product: str) -> str:
-    """The deployment architecture. Canvas height is computed, not fixed."""
+def architecture_svg(product: str, profile: Profile = STANDARD) -> str:
+    """The deployment architecture. Canvas height is computed, not fixed.
+
+    The profile supplies the box tree and the name of its route set."""
     # This diagram owns the unsuffixed marker ids, and its two-way arrows
     # need the reverse head.
     pen = Pen(suffix="", stroke=PALETTE["muted"], width=1.5, reverse=True)
     inner_w = CANVAS_W - 48
     boxes: dict[str, Box] = {}
-    tree = _resolved_tree(product)
+    tree = _resolved_tree(product, profile.arch_tree)
     body, h = render(tree, 24, 24, inner_w, boxes)
     height = h + 48
 
-    arrows = _arrows(boxes, tree, pen)
+    arrows = ROUTES[profile.routes](boxes, tree, pen)
 
     return (
         f'<svg viewBox="0 0 {CANVAS_W} {height:.0f}" '
@@ -719,7 +723,7 @@ def architecture_svg(product: str) -> str:
     )
 
 
-def geometry_problems(product: str) -> list[str]:
+def geometry_problems(product: str, profile: Profile = STANDARD) -> list[str]:
     """Everything wrong with the architecture tree's own geometry.
 
     Two failures live here, and both are silent in the drawing:
@@ -768,7 +772,7 @@ def geometry_problems(product: str) -> list[str]:
         for k in g.children:
             visit(k)
 
-    visit(_resolved_tree(product))
+    visit(_resolved_tree(product, profile.arch_tree))
     problems.extend(
         f"id {i!r} is used {n} times; the box registry is a plain dict, so "
         "the later box wins and every arrow anchored to the earlier one "
@@ -836,3 +840,9 @@ def workflow_svg(product: str) -> str:
         f'{pen.defs()}{rect(0, 0, CANVAS_W, 262, rx=0)}'
         f'{"".join(out)}</svg>'
     )
+
+
+# Route sets, keyed by Profile.routes. A route set draws the arrows over one
+# box tree and is the only place a connection lives, so a profile with a
+# different tree names its own set here.
+ROUTES = {"standard": _arrows_standard}

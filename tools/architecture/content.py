@@ -676,3 +676,38 @@ PROSE = {
         "in a partial state."
     ),
 }
+
+
+# ---------------------------------------------------------------------------
+# Deployment profiles
+#
+# A profile is one document variant for one audience: the standard overview,
+# or a proposal written for a named client. Every field that is None or empty
+# falls back to the standard content above, so a profile states only what it
+# changes. A new tender is a new Profile in PROFILES plus its routes in
+# diagram.ROUTES, nothing else.
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class Profile:
+    """A deployment profile. See the block comment above."""
+
+    key: str
+    products: tuple[str, ...] = ()   # empty means any product
+    title: str = "Components, dependencies and integration points"
+    doc_title: str = ""              # the <title>, default "<product> architecture overview"
+    masthead_title: str = "Architecture overview"
+    pills: tuple[str, ...] | None = None
+    prose: dict | None = None        # overrides single PROSE keys
+    facts: tuple | None = None
+    components: tuple | None = None
+    connectors: tuple | None = None
+    integrations: tuple | None = None
+    arch_tree: Group | None = None
+    routes: str = "standard"         # a key of diagram.ROUTES
+
+
+STANDARD = Profile(key="standard")
+
+PROFILES = {"standard": STANDARD}
