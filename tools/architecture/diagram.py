@@ -585,7 +585,7 @@ def _arrows_standard(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
               (LANE_R - 22, b["connectors"].cy),
               (b["connectors"].right, b["connectors"].cy)],
              dashed=True, label="HTTPS  ·  per-system credentials"),
-        # 4. Support SSH, its own lane outside the AWS boundary, then in
+        # 4. Support access (SSM), its own lane outside the AWS boundary, then in
         #    under the AWS box and up into the instance from below. It
         #    cannot turn in along the right of the EC2 box: every height
         #    there is either the S3 column, AWS Backup or Monitoring.
@@ -595,7 +595,7 @@ def _arrows_standard(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
               (LANE_R, below_aws),
               (b["ec2"].cx, below_aws),
               (b["ec2"].cx, b["ec2"].bottom)],
-             dashed=True, label="SSH  ·  key based"),
+             dashed=True, label="AWS Systems Manager"),
         # 5. Platform to object storage. The corridor between them is kept clear.
         route([(b["platform"].right, b["platform"].cy),
               (b["s3"].x, b["platform"].cy)],

@@ -108,7 +108,7 @@ Three placeholder forms plus the literal, and the distinction matters:
 | literal `Penwern` | never substituted | who operates or builds something |
 
 `Penwern A3M`, `Penwern support access`, `Penwern-operated endpoint`,
-`Named Penwern engineers over SSH`, the lowercase `named Penwern
+`Named Penwern engineers through AWS Systems Manager`, the lowercase `named Penwern
 engineers` in the security note, and `Penwern operated, outside the
 tenant` stay as written in both builds. Nine occurrences across those six
 distinct phrases survive into the Soteria+ document, in the tables, the

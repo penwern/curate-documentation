@@ -188,9 +188,10 @@ COMPONENTS = [
     ),
     (
         "MongoDB",
-        "Document store and search index",
+        "Document stores for Pydio Cells: activity, audit and system logs, "
+        "job history and file versions",
         "MongoDB",
-        "Indexed content metadata",
+        "Activity, log, job and version records",
     ),
     (
         "NATS",
@@ -200,6 +201,14 @@ COMPONENTS = [
     ),
     ("ClamAV", "Virus scanning on ingest", "ClamAV", "None"),
     ("Siegfried", "File format characterisation against PRONOM", "Go", "None"),
+    (
+        "{product} event watcher",
+        "Optional, enabled per deployment. Curation and virus scanning on "
+        "ingest: scans with ClamAV, identifies formats with embedded "
+        "Siegfried, and records the results as PREMIS events",
+        "Go",
+        "Work queue and audit state, SQLite",
+    ),
     (
         "Email archives",
         "Unpacks uploaded MBOX and PST files into individual messages and "
@@ -344,8 +353,8 @@ INTEGRATIONS = [
     (
         "Penwern support access",
         "Inbound",
-        "SSH",
-        "Named engineers, key based, no shared accounts",
+        "AWS Systems Manager Session Manager",
+        "Named engineers, no shared accounts, no public SSH port",
         "Administrative access to the instance",
     ),
     (
@@ -406,8 +415,8 @@ FACTS = [
     ),
     (
         "Support access",
-        "Named Penwern engineers over SSH using individual keys. No shared "
-        "accounts.",
+        "Named Penwern engineers through AWS Systems Manager, with no public "
+        "SSH port. No shared accounts.",
     ),
 ]
 
@@ -444,7 +453,7 @@ ARCH_TREE = Group(
                      lines=("Pure, CALM, SharePoint",
                             "Optional, one connector per system you use")),
                 Card(id="support", title="Penwern support access",
-                     lines=("Named engineers, SSH key based",
+                     lines=("Named engineers, AWS Systems Manager",
                             "Monitoring and maintenance")),
             ),
         ),
@@ -482,7 +491,8 @@ ARCH_TREE = Group(
                              lines=("Core platform", "metadata")),
                         Card(id="mongodb", title="MongoDB",
                              fill="#f2fbf7", stroke="#a6e8ce",
-                             lines=("Document store", "and search index")),
+                             lines=("Activity, audit, job and",
+                                    "version records")),
                         Card(id="clamav", title="ClamAV",
                              fill="#f2fbf7", stroke="#a6e8ce",
                              lines=("Virus scanning", "on ingest")),
@@ -490,6 +500,10 @@ ARCH_TREE = Group(
                              fill="#f2fbf7", stroke="#a6e8ce",
                              lines=("Format characterisation",
                                     "against PRONOM")),
+                        Card(id="watcher", title="{product} event watcher",
+                             fill="#f2fbf7", stroke="#9ca3af", dashed=True,
+                             lines=("Optional curation and",
+                                    "virus scanning on ingest")),
                         Card(id="email", title="Email archives",
                              fill="#f2fbf7", stroke="#a6e8ce",
                              lines=("Unpacks uploaded",
@@ -622,9 +636,10 @@ PROSE = {
     ),
     "security_note": (
         "<strong>No inbound connections other than those listed.</strong> "
-        "The instance security group admits only HTTPS on 443, HTTP on 80 "
-        "(which redirects to HTTPS), and SSH for named Penwern engineers. "
-        "No other inbound port is open, so the application services behind "
+        "The instance security group admits only HTTPS on 443 and HTTP on 80 "
+        "(which redirects to HTTPS). No SSH port is open: named Penwern "
+        "engineers reach the instance through AWS Systems Manager. No other "
+        "inbound port is open, so the application services behind "
         "the reverse proxy cannot be reached directly from outside the "
         "instance. Object storage is reached outbound using an AWS instance "
         "role, so no long-lived storage credentials are held on the server."
