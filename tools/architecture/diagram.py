@@ -9,6 +9,7 @@ A card sitting inside a teal group does not pick up teal.
 """
 
 import dataclasses
+import re
 from dataclasses import dataclass
 
 from content import (
@@ -18,8 +19,11 @@ from content import (
     PALETTE,
     WORKFLOW,
     WORKFLOW_NOTE,
+    STANDARD,
     Card,
+    FlowDiagram,
     Group,
+    Profile,
 )
 
 CARD_H = 88
@@ -330,6 +334,29 @@ def _card(c: Card, box: Box) -> str:
     return "".join(out)
 
 
+def _frame(x, y, w, h, label, lines, fill, stroke, dashed) -> str:
+    """A labelled group box: outline, label, and the caption lines under it.
+
+    Shared by the tree layout and the fixed-coordinate data-flow diagram,
+    so a frame looks the same in both.
+    """
+    out = [rect(x, y, w, h, fill=fill or PALETTE["wash"],
+                stroke=stroke or PALETTE["sage"],
+                dashed=dashed, rx=10, sw=2, dash="6 5")]
+    out.append(text(x + 16, y + 24, label, size=10.5, weight="600",
+                    spacing="1.1", fill=PALETTE["muted"]))
+    # Caption lines under the label. The tuple is flat, so the source's
+    # emphasis on its closing claim is applied by position.
+    for i, line in enumerate(lines):
+        last = i == len(lines) - 1
+        out.append(text(
+            x + 16, y + 42 + i * GROUP_LINE_H, line, size=10.5,
+            weight="600" if last else None,
+            fill=PALETTE["teal_deep"] if last else PALETTE["muted"],
+        ))
+    return "".join(out)
+
+
 def render(group: Group, x: float, y: float, w: float,
            boxes: dict[str, Box]) -> tuple[str, float]:
     """Draw a group at (x, y) with width w. Returns (svg, height used).
@@ -342,20 +369,8 @@ def render(group: Group, x: float, y: float, w: float,
     out = []
 
     if group.label:
-        out.append(rect(x, y, w, h, fill=group.fill or PALETTE["wash"],
-                        stroke=group.stroke or PALETTE["sage"],
-                        dashed=group.dashed, rx=10, sw=2, dash="6 5"))
-        out.append(text(x + 16, y + 24, group.label, size=10.5, weight="600",
-                        spacing="1.1", fill=PALETTE["muted"]))
-        # Caption lines under the label. The tuple is flat, so the source's
-        # emphasis on its closing claim is applied by position.
-        for i, line in enumerate(group.lines):
-            last = i == len(group.lines) - 1
-            out.append(text(
-                x + 16, y + 42 + i * GROUP_LINE_H, line, size=10.5,
-                weight="600" if last else None,
-                fill=PALETTE["teal_deep"] if last else PALETTE["muted"],
-            ))
+        out.append(_frame(x, y, w, h, group.label, group.lines, group.fill,
+                          group.stroke, group.dashed))
 
     if group.id:
         boxes[group.id] = Box(x, y, w, h)
@@ -438,7 +453,8 @@ class Pen:
         return out + '</defs>'
 
 
-def connector(pts, pen: Pen, dashed=False, both=False, label=None):
+def connector(pts, pen: Pen, dashed=False, both=False, label=None,
+              flow=None, badge=False):
     """An orthogonal arrow through hand-chosen waypoints.
 
     `pts` is a list of (x, y). Endpoints come from the box registry; the
@@ -461,6 +477,8 @@ def connector(pts, pen: Pen, dashed=False, both=False, label=None):
         a.append(f'marker-start="url(#arrowrev{pen.suffix})"')
     if dashed:
         a.append('stroke-dasharray="5 4"')
+    if flow is not None:
+        a.append(f'data-flow="{flow}"')
     out = f"<path {' '.join(a)}/>"
     if label:
         # The label sits on the middle of the route's first turn, which is
@@ -492,6 +510,13 @@ def connector(pts, pen: Pen, dashed=False, both=False, label=None):
         out += rect(cx - lw / 2, cy - PLAQUE_H / 2, lw, PLAQUE_H, rx=3)
         out += text(cx, cy + 4.5, label, size=10, anchor="middle",
                     fill=PALETTE["muted"])
+    if badge:
+        # The flow number, on the route's tail.
+        out += (f'<g data-badge="{flow}">'
+                + circle(*pts[0], 9, PALETTE["teal_deep"])
+                + text(pts[0][0], pts[0][1] + 4.5, str(flow), size=12,
+                       weight="600", anchor="middle", fill=PALETTE["white"])
+                + "</g>")
     return out
 
 
@@ -531,7 +556,7 @@ LANE_L = 36
 LANE_R = CANVAS_W - 14
 
 
-def _arrows(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
+def _arrows_standard(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
     """The twelve routes. Endpoints come from the registry, waypoints are
     hand-chosen: the left and right lanes keep long routes outside the
     boxes, and the S3 corridor is left clear."""
@@ -583,7 +608,7 @@ def _arrows(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
               (LANE_R - 22, b["connectors"].cy),
               (b["connectors"].right, b["connectors"].cy)],
              dashed=True, label="HTTPS  ·  per-system credentials"),
-        # 4. Support SSH, its own lane outside the AWS boundary, then in
+        # 4. Support access (SSM), its own lane outside the AWS boundary, then in
         #    under the AWS box and up into the instance from below. It
         #    cannot turn in along the right of the EC2 box: every height
         #    there is either the S3 column, AWS Backup or Monitoring.
@@ -593,7 +618,7 @@ def _arrows(b: dict[str, Box], tree: Group, pen: Pen) -> list[str]:
               (LANE_R, below_aws),
               (b["ec2"].cx, below_aws),
               (b["ec2"].cx, b["ec2"].bottom)],
-             dashed=True, label="SSH  ·  key based"),
+             dashed=True, label="AWS Systems Manager"),
         # 5. Platform to object storage. The corridor between them is kept clear.
         route([(b["platform"].right, b["platform"].cy),
               (b["s3"].x, b["platform"].cy)],
@@ -674,7 +699,7 @@ def _chip_chain(box: Box, card: Card | None, pen: Pen) -> list[str]:
     return out
 
 
-def _resolved_tree(product: str) -> Group:
+def _resolved_tree(product: str, root: Group | None = None) -> Group:
     """A copy of the tree with {product} resolved and group labels upper-cased.
 
     Built with dataclasses.replace so the module-level ARCH_TREE is never
@@ -691,21 +716,23 @@ def _resolved_tree(product: str) -> Group:
             ),
             children=tuple(fix(k) for k in g.children),
         )
-    return fix(ARCH_TREE)
+    return fix(root or ARCH_TREE)
 
 
-def architecture_svg(product: str) -> str:
-    """The deployment architecture. Canvas height is computed, not fixed."""
+def architecture_svg(product: str, profile: Profile = STANDARD) -> str:
+    """The deployment architecture. Canvas height is computed, not fixed.
+
+    The profile supplies the box tree and the name of its route set."""
     # This diagram owns the unsuffixed marker ids, and its two-way arrows
     # need the reverse head.
     pen = Pen(suffix="", stroke=PALETTE["muted"], width=1.5, reverse=True)
     inner_w = CANVAS_W - 48
     boxes: dict[str, Box] = {}
-    tree = _resolved_tree(product)
+    tree = _resolved_tree(product, profile.arch_tree)
     body, h = render(tree, 24, 24, inner_w, boxes)
     height = h + 48
 
-    arrows = _arrows(boxes, tree, pen)
+    arrows = ROUTES[profile.routes](boxes, tree, pen)
 
     return (
         f'<svg viewBox="0 0 {CANVAS_W} {height:.0f}" '
@@ -719,7 +746,7 @@ def architecture_svg(product: str) -> str:
     )
 
 
-def geometry_problems(product: str) -> list[str]:
+def geometry_problems(product: str, profile: Profile = STANDARD) -> list[str]:
     """Everything wrong with the architecture tree's own geometry.
 
     Two failures live here, and both are silent in the drawing:
@@ -768,7 +795,7 @@ def geometry_problems(product: str) -> list[str]:
         for k in g.children:
             visit(k)
 
-    visit(_resolved_tree(product))
+    visit(_resolved_tree(product, profile.arch_tree))
     problems.extend(
         f"id {i!r} is used {n} times; the box registry is a plain dict, so "
         "the later box wins and every arrow anchored to the earlier one "
@@ -782,7 +809,7 @@ _NUMBERS = ("zero", "one", "two", "three", "four", "five", "six", "seven",
             "eight", "nine", "ten")
 
 
-def workflow_svg(product: str) -> str:
+def workflow_svg(product: str, profile: Profile = STANDARD) -> str:
     """The preservation pipeline, one card per step.
 
     The step count in the label is derived from the content, not written
@@ -791,7 +818,8 @@ def workflow_svg(product: str) -> str:
     # Sage arrows at 1.6, and no reverse head: every arrow here runs one
     # way. The architecture diagram owns the unsuffixed marker ids.
     pen = Pen(suffix="2", stroke=PALETTE["sage"], width=1.6)
-    n = len(WORKFLOW)
+    steps = profile.workflow or WORKFLOW
+    n = len(steps)
     label = f"Preservation workflow, {_NUMBERS[n] if n < len(_NUMBERS) else n} steps"
 
     # The source's own vertical rhythm on a 262 canvas: discs centred at
@@ -800,7 +828,7 @@ def workflow_svg(product: str) -> str:
     cw = (CANVAS_W - 2 * pad - gap * (n - 1)) / n
 
     out = []
-    for i, step in enumerate(WORKFLOW):
+    for i, step in enumerate(steps):
         x = pad + i * (cw + gap)
         # A dashed card is dashed more finely than a dashed group box, and
         # takes the neutral outline rather than sage: it is the same
@@ -835,4 +863,109 @@ def workflow_svg(product: str) -> str:
         f'role="img" aria-label="{esc(label)}">'
         f'{pen.defs()}{rect(0, 0, CANVAS_W, 262, rx=0)}'
         f'{"".join(out)}</svg>'
+    )
+
+
+# Route sets, keyed by Profile.routes. A route set draws the arrows over one
+# box tree and is the only place a connection lives, so a profile with a
+# different tree names its own set here.
+ROUTES = {"standard": _arrows_standard}
+
+
+# ---------------------------------------------------------------------------
+# The data-flow diagram: fixed coordinates, like the workflow diagram, because
+# a flow diagram is a hand-composed picture rather than a reflowing tree. The
+# frames, cards and routes are data in the profile (content.FlowDiagram).
+# ---------------------------------------------------------------------------
+
+_REF = re.compile(
+    r"^(\w+)\.(x|y|w|h|cx|cy|right|bottom)([+-]\d+(?:\.\d+)?)?$"
+)
+
+
+def _flow_boxes(fd: FlowDiagram) -> dict[str, Box]:
+    """Every frame and node of a flow diagram, by id. A repeat id raises,
+    for the same reason check 8 refuses one in the tree."""
+    boxes: dict[str, Box] = {}
+    ids = [f.id for f in fd.frames] + [n.card.id for n in fd.nodes]
+    for i in ids:
+        if not i:
+            raise DiagramError("a data-flow frame or card has no id")
+        if i in boxes:
+            raise DiagramError(f"data-flow id {i!r} is used twice")
+        boxes[i] = None
+    for f in fd.frames:
+        boxes[f.id] = Box(f.x, f.y, f.w, f.h)
+    for n in fd.nodes:
+        boxes[n.card.id] = Box(n.x, n.y, n.w, n.h)
+    return boxes
+
+
+def _flow_ref(spec, boxes: dict[str, Box]) -> float:
+    if isinstance(spec, (int, float)):
+        return spec
+    m = _REF.match(spec)
+    if not m:
+        raise DiagramError(f"bad data-flow coordinate {spec!r}")
+    box = boxes.get(m.group(1))
+    if box is None:
+        raise DiagramError(f"data-flow coordinate {spec!r} names no box")
+    return getattr(box, m.group(2)) + (float(m.group(3)) if m.group(3) else 0)
+
+
+def flow_geometry_problems(product: str, profile: Profile) -> list[str]:
+    """What check 8 asks of the tree, asked of the data-flow diagram:
+    no card draws past its own box, and every route coordinate resolves."""
+    fd = profile.flow_diagram
+    if fd is None:
+        return []
+    problems = []
+    try:
+        boxes = _flow_boxes(fd)
+    except DiagramError as exc:
+        return [str(exc)]
+    for n in fd.nodes:
+        bottom = _card_content_bottom(n.card, Box(n.x, n.y, n.w, n.h))
+        if bottom > n.y + n.h:
+            problems.append(
+                f"data-flow card {n.card.title!r} draws content down to "
+                f"{bottom:g}px in a box that ends at {n.y + n.h:g}px"
+            )
+    for r in fd.routes:
+        try:
+            for pt in r.pts:
+                for c in pt:
+                    _flow_ref(c, boxes)
+        except DiagramError as exc:
+            problems.append(f"data-flow route {r.flow}: {exc}")
+    return problems
+
+
+def flow_svg(product: str, profile: Profile) -> str:
+    """The data-flow diagram of a profile. Canvas height is the lowest
+    frame or card plus the page margin."""
+    fd = profile.flow_diagram
+    pen = Pen(suffix="3", stroke=PALETTE["muted"], width=1.5)
+    boxes = _flow_boxes(fd)
+    fix = lambda s: s.replace("{product}", product)  # noqa: E731
+    out = []
+    for f in fd.frames:
+        out.append(_frame(f.x, f.y, f.w, f.h, fix(f.label).upper(),
+                          tuple(fix(x) for x in f.lines), f.fill, f.stroke,
+                          f.dashed))
+    for n in fd.nodes:
+        c = dataclasses.replace(
+            n.card, title=fix(n.card.title),
+            lines=tuple(fix(x) for x in n.card.lines))
+        out.append(_card(c, boxes[n.card.id]))
+    for r in fd.routes:
+        pts = [(_flow_ref(x, boxes), _flow_ref(y, boxes)) for x, y in r.pts]
+        out.append(connector(pts, pen, dashed=r.dashed, label=r.label or None,
+                             flow=r.flow, badge=r.badge))
+    height = max(b.bottom for b in boxes.values()) + 24
+    return (
+        f'<svg viewBox="0 0 {CANVAS_W} {height:.0f}" '
+        'xmlns="http://www.w3.org/2000/svg" role="img" '
+        f'aria-label="{esc(fix(fd.aria))}">'
+        f'{pen.defs()}{rect(0, 0, CANVAS_W, height, rx=0)}{"".join(out)}</svg>'
     )

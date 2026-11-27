@@ -2,3 +2,4 @@ venv
 out/
 .superpowers/
 __pycache__/
+tools/architecture/private/

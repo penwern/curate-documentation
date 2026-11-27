@@ -7,6 +7,7 @@ Run from anywhere:
 
 import argparse
 import base64
+import importlib.util
 import os
 import re
 import subprocess
@@ -18,12 +19,37 @@ from pathlib import Path
 
 import content
 import diagram
-from content import PRODUCTS, Brand
+from content import PRODUCTS, PROFILES, Brand, Profile
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]              # curate-documentation/
 ASSETS = REPO / "docs" / "assets"
 OUT = HERE / "out"
+
+
+PRIVATE = HERE / "private"
+
+
+def load_private_profiles() -> list[str]:
+    """Import every private/*.py, if the directory exists.
+
+    Client-specific profiles are written for one customer and are not
+    published with this repository: private/ is gitignored. A module
+    registers its Profile in content.PROFILES, and any route set it needs
+    in diagram.ROUTES, when it is imported. Returns the module names loaded.
+    A module that fails to import stops the build with its own traceback,
+    because a half-loaded private profile is worse than none.
+    """
+    names = []
+    for path in sorted(PRIVATE.glob("*.py")):
+        if path.name.startswith("_"):
+            continue
+        spec = importlib.util.spec_from_file_location(
+            f"private_{path.stem}", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        names.append(path.stem)
+    return names
 
 
 class CheckError(Exception):
@@ -129,7 +155,7 @@ def _other_brands(brand: Brand) -> list[Brand]:
     return [PRODUCTS[k] for k in sorted(PRODUCTS) if k != brand.key]
 
 
-def check_output(html: str, brand: Brand) -> None:
+def check_output(html: str, brand: Brand, profile: Profile) -> None:
     """Run every check and raise CheckError once, listing every failure.
 
     Everything collected here is fatal. The one build-time result that is
@@ -165,8 +191,9 @@ def check_output(html: str, brand: Brand) -> None:
     #    externally supplied, but it is third-party and this tool is
     #    standard-library only.
     svgs = re.findall(r"<svg.*?</svg>", html, flags=re.S)
-    if len(svgs) != 2:
-        problems.append(f"expected 2 SVGs, found {len(svgs)}")
+    want = 2 + (1 if profile.flow_diagram else 0)
+    if len(svgs) != want:
+        problems.append(f"expected {want} SVGs, found {len(svgs)}")
     for i, svg in enumerate(svgs):
         try:
             ET.fromstring(svg)
@@ -198,6 +225,10 @@ def check_output(html: str, brand: Brand) -> None:
             problems.append(f"branding surface not found in the page: {name}")
             continue
         for other in _other_brands(brand):
+            # A profile may name who actually operates the service in its
+            # pill, for a white-label brand run by another company.
+            if name == "'Managed by' pill" and other.vendor == profile.operator:
+                continue
             if other.vendor in surface:
                 problems.append(
                     f"{brand.key} build names the vendor {other.vendor!r} "
@@ -209,7 +240,36 @@ def check_output(html: str, brand: Brand) -> None:
     #    silent in the drawing, and both are asked of diagram.py rather
     #    than worked out again from the SVG here: a second reading of the
     #    geometry is a second thing to keep in step with the first.
-    problems.extend(diagram.geometry_problems(brand.product))
+    problems.extend(diagram.geometry_problems(brand.product, profile))
+    problems.extend(diagram.flow_geometry_problems(brand.product, profile))
+
+    # 9. Every numbered data flow has its arrow, and every arrow its flow.
+    #    The list and the diagram are written apart, so each is read back
+    #    from the finished page: a flow added to one and not the other
+    #    is silent otherwise. A profile with no flows must have no
+    #    numbered arrows either.
+    listed = sorted(f.n for f in profile.flows)
+    drawn = sorted({int(n) for n in re.findall(r'data-flow="(\d+)"', html)})
+    badged = sorted({int(n) for n in re.findall(
+        r'<g data-badge="(\d+)">', html)})
+    in_list = sorted(int(n) for n in re.findall(r'<li data-flow=(\d+)>', html))
+    if profile.flows and (listed != in_list):
+        problems.append(f"data-flow list in the page {in_list}, expected {listed}")
+    if drawn != listed:
+        problems.append(f"data-flow arrows drawn for {drawn}, flows listed {listed}")
+    if profile.flows and badged != listed:
+        problems.append(f"data-flow numbers badged on arrows {badged}, flows listed {listed}")
+
+    # 10. No other profile's client is named in this build. A client name
+    #     is correct in its own proposal and a leak anywhere else. Image
+    #     payloads are stripped first, as for check 7.
+    text = re.sub(r"data:image/png;base64,[A-Za-z0-9+/=]+", "", html)
+    for other in PROFILES.values():
+        if other.client and other.key != profile.key and re.search(
+                rf"\b{re.escape(other.client)}\b", text):
+            problems.append(
+                f"{profile.key} build names the client {other.client!r}"
+            )
 
     if problems:
         raise CheckError(
@@ -332,6 +392,15 @@ footer.doc{margin-top:44px; padding-top:16px; border-top:1px solid var(--rule);
 """
 
 
+# Added to the stylesheet only for a profile that has data flows, so the
+# standard page is unchanged byte for byte.
+FLOW_CSS = """
+ol.flows{max-width:90ch; padding-left:1.4em}
+ol.flows li{margin:6px 0}
+@media print{ol.flows li{break-inside:avoid}}
+"""
+
+
 def _table(headers, widths, rows, brand: Brand) -> str:
     """One table, with its column widths carried in a colgroup.
 
@@ -351,7 +420,33 @@ def _table(headers, widths, rows, brand: Brand) -> str:
     )
 
 
-def render_page(brand: Brand) -> str:
+def _flows_section(brand: Brand, profile: Profile, p: dict) -> str:
+    """The data-flow section: heading, intro, numbered list, diagram.
+
+    Empty for a profile with no flows, so the standard page is unchanged.
+    The list comes first and the diagram, a landscape page of its own,
+    follows it. Each item carries its number as data-flow so check 9 can
+    read the list back from the page.
+    """
+    if not profile.flows:
+        return ""
+    items = "".join(
+        f"<li data-flow={f.n}><strong>{resolve(f.name, brand)}.</strong> "
+        f"{resolve(f.text, brand)}</li>"
+        for f in profile.flows
+    )
+    return (
+        f"\n<h2>{resolve(profile.flows_heading, brand)}</h2>\n"
+        f'<p>{p["flows_intro"]}</p>\n'
+        f"<ol class=flows>{items}</ol>\n"
+        f"<figure class=arch>\n"
+        f"  <div class=frame>{diagram.flow_svg(brand.product, profile)}</div>\n"
+        f'  <figcaption>{p["flows_caption"]}</figcaption>\n'
+        f"</figure>\n"
+    )
+
+
+def render_page(brand: Brand, profile: Profile = content.STANDARD) -> str:
     """The whole document, as one self-contained HTML file.
 
     The masthead is the only place the vendor is named, and it is taken
@@ -359,7 +454,8 @@ def render_page(brand: Brand) -> str:
     ship the wrong company's name in the other product's build, and check
     3 only catches the other product's name, not the other vendor's.
     """
-    p = {k: resolve(v, brand) for k, v in content.PROSE.items()}
+    p = {k: resolve(v, brand)
+         for k, v in {**content.PROSE, **(profile.prose or {})}.items()}
     logo = logo_data_uri(brand)
     # The tile is wrapped around the mark only for a brand that asks for
     # one, so a brand with no tile gets no empty element either. The
@@ -375,19 +471,20 @@ def render_page(brand: Brand) -> str:
             f"{mark}</div>"
         )
     pills = "".join(
-        f"<span class=pill>{resolve(x, brand)}</span>" for x in content.PILLS
+        f"<span class=pill>{resolve(x, brand)}</span>"
+        for x in (profile.pills or content.PILLS)
     )
     facts = "".join(
         f"<div class=fact><div class=k>{resolve(k, brand)}</div>"
         f"<div class=v>{resolve(v, brand)}</div></div>"
-        for k, v in content.FACTS
+        for k, v in (profile.facts or content.FACTS)
     )
 
     return f"""<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{brand.product} architecture overview</title>
+<title>{resolve(profile.doc_title, brand) or brand.product + " architecture overview"}</title>
 <link rel="icon" type="image/png" href="{logo}">
-<style>{CSS}</style>
+<style>{CSS}{FLOW_CSS if profile.flows else ""}</style>
 
 <div class=wrap>
 
@@ -395,12 +492,12 @@ def render_page(brand: Brand) -> str:
   {mark}
   <div class="titles">
     <span class="eyebrow">{brand.vendor} &middot; {brand.product}</span>
-    <span class="title">Architecture overview</span>
+    <span class="title">{resolve(profile.masthead_title, brand)}</span>
   </div>
 </header>
 
 <header class=doc>
-  <h1>Components, dependencies and integration points</h1>
+  <h1>{resolve(profile.title, brand)}</h1>
   <p class=lede>{p["lede"]}</p>
   <div class=meta>{pills}</div>
 </header>
@@ -408,31 +505,31 @@ def render_page(brand: Brand) -> str:
 <h2>System architecture</h2>
 <p>{p["arch_intro"]}</p>
 <figure class=arch>
-  <div class=frame>{diagram.architecture_svg(brand.product)}</div>
+  <div class=frame>{diagram.architecture_svg(brand.product, profile)}</div>
   <figcaption>{p["arch_caption"]}</figcaption>
 </figure>
 
 <h2>Components</h2>
 <p>{p["components_intro"]}</p>
 {_table(("Component", "Role", "Technology", "Data held"),
-        (17, 34, 16, 33), content.COMPONENTS, brand)}
+        (17, 34, 16, 33), profile.components or content.COMPONENTS, brand)}
 
 <h3>Optional connectors</h3>
 <p>{p["connectors_intro"]}</p>
 {_table(("Connector", "What it does", "Technology", "Notes"),
-        (19, 38, 14, 29), content.CONNECTORS, brand)}
+        (19, 38, 14, 29), profile.connectors or content.CONNECTORS, brand)}
 
 <h2>Integration points</h2>
 <p>{p["integrations_intro"]}</p>
 {_table(("Interface", "Direction", "Protocol", "Authentication", "Data crossing"),
-        (14, 11, 16, 31, 28), content.INTEGRATIONS, brand)}
+        (14, 11, 16, 31, 28), profile.integrations or content.INTEGRATIONS, brand)}
 
 <div class=note>{p["security_note"]}</div>
-
+{_flows_section(brand, profile, p)}
 <h2>Preservation workflow</h2>
 <p>{p["workflow_intro"]}</p>
 <figure class=flow>
-  <div class=frame>{diagram.workflow_svg(brand.product)}</div>
+  <div class=frame>{diagram.workflow_svg(brand.product, profile)}</div>
   <figcaption>{p["workflow_caption"]}</figcaption>
 </figure>
 
@@ -491,7 +588,8 @@ def find_chrome() -> Path | None:
     return None
 
 
-def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
+def to_pdf(html_path: Path, pdf_path: Path,
+           landscape_pages: int = 1) -> Path | None:
     """Print the page to PDF. Returns None when no PDF could be made.
 
     Every way this can go wrong returns None rather than raising: no
@@ -569,27 +667,36 @@ def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
             "  PDF has no readable /MediaBox, so its page setup could not "
             "be checked. Open it before sending it out."
         )
-    elif landscape != 1:
+    elif landscape != landscape_pages:
         print(
             f"  PDF page setup is wrong: {landscape} landscape page(s) of "
-            f"{len(orient)}, expected exactly 1: {orient}. The HTML is "
+            f"{len(orient)}, expected exactly {landscape_pages}: {orient}. The HTML is "
             "correct; the browser printing it may not honour the named "
             "@page rule the diagram page uses."
         )
     return pdf_path
 
 
-def build(brand: Brand, want_pdf: bool = True) -> Path:
+def build(brand: Brand, profile: Profile = content.STANDARD,
+          want_pdf: bool = True) -> Path:
+    if profile.products and brand.key not in profile.products:
+        raise CheckError(
+            f"profile {profile.key!r} is written for {list(profile.products)}, "
+            f"not {brand.key!r}"
+        )
     OUT.mkdir(parents=True, exist_ok=True)
-    html = render_page(brand)
-    html_path = OUT / f"{brand.out}.html"
+    html = render_page(brand, profile)
+    # The standard profile keeps the original file names.
+    stem = brand.out + ("" if profile.key == "standard" else f"-{profile.key}")
+    html_path = OUT / f"{stem}.html"
     html_path.write_text(html, encoding="utf-8")
 
     pdf_path = None
     if want_pdf:
-        pdf_path = to_pdf(html_path, OUT / f"{brand.out}.pdf")
+        pdf_path = to_pdf(html_path, OUT / f"{stem}.pdf",
+                          1 + (1 if profile.flow_diagram else 0))
 
-    check_output(html, brand)
+    check_output(html, brand, profile)
 
     print(f"  {html_path.relative_to(REPO)}")
     if pdf_path:
@@ -605,9 +712,22 @@ def main() -> int:
     )
     ap.add_argument("--all", action="store_true", help="build both products")
     ap.add_argument(
+        "--profile", default="standard",
+        help="deployment profile (default: standard); client profiles are "
+        "loaded from tools/architecture/private/",
+    )
+    ap.add_argument(
         "--no-pdf", action="store_true", help="emit HTML only, skip the PDF"
     )
     args = ap.parse_args()
+    load_private_profiles()
+    if args.profile not in PROFILES:
+        ap.error(
+            f"unknown profile {args.profile!r}. Registered: "
+            f"{', '.join(sorted(PROFILES))}. Private profiles are loaded from "
+            f"{PRIVATE.relative_to(REPO)}/*.py, which is gitignored and may "
+            "not be present on this machine."
+        )
 
     if args.all:
         keys = sorted(PRODUCTS)
@@ -618,7 +738,8 @@ def main() -> int:
 
     try:
         for key in keys:
-            build(PRODUCTS[key], want_pdf=not args.no_pdf)
+            build(PRODUCTS[key], PROFILES[args.profile],
+                  want_pdf=not args.no_pdf)
     except CheckError as exc:
         print(f"\nFAILED: {exc}", file=sys.stderr)
         return 1
