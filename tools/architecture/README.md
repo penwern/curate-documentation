@@ -27,7 +27,9 @@ curate-architecture-overview.pdf     soteria-architecture-overview.pdf
 ```
 
 Options: `--product curate|soteria` for one product, `--no-pdf` for HTML
-only. Giving neither flag is an error rather than a default build.
+only, `--profile NAME` for a deployment profile (default `standard`, see
+below). Giving neither `--product` nor `--all` is an error rather than a
+default build. `--all` builds the standard profile of both products.
 
 Python 3.10 or newer, standard library only. No `pip install`, and nothing
 is added to `pyproject.toml`, which belongs to mkdocs.
@@ -46,19 +48,95 @@ running after three minutes, the step prints why, the HTML is still
 written and the build still succeeds. Point at a specific binary with
 `CHROME=/path/to/chrome`.
 
-A current PDF is six pages, of which page 2 is the landscape architecture
-diagram. The step reads that page setup back out of the file and prints a
+A current standard PDF is six pages, of which page 2 is the landscape
+architecture diagram. A profile with a data-flow diagram adds a second
+landscape page. The step reads that page setup back out of the file and prints a
 note if it came out any other way, which is what a browser that ignores
 the named `@page` rule does. A note and not a failure: the document is
 correct, the printing of it is not.
+
+## Profiles
+
+A profile is one document variant for one audience: the standard overview,
+or a proposal written for a named client.
+
+```bash
+python3 tools/architecture/build.py --product soteria --profile acme
+```
+
+writes `soteria-architecture-overview-acme.html` and `.pdf`. The standard
+profile keeps the original file names and its output is the default.
+
+A `content.Profile` overrides only what it states; every field left unset
+falls back to the standard content:
+
+| Field | Overrides |
+| --- | --- |
+| `title`, `doc_title`, `masthead_title` | the heading, the `<title>` and the masthead line |
+| `pills` | the summary pills |
+| `prose` | single keys of `PROSE` (lede, intros, captions, security note, footer) |
+| `facts`, `components`, `connectors`, `integrations` | the hosting panel and the three tables |
+| `arch_tree`, `routes` | the architecture box tree, and the name of its route set in `diagram.ROUTES` |
+| `flows`, `flow_diagram` | an extra numbered data-flow section: a list, and a diagram at fixed coordinates |
+| `client`, `products` | the client named in it (check 10), and the products it may be built for |
+| `operator` | who runs the service, named in the "Managed by" pill when that differs from the brand's vendor (check 7 allows that name in the pill only) |
+| `workflow` | replaces the preservation workflow steps |
+
+Adding the next tender is a new `Profile`, a route function registered in
+`diagram.ROUTES` if it has its own box tree, and nothing in `build.py`. Write the profile in the register of a proposal:
+anything not yet live is worded "will", and the client name appears only in
+that profile (check 10 fails the build if it leaks into another).
+
+The data-flow diagram does not reflow. Its frames, cards and routes are
+coordinates on the 1400-unit canvas, written in `content.FlowDiagram`,
+because it is a hand-composed picture. A route coordinate is a number or a
+reference such as `"web.right"` or `"q.x"` (a node or frame id, a dot, one
+of `x y w h cx cy right bottom`, and an optional signed offset), so
+arrows still follow a box that is moved. Each route carries its flow
+number; `badge=True` draws that number on the route's tail, and a flow of
+several hops badges only its first. Lanes between boxes are literal
+numbers and need checking by eye after any move, as `LANE_L` and `LANE_R`
+do.
+
+### Private profiles
+
+A client profile names a customer and describes a proposal, so it does not
+belong in this repository. `tools/architecture/private/` is gitignored, and
+`build.py` imports every `private/*.py` it finds there before it reads the
+command line. A module registers itself when imported:
+
+```python
+# tools/architecture/private/acme.py
+import content
+import diagram
+from content import Card, Group, Profile
+from diagram import connector, _lane
+
+ACME_TREE = Group(label="", children=(...))
+
+def _arrows_acme(boxes, tree, pen):
+    return [connector([...], pen)]
+
+ACME = Profile(key="acme", client="Acme", products=("soteria",),
+               arch_tree=ACME_TREE, routes="acme")
+
+content.PROFILES["acme"] = ACME
+diagram.ROUTES["acme"] = _arrows_acme
+```
+
+A module whose name starts with an underscore is skipped. Asking for a
+profile that is not registered, for instance on a machine without the
+private directory, stops with a message saying where private profiles are
+loaded from; the standard build is unaffected. Keep a copy of the private
+directory somewhere the team can reach, since git will not have it.
 
 ## Files
 
 | File | Holds |
 | --- | --- |
-| `content.py` | Every fact, table row and block of copy, plus the brand definitions and the diagram's box tree. Knows nothing about rendering. |
+| `content.py` | Every fact, table row and block of copy, plus the brand definitions, the diagram's box tree and the profile definitions. Knows nothing about rendering. |
 | `diagram.py` | SVG primitives, the self-measuring layout engine, and the two diagrams. |
-| `build.py` | The page template, the stylesheet, the seven checks, and the PDF step. |
+| `build.py` | The page template, the stylesheet, the checks, and the PDF step. |
 
 ## Editing
 
@@ -66,7 +144,8 @@ correct, the printing of it is not.
 | --- | --- |
 | A fact, a table row, any prose | `content.py` |
 | A component in the diagram | `content.ARCH_TREE`, which reflows on its own |
-| A connection in the diagram | the route list in `diagram._arrows` |
+| A connection in the diagram | the route list in `diagram._arrows_standard` (or the profile's own route function) |
+| A step in a profile's data flows | `content.Flow` and `content.FlowDiagram` in that profile |
 | A step in the preservation pipeline diagram | `content.WORKFLOW` |
 | Page layout, CSS, print rules | `build.py` |
 
@@ -134,14 +213,15 @@ in the stylesheet.
 
 ## Checks
 
-Seven checks run inside the build, numbered 1 to 8 with 6 retired. Any
+Nine checks run inside the build, numbered 1 to 10 with 6 retired. Any
 failure raises, listing every problem at once, and the build exits
 non-zero.
 
 1. No `{product}`, `{vendor}` or `{entity}` survived unresolved.
 2. Zero em dashes.
 3. No other product's name appears anywhere in the document.
-4. Both SVGs are present and parse as XML.
+4. Both SVGs (three, for a profile with a data-flow diagram) are present and
+   parse as XML.
 5. The referenced logo file exists.
 6. Retired. This was the PDF's page orientation, which the PDF step now
    reports as a note of its own. A build whose HTML is correct must not
@@ -159,6 +239,14 @@ non-zero.
    long for its card still overflows sideways uncaught, because measuring
    rendered text width needs font metrics the standard library does not
    have.
+
+9. Every numbered data flow has its arrow. The profile's list of flows, the
+   `data-flow` arrows in the data-flow diagram, the number badges on them and
+   the numbered lines in the page must all name the same flows. A profile
+   with no flows must draw none. Check 8 also covers the data-flow diagram's
+   cards and resolves every route coordinate.
+10. No other profile's client is named in this build, so a client's proposal
+    cannot leak into the standard overview or another tender.
 
 Checks 3 and 7 hold a build against every other brand rather than one
 named opposite, so adding a third entry to `PRODUCTS` extends them on its
