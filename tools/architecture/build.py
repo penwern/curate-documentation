@@ -7,6 +7,7 @@ Run from anywhere:
 
 import argparse
 import base64
+import importlib.util
 import os
 import re
 import subprocess
@@ -24,6 +25,31 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]              # curate-documentation/
 ASSETS = REPO / "docs" / "assets"
 OUT = HERE / "out"
+
+
+PRIVATE = HERE / "private"
+
+
+def load_private_profiles() -> list[str]:
+    """Import every private/*.py, if the directory exists.
+
+    Client-specific profiles are written for one customer and are not
+    published with this repository: private/ is gitignored. A module
+    registers its Profile in content.PROFILES, and any route set it needs
+    in diagram.ROUTES, when it is imported. Returns the module names loaded.
+    A module that fails to import stops the build with its own traceback,
+    because a half-loaded private profile is worse than none.
+    """
+    names = []
+    for path in sorted(PRIVATE.glob("*.py")):
+        if path.name.startswith("_"):
+            continue
+        spec = importlib.util.spec_from_file_location(
+            f"private_{path.stem}", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        names.append(path.stem)
+    return names
 
 
 class CheckError(Exception):
@@ -686,13 +712,22 @@ def main() -> int:
     )
     ap.add_argument("--all", action="store_true", help="build both products")
     ap.add_argument(
-        "--profile", choices=sorted(PROFILES), default="standard",
-        help="deployment profile (default: standard)",
+        "--profile", default="standard",
+        help="deployment profile (default: standard); client profiles are "
+        "loaded from tools/architecture/private/",
     )
     ap.add_argument(
         "--no-pdf", action="store_true", help="emit HTML only, skip the PDF"
     )
     args = ap.parse_args()
+    load_private_profiles()
+    if args.profile not in PROFILES:
+        ap.error(
+            f"unknown profile {args.profile!r}. Registered: "
+            f"{', '.join(sorted(PROFILES))}. Private profiles are loaded from "
+            f"{PRIVATE.relative_to(REPO)}/*.py, which is gitignored and may "
+            "not be present on this machine."
+        )
 
     if args.all:
         keys = sorted(PRODUCTS)
