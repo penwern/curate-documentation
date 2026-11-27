@@ -165,8 +165,9 @@ def check_output(html: str, brand: Brand, profile: Profile) -> None:
     #    externally supplied, but it is third-party and this tool is
     #    standard-library only.
     svgs = re.findall(r"<svg.*?</svg>", html, flags=re.S)
-    if len(svgs) != 2:
-        problems.append(f"expected 2 SVGs, found {len(svgs)}")
+    want = 2 + (1 if profile.flow_diagram else 0)
+    if len(svgs) != want:
+        problems.append(f"expected {want} SVGs, found {len(svgs)}")
     for i, svg in enumerate(svgs):
         try:
             ET.fromstring(svg)
@@ -198,6 +199,10 @@ def check_output(html: str, brand: Brand, profile: Profile) -> None:
             problems.append(f"branding surface not found in the page: {name}")
             continue
         for other in _other_brands(brand):
+            # A profile may name who actually operates the service in its
+            # pill, for a white-label brand run by another company.
+            if name == "'Managed by' pill" and other.vendor == profile.operator:
+                continue
             if other.vendor in surface:
                 problems.append(
                     f"{brand.key} build names the vendor {other.vendor!r} "
@@ -210,6 +215,35 @@ def check_output(html: str, brand: Brand, profile: Profile) -> None:
     #    than worked out again from the SVG here: a second reading of the
     #    geometry is a second thing to keep in step with the first.
     problems.extend(diagram.geometry_problems(brand.product, profile))
+    problems.extend(diagram.flow_geometry_problems(brand.product, profile))
+
+    # 9. Every numbered data flow has its arrow, and every arrow its flow.
+    #    The list and the diagram are written apart, so each is read back
+    #    from the finished page: a flow added to one and not the other
+    #    is silent otherwise. A profile with no flows must have no
+    #    numbered arrows either.
+    listed = sorted(f.n for f in profile.flows)
+    drawn = sorted({int(n) for n in re.findall(r'data-flow="(\d+)"', html)})
+    badged = sorted({int(n) for n in re.findall(
+        r'<g data-badge="(\d+)">', html)})
+    in_list = sorted(int(n) for n in re.findall(r'<li data-flow=(\d+)>', html))
+    if profile.flows and (listed != in_list):
+        problems.append(f"data-flow list in the page {in_list}, expected {listed}")
+    if drawn != listed:
+        problems.append(f"data-flow arrows drawn for {drawn}, flows listed {listed}")
+    if profile.flows and badged != listed:
+        problems.append(f"data-flow numbers badged on arrows {badged}, flows listed {listed}")
+
+    # 10. No other profile's client is named in this build. A client name
+    #     is correct in its own proposal and a leak anywhere else. Image
+    #     payloads are stripped first, as for check 7.
+    text = re.sub(r"data:image/png;base64,[A-Za-z0-9+/=]+", "", html)
+    for other in PROFILES.values():
+        if other.client and other.key != profile.key and re.search(
+                rf"\b{re.escape(other.client)}\b", text):
+            problems.append(
+                f"{profile.key} build names the client {other.client!r}"
+            )
 
     if problems:
         raise CheckError(
@@ -332,6 +366,15 @@ footer.doc{margin-top:44px; padding-top:16px; border-top:1px solid var(--rule);
 """
 
 
+# Added to the stylesheet only for a profile that has data flows, so the
+# standard page is unchanged byte for byte.
+FLOW_CSS = """
+ol.flows{max-width:90ch; padding-left:1.4em}
+ol.flows li{margin:6px 0}
+@media print{ol.flows li{break-inside:avoid}}
+"""
+
+
 def _table(headers, widths, rows, brand: Brand) -> str:
     """One table, with its column widths carried in a colgroup.
 
@@ -348,6 +391,32 @@ def _table(headers, widths, rows, brand: Brand) -> str:
     return (
         f'<div class=tw><table><colgroup>{cols}</colgroup>'
         f"<thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>"
+    )
+
+
+def _flows_section(brand: Brand, profile: Profile, p: dict) -> str:
+    """The data-flow section: heading, intro, numbered list, diagram.
+
+    Empty for a profile with no flows, so the standard page is unchanged.
+    The list comes first and the diagram, a landscape page of its own,
+    follows it. Each item carries its number as data-flow so check 9 can
+    read the list back from the page.
+    """
+    if not profile.flows:
+        return ""
+    items = "".join(
+        f"<li data-flow={f.n}><strong>{resolve(f.name, brand)}.</strong> "
+        f"{resolve(f.text, brand)}</li>"
+        for f in profile.flows
+    )
+    return (
+        f"\n<h2>{resolve(profile.flows_heading, brand)}</h2>\n"
+        f'<p>{p["flows_intro"]}</p>\n'
+        f"<ol class=flows>{items}</ol>\n"
+        f"<figure class=arch>\n"
+        f"  <div class=frame>{diagram.flow_svg(brand.product, profile)}</div>\n"
+        f'  <figcaption>{p["flows_caption"]}</figcaption>\n'
+        f"</figure>\n"
     )
 
 
@@ -389,7 +458,7 @@ def render_page(brand: Brand, profile: Profile = content.STANDARD) -> str:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{resolve(profile.doc_title, brand) or brand.product + " architecture overview"}</title>
 <link rel="icon" type="image/png" href="{logo}">
-<style>{CSS}</style>
+<style>{CSS}{FLOW_CSS if profile.flows else ""}</style>
 
 <div class=wrap>
 
@@ -430,11 +499,11 @@ def render_page(brand: Brand, profile: Profile = content.STANDARD) -> str:
         (14, 11, 16, 31, 28), profile.integrations or content.INTEGRATIONS, brand)}
 
 <div class=note>{p["security_note"]}</div>
-
+{_flows_section(brand, profile, p)}
 <h2>Preservation workflow</h2>
 <p>{p["workflow_intro"]}</p>
 <figure class=flow>
-  <div class=frame>{diagram.workflow_svg(brand.product)}</div>
+  <div class=frame>{diagram.workflow_svg(brand.product, profile)}</div>
   <figcaption>{p["workflow_caption"]}</figcaption>
 </figure>
 
@@ -493,7 +562,8 @@ def find_chrome() -> Path | None:
     return None
 
 
-def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
+def to_pdf(html_path: Path, pdf_path: Path,
+           landscape_pages: int = 1) -> Path | None:
     """Print the page to PDF. Returns None when no PDF could be made.
 
     Every way this can go wrong returns None rather than raising: no
@@ -571,10 +641,10 @@ def to_pdf(html_path: Path, pdf_path: Path) -> Path | None:
             "  PDF has no readable /MediaBox, so its page setup could not "
             "be checked. Open it before sending it out."
         )
-    elif landscape != 1:
+    elif landscape != landscape_pages:
         print(
             f"  PDF page setup is wrong: {landscape} landscape page(s) of "
-            f"{len(orient)}, expected exactly 1: {orient}. The HTML is "
+            f"{len(orient)}, expected exactly {landscape_pages}: {orient}. The HTML is "
             "correct; the browser printing it may not honour the named "
             "@page rule the diagram page uses."
         )
@@ -597,7 +667,8 @@ def build(brand: Brand, profile: Profile = content.STANDARD,
 
     pdf_path = None
     if want_pdf:
-        pdf_path = to_pdf(html_path, OUT / f"{stem}.pdf")
+        pdf_path = to_pdf(html_path, OUT / f"{stem}.pdf",
+                          1 + (1 if profile.flow_diagram else 0))
 
     check_output(html, brand, profile)
 

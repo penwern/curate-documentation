@@ -705,10 +705,78 @@ PROSE = {
 
 
 @dataclass(frozen=True)
+class Flow:
+    """One numbered data flow: a line in the list under the data-flow
+    diagram. The diagram carries the same number on an arrow, and check 9
+    fails the build if either side is missing."""
+
+    n: int
+    name: str
+    text: str
+
+
+@dataclass(frozen=True)
+class FlowNode:
+    """A card on the data-flow diagram, at fixed coordinates."""
+
+    card: Card
+    x: float
+    y: float
+    w: float
+    h: float = 88
+
+
+@dataclass(frozen=True)
+class FlowFrame:
+    """A labelled box on the data-flow diagram, at fixed coordinates."""
+
+    id: str
+    label: str
+    x: float
+    y: float
+    w: float
+    h: float
+    lines: tuple[str, ...] = ()
+    fill: str = ""
+    stroke: str = ""
+    dashed: bool = False
+
+
+@dataclass(frozen=True)
+class FlowRoute:
+    """One arrow on the data-flow diagram, tagged with its flow number.
+
+    A coordinate is a number, or a reference such as "users.right" or
+    "web.x-4": a node or frame id, a dot, one of x y w h cx cy right
+    bottom, and an optional signed offset. `badge` draws the flow number
+    on the route's first point; a flow of several hops badges only its
+    first.
+    """
+
+    flow: int
+    pts: tuple
+    label: str = ""
+    dashed: bool = False
+    badge: bool = False
+
+
+@dataclass(frozen=True)
+class FlowDiagram:
+    """The data-flow diagram: frames, cards and routes at fixed
+    coordinates, on the 1400-unit canvas."""
+
+    aria: str
+    frames: tuple[FlowFrame, ...]
+    nodes: tuple[FlowNode, ...]
+    routes: tuple[FlowRoute, ...]
+
+
+@dataclass(frozen=True)
 class Profile:
     """A deployment profile. See the block comment above."""
 
     key: str
+    client: str = ""                 # named in no other profile's output
     products: tuple[str, ...] = ()   # empty means any product
     title: str = "Components, dependencies and integration points"
     doc_title: str = ""              # the <title>, default "<product> architecture overview"
@@ -721,6 +789,11 @@ class Profile:
     integrations: tuple | None = None
     arch_tree: Group | None = None
     routes: str = "standard"         # a key of diagram.ROUTES
+    flows_heading: str = "Data flows"
+    flows: tuple[Flow, ...] = ()
+    flow_diagram: FlowDiagram | None = None
+    workflow: list | None = None     # replaces WORKFLOW
+    operator: str = ""               # who runs the service, named in the "Managed by" pill; empty means the brand's vendor
 
 
 STANDARD = Profile(key="standard")
